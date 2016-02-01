@@ -17,4 +17,38 @@
       constraintName="MRN_SITE_UNIQUE"/>
   </changeSet>
   
+  
+  <changeSet author="mdnasim" id="Table to store storage container types">
+    <createTable tableName="OS_STORAGE_CONTAINER_TYPES">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="NAME" type="${text.type}(64)">
+        <constraints unique="true" nullable="false" />
+      </column>
+
+      <column name="TEMPERATURE" type="${double.type}">
+      </column>
+     
+      <column name="NO_OF_COLS" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+     
+      <column name="NO_OF_ROWS" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+     
+      <column name="COLUMN_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers">
+      </column>
+     
+      <column name="ROW_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers">
+      </column>
+      
+      <column name="STORE_SPECIMENS" type="${boolean.type}" defaultValueBoolean="0">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  
 </databaseChangeLog>

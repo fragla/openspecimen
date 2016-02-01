@@ -376,6 +376,15 @@
     <property name="containerFactory" ref="storageContainerFactory"/>
     <property name="mapExporter" ref="containerMapExporter"/>
   </bean>
+  
+  <bean id="StorageContainerTypeFactory" class="com.krishagni.catissueplus.core.administrative.domain.factory.impl.StorageContainerTypeFactoryImpl">
+  	<property name="daoFactory" ref="biospecimenDaoFactory"/>
+  </bean>
+  
+  <bean id="storageContainerTypeSvc" class="com.krishagni.catissueplus.core.administrative.services.impl.StorageContainerTypeServiceImpl">
+	<property name="daoFactory" ref="biospecimenDaoFactory"/>
+	<property name="containerTypeFactory" ref="StorageContainerTypeFactory"/>
+  </bean>
 	
   <bean id="distributionProtocolFactory" class="com.krishagni.catissueplus.core.administrative.domain.factory.impl.DistributionProtocolFactoryImpl">
     <property name="daoFactory"   ref="biospecimenDaoFactory"/>

@@ -8,19 +8,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.krishagni.catissueplus.core.administrative.events.ContainerQueryCriteria;
 import com.krishagni.catissueplus.core.administrative.events.ContainerTypeQueryCriteria;
-import com.krishagni.catissueplus.core.administrative.events.StorageContainerDetail;
 import com.krishagni.catissueplus.core.administrative.events.StorageContainerTypeDetail;
 import com.krishagni.catissueplus.core.administrative.services.StorageContainerTypeService;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 
 @Controller
-@RequestMapping("/storage-containers-type")
+@RequestMapping("/storage-container-types")
 public class StorageContainerTypeController {
 
 	@Autowired
@@ -33,13 +32,13 @@ public class StorageContainerTypeController {
 		return getContainerType(new ContainerTypeQueryCriteria(containerId));
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value="/byname/{name}")
+	@RequestMapping(method = RequestMethod.GET, value="/byname")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public StorageContainerTypeDetail getStorageContainer(@PathVariable("name") String name) {
+	public StorageContainerTypeDetail getStorageContainer(@RequestParam(value = "name", required = true) String name) {
 		return getContainerType(new ContainerTypeQueryCriteria(name));
 	}
-
+	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
@@ -58,6 +57,5 @@ public class StorageContainerTypeController {
 		
 		return resp.getPayload();
 	}	
-
 
 }

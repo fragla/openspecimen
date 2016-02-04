@@ -48,6 +48,12 @@
       <column name="STORE_SPECIMENS" type="${boolean.type}" defaultValueBoolean="0">
         <constraints nullable="false"/>
       </column>
+      
+      <column name="ABBREVIATION" type="${text.type}(64)">
+      </column>
+      
+      <column name="CAN_HOLD_ID" type="${int.type}">
+      </column>
     </createTable>
   </changeSet>
   

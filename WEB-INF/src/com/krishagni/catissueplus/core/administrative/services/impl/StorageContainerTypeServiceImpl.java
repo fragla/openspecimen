@@ -2,14 +2,10 @@ package com.krishagni.catissueplus.core.administrative.services.impl;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.krishagni.catissueplus.core.administrative.domain.StorageContainer;
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainerType;
-import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerTypeErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerTypeFactory;
-import com.krishagni.catissueplus.core.administrative.events.ContainerQueryCriteria;
 import com.krishagni.catissueplus.core.administrative.events.ContainerTypeQueryCriteria;
-import com.krishagni.catissueplus.core.administrative.events.StorageContainerDetail;
 import com.krishagni.catissueplus.core.administrative.events.StorageContainerTypeDetail;
 import com.krishagni.catissueplus.core.administrative.services.StorageContainerTypeService;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
@@ -41,16 +37,35 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 	public void setContainerTypeFactory(StorageContainerTypeFactory containerTypeFactory) {
 		this.containerTypeFactory = containerTypeFactory;
 	}
-
+	
+	@Override
+	@PlusTransactional
+	public ResponseEvent<StorageContainerTypeDetail> getStorageContainerType(RequestEvent<ContainerTypeQueryCriteria> req) {
+		try {		
+			StorageContainerType containerType = getContainerType(req.getPayload());			
+			AccessCtrlMgr.getInstance().ensureReadContainerTypeRights();
+			return ResponseEvent.response(StorageContainerTypeDetail.from(containerType));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+	
 	@Override
 	@PlusTransactional
 	public ResponseEvent<StorageContainerTypeDetail> createStorageContainerType(RequestEvent<StorageContainerTypeDetail> req) {
 		try {
+			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 			StorageContainerTypeDetail input = req.getPayload();
-			StorageContainerType containerType = containerTypeFactory.createStorageContainerType(input);
+			StorageContainerType  canHold = null;
+			if(input.getCanHold() != null) {
+				canHold = getCanHold(input, ose);
+			}
+			StorageContainerType containerType = containerTypeFactory.createStorageContainerType(input, canHold);
+			AccessCtrlMgr.getInstance().ensureCreateContainerTypeRights();
 			
-			ensureUniqueConstraintsType(null, containerType);
-			//container.validateRestrictions();
+			ensureUniqueConstraints(null, containerType, ose);
 			daoFactory.getStorageContainerTypeDao().saveOrUpdate(containerType, true);
 			return ResponseEvent.response(StorageContainerTypeDetail.from(containerType));
 		} catch (OpenSpecimenException ose) {
@@ -59,40 +74,6 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 			return ResponseEvent.serverError(e);
 		}
 	}
-	
-	private void ensureUniqueConstraintsType(StorageContainerType existing, StorageContainerType newContainerType) {
-		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
-		
-		if (!isUniqueName1(existing, newContainerType)) {
-			ose.addError(StorageContainerErrorCode.DUP_NAME, newContainerType.getName());
-		}
-		
-		ose.checkAndThrow();
-	}
-	
-	private boolean isUniqueName1(StorageContainerType existingContainerType, StorageContainerType newContainerType) {
-		if (existingContainerType != null && existingContainerType.getName().equals(newContainerType.getName())) {
-			return true;
-		}
-		
-		StorageContainerType container = daoFactory.getStorageContainerTypeDao().getByName(newContainerType.getName());
-		return container == null;
-	}
-	
-	@Override
-	@PlusTransactional
-	public ResponseEvent<StorageContainerTypeDetail> getStorageContainerType(RequestEvent<ContainerTypeQueryCriteria> req) {
-		try {		
-			StorageContainerType containerType = getContainerType(req.getPayload());						
-//			AccessCtrlMgr.getInstance().ensureReadContainerRights(container);
-			return ResponseEvent.response(StorageContainerTypeDetail.from(containerType));
-		} catch (OpenSpecimenException ose) {
-			return ResponseEvent.error(ose);
-		} catch (Exception e) {
-			return ResponseEvent.serverError(e);
-		}
-	}
-	
 	
 	private StorageContainerType getContainerType(ContainerTypeQueryCriteria crit) {
 		return getContainerType(crit.getId(), crit.getName());
@@ -122,7 +103,32 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 		ose.checkAndThrow();
 		return containerType;
 	}
-
-
+	
+	private StorageContainerType getCanHold(StorageContainerTypeDetail input, OpenSpecimenException ose) {
+		StorageContainerType canHold = null;
+		String name = input.getCanHold().getName();
+		if (input.getCanHold() != null) {
+			canHold = daoFactory.getStorageContainerTypeDao().getByName(name);
+			if (canHold == null) {
+				ose.addError(StorageContainerTypeErrorCode.NOT_FOUND, name);
+			}
+		}
+		
+		ose.checkAndThrow();
+		return canHold;
+	}
+	
+	private void ensureUniqueConstraints(StorageContainerType existing, StorageContainerType newContainerType, OpenSpecimenException ose) {
+		if (!isUniqueName(existing, newContainerType)) {
+			ose.addError(StorageContainerTypeErrorCode.DUP_NAME, newContainerType.getName());
+		}
+		
+		ose.checkAndThrow();
+	}
+	
+	private boolean isUniqueName(StorageContainerType existingContainerType, StorageContainerType newContainerType) {
+		StorageContainerType containerType = daoFactory.getStorageContainerTypeDao().getByName(newContainerType.getName());
+		return containerType == null;
+	}
 
 }

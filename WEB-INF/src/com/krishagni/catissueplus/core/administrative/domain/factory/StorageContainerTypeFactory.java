@@ -4,6 +4,6 @@ import com.krishagni.catissueplus.core.administrative.domain.StorageContainerTyp
 import com.krishagni.catissueplus.core.administrative.events.StorageContainerTypeDetail;
 
 public interface StorageContainerTypeFactory {
-	public StorageContainerType createStorageContainerType(StorageContainerTypeDetail detail);
+	public StorageContainerType createStorageContainerType(StorageContainerTypeDetail detail, StorageContainerType canHold);
 	
 }

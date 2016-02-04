@@ -19,6 +19,10 @@ public class StorageContainerTypeDetail {
 	private Double temperature;
 	
 	private boolean canStoreSpecimen;
+	
+	private String abbreviation;
+	
+	private StorageContainerTypeDetail canHold;
 
 	public Long getId() {
 		return id;
@@ -84,9 +88,24 @@ public class StorageContainerTypeDetail {
 		this.canStoreSpecimen = canStoreSpecimen;
 	}
 
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
+	}
+
+	public StorageContainerTypeDetail getCanHold() {
+		return canHold;
+	}
+
+	public void setCanHold(StorageContainerTypeDetail canHold) {
+		this.canHold = canHold;
+	}
+
 	public static StorageContainerTypeDetail from(StorageContainerType containerType) {
 		StorageContainerTypeDetail result = new StorageContainerTypeDetail();
-		
 		result.setId(containerType.getId());
 		result.setName(containerType.getName());
 		result.setNoOfRows(containerType.getNoOfRows());
@@ -95,8 +114,10 @@ public class StorageContainerTypeDetail {
 		result.setColumnLabelingScheme(containerType.getColumnLabelingScheme());
 		result.setCanStoreSpecimen(containerType.isCanStoreSpecimen());
 		result.setTemperature(containerType.getTemperature());
-		
+		result.setAbbreviation(containerType.getAbbreviation());
+		if(containerType.getCanHold() != null) {
+			result.setCanHold(StorageContainerTypeDetail.from(containerType.getCanHold()));
+		}
 		return result;
 	}
 }
-

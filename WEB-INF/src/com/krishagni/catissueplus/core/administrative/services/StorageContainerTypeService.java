@@ -5,9 +5,9 @@ import com.krishagni.catissueplus.core.administrative.events.StorageContainerTyp
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 
-public interface StorageContainerTypeService {
-	public ResponseEvent<StorageContainerTypeDetail> createStorageContainerType(RequestEvent<StorageContainerTypeDetail> req);
-	
+public interface StorageContainerTypeService {	
 	public ResponseEvent<StorageContainerTypeDetail> getStorageContainerType(RequestEvent<ContainerTypeQueryCriteria> req);
 
+	public ResponseEvent<StorageContainerTypeDetail> createStorageContainerType(RequestEvent<StorageContainerTypeDetail> req);
+	
 }

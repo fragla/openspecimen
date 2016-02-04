@@ -17,6 +17,10 @@ public class StorageContainerType extends BaseEntity {
 	
 	private boolean canStoreSpecimen = false;
 	
+	private String abbreviation;
+	
+	private StorageContainerType canHold;
+	
 	public String getName() {
 		return name;
 	}
@@ -72,6 +76,21 @@ public class StorageContainerType extends BaseEntity {
 	public void setCanStoreSpecimen(boolean canStoreSpecimen) {
 		this.canStoreSpecimen = canStoreSpecimen;
 	}
+	
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
+	}
+
+	public StorageContainerType getCanHold() {
+		return canHold;
+	}
+
+	public void setCanHold(StorageContainerType canHold) {
+		this.canHold = canHold;
+	}
 
 }
-

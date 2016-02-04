@@ -547,7 +547,25 @@ public class AccessCtrlMgr {
 	public void ensureDeleteContainerRights(StorageContainer container) {
 		ensureStorageContainerObjectRights(container, Operation.DELETE);
 	}
-
+	
+	public void ensureCreateContainerTypeRights() {
+		if(AuthUtil.isAdmin()) {
+			return;
+		}
+	}
+	
+	public void ensureReadContainerTypeRights() {
+		if(AuthUtil.isAdmin()) {
+			return;
+		}
+	}
+	
+	public void ensureUpdateContainerTypeRights() {
+		if(AuthUtil.isAdmin()) {
+			return;
+		}
+	}
+	
 	private void ensureStorageContainerObjectRights(StorageContainer container, Operation op) {
 		if (AuthUtil.isAdmin()) {
 			return;

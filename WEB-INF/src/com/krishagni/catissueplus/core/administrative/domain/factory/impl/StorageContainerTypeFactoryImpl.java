@@ -23,7 +23,7 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 	}
 	
 	@Override
-	public StorageContainerType createStorageContainerType(StorageContainerTypeDetail detail) {
+	public StorageContainerType createStorageContainerType(StorageContainerTypeDetail detail, StorageContainerType canHold) {
 		StorageContainerType containerType = new StorageContainerType();
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 		containerType.setId(detail.getId());
@@ -32,9 +32,14 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		setDimension(detail, containerType, ose);
 		setLabelingSchemes(detail, containerType, ose);
 		setTemperature(detail, containerType, ose);
+		setAbbreviation(detail, containerType, ose);
+		if(canHold != null) {
+			containerType.setCanHold(canHold);
+		}
+		
+		ose.checkAndThrow();
 		return containerType;
 	}
-	
 	
 	private void setName(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
 		String name = detail.getName();
@@ -48,6 +53,10 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 	
 	private void setTemperature(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
 		containerType.setTemperature(detail.getTemperature());
+	}
+	
+	private void setAbbreviation(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
+		containerType.setAbbreviation(detail.getAbbreviation());
 	}
 		
 	private void setDimension(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {

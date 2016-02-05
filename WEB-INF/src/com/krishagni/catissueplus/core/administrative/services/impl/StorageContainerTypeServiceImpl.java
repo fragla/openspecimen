@@ -44,10 +44,10 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 	public ResponseEvent<StorageContainerTypeDetail> getStorageContainerType(
 			                 RequestEvent<ContainerTypeQueryCriteria> req) {
 		try {
-			StorageContainerType containerType = getContainerType(req.getPayload());			
 			if (!AuthUtil.isAdmin()) {
 				throw new OpenSpecimenException(ErrorType.USER_ERROR, RbacErrorCode.ADMIN_RIGHTS_REQUIRED);
 			}
+			StorageContainerType containerType = getContainerType(req.getPayload());
 			return ResponseEvent.response(StorageContainerTypeDetail.from(containerType));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -61,12 +61,12 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 	public ResponseEvent<StorageContainerTypeDetail> createStorageContainerType(
 			                 RequestEvent<StorageContainerTypeDetail> req) {
 		try {
-			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
-			StorageContainerTypeDetail input = req.getPayload();
-			StorageContainerType containerType = containerTypeFactory.createStorageContainerType(input);
 			if (!AuthUtil.isAdmin()) {
 				throw new OpenSpecimenException(ErrorType.USER_ERROR, RbacErrorCode.ADMIN_RIGHTS_REQUIRED);
 			}
+			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
+			StorageContainerTypeDetail input = req.getPayload();
+			StorageContainerType containerType = containerTypeFactory.createStorageContainerType(input);
 			
 			ensureUniqueConstraints(null, containerType, ose);
 			daoFactory.getStorageContainerTypeDao().saveOrUpdate(containerType, true);
@@ -83,24 +83,18 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 	}
 	
 	private StorageContainerType getContainerType(Long id, String name) {
-		return getContainerType(id, name, StorageContainerTypeErrorCode.ID_OR_NAME_REQ);
-	}
-	
-	private StorageContainerType getContainerType(Long id, String name, ErrorCode requiredErrCode) {
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 		StorageContainerType containerType = null;
 		if (id != null) {
 			containerType = daoFactory.getStorageContainerTypeDao().getById(id);
 			if (containerType == null) {
-				ose.addError(StorageContainerTypeErrorCode.ID_NOT_FOUND, id);
+				ose.addError(StorageContainerTypeErrorCode.IDENTIFIER_NOT_FOUND, id);
 			}
 		} else if (StringUtils.isNotBlank(name)) {
 			containerType = daoFactory.getStorageContainerTypeDao().getByName(name);
 			if (containerType == null) {
 				ose.addError(StorageContainerTypeErrorCode.NAME_NOT_FOUND, name);
 			}
-		} else if (requiredErrCode != null) {
-			ose.addError(requiredErrCode);
 		}
 		
 		ose.checkAndThrow();

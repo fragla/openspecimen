@@ -27,12 +27,12 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		StorageContainerType containerType = new StorageContainerType();
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 		containerType.setId(detail.getId());
-		containerType.setStoreSpecimenEnabled(detail.isStoreSpecimenEnabled());
 		setName(detail, containerType, ose);
 		setDimension(detail, containerType, ose);
 		setLabelingSchemes(detail, containerType, ose);
-		setTemperature(detail, containerType, ose);
-		setAbbreviation(detail, containerType, ose);
+		containerType.setTemperature(detail.getTemperature());
+		containerType.setStoreSpecimenEnabled(detail.isStoreSpecimenEnabled());
+		containerType.setAbbreviation(detail.getAbbreviation());
 		setCanHold(detail, containerType, ose);
 		
 		ose.checkAndThrow();
@@ -110,28 +110,18 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		containerType.setRowLabelingScheme(rowLabelingScheme);		
 	}
 	
-	private void setTemperature(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
-		containerType.setTemperature(detail.getTemperature());
-	}
-	
-	private void setAbbreviation(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
-		containerType.setAbbreviation(detail.getAbbreviation());
-	}
-	
 	private void setCanHold(StorageContainerTypeDetail detail, StorageContainerType containerType, 
 			                  OpenSpecimenException ose) {
-		StorageContainerType canHold = null;
 		if(detail.getCanHold() == null) {
 			return;
 		}
+		StorageContainerType canHold = null;
 		Long id = detail.getCanHold().getId();
 		String name = detail.getCanHold().getName();
 		if (id != null) {
 			canHold = daoFactory.getStorageContainerTypeDao().getById(id);
 			if(canHold == null) {
-				ose.addError(StorageContainerTypeErrorCode.ID_NOT_FOUND, id);
+				ose.addError(StorageContainerTypeErrorCode.IDENTIFIER_NOT_FOUND, id);
 			}
 		} else if (StringUtils.isNotBlank(name)) {
 			canHold = daoFactory.getStorageContainerTypeDao().getByName(name);

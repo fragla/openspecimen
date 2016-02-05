@@ -5,17 +5,17 @@ import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
 public class StorageContainerType extends BaseEntity {
 	private String name;
 	
-	private int noOfRows;
-	
 	private int noOfColumns;
 	
-	private String rowLabelingScheme;
+	private int noOfRows;
 	
 	private String columnLabelingScheme;
 	
+	private String rowLabelingScheme;
+	
 	private Double temperature;
 	
-	private boolean canStoreSpecimen = false;
+	private boolean storeSpecimenEnabled = false;
 	
 	private String abbreviation;
 	
@@ -29,14 +29,6 @@ public class StorageContainerType extends BaseEntity {
 		this.name = name;
 	}
 
-	public int getNoOfRows() {
-		return noOfRows;
-	}
-
-	public void setNoOfRows(int noOfRows) {
-		this.noOfRows = noOfRows;
-	}
-
 	public int getNoOfColumns() {
 		return noOfColumns;
 	}
@@ -45,12 +37,12 @@ public class StorageContainerType extends BaseEntity {
 		this.noOfColumns = noOfColumns;
 	}
 
-	public String getRowLabelingScheme() {
-		return rowLabelingScheme;
+	public int getNoOfRows() {
+		return noOfRows;
 	}
 
-	public void setRowLabelingScheme(String rowLabelingScheme) {
-		this.rowLabelingScheme = rowLabelingScheme;
+	public void setNoOfRows(int noOfRows) {
+		this.noOfRows = noOfRows;
 	}
 
 	public String getColumnLabelingScheme() {
@@ -61,6 +53,14 @@ public class StorageContainerType extends BaseEntity {
 		this.columnLabelingScheme = columnLabelingScheme;
 	}
 
+	public String getRowLabelingScheme() {
+		return rowLabelingScheme;
+	}
+
+	public void setRowLabelingScheme(String rowLabelingScheme) {
+		this.rowLabelingScheme = rowLabelingScheme;
+	}
+
 	public Double getTemperature() {
 		return temperature;
 	}
@@ -69,14 +69,14 @@ public class StorageContainerType extends BaseEntity {
 		this.temperature = temperature;
 	}
 	
-	public boolean isCanStoreSpecimen() {
-		return canStoreSpecimen;
+	public boolean isStoreSpecimenEnabled() {
+		return storeSpecimenEnabled;
 	}
 
-	public void setCanStoreSpecimen(boolean canStoreSpecimen) {
-		this.canStoreSpecimen = canStoreSpecimen;
+	public void setStoreSpecimenEnabled(boolean storeSpecimenEnabled) {
+		this.storeSpecimenEnabled = storeSpecimenEnabled;
 	}
-	
+
 	public String getAbbreviation() {
 		return abbreviation;
 	}

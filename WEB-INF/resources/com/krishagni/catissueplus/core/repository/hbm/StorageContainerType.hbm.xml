@@ -24,20 +24,20 @@
 
     <property name="rowLabelingScheme" column="ROW_LABELING_SCHEME"/>
 
-    <property name="canStoreSpecimen" column="STORE_SPECIMENS"/>
+    <property name="storeSpecimenEnabled" column="STORE_SPECIMENS"/>
 
     <property name="abbreviation" column="ABBREVIATION"/>
 
     <many-to-one
       name="canHold" 
       class="com.krishagni.catissueplus.core.administrative.domain.StorageContainerType"
-      column="CAN_HOLD_ID"/>
+      column="CAN_HOLD"/>
      
     <query name="getStorageContainerTypesByName">
       from
         com.krishagni.catissueplus.core.administrative.domain.StorageContainerType storageContainerType
       where
-        storageContainerType.name in (:name) 
+        storageContainerType.name = :name 
     </query>
   </class>
 </hibernate-mapping>

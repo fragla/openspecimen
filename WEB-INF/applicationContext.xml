@@ -378,12 +378,12 @@
   </bean>
   
   <bean id="storageContainerTypeFactory" class="com.krishagni.catissueplus.core.administrative.domain.factory.impl.StorageContainerTypeFactoryImpl">
-  	<property name="daoFactory" ref="biospecimenDaoFactory"/>
+    <property name="daoFactory" ref="biospecimenDaoFactory"/>
   </bean>
   
   <bean id="storageContainerTypeSvc" class="com.krishagni.catissueplus.core.administrative.services.impl.StorageContainerTypeServiceImpl">
-	<property name="daoFactory" ref="biospecimenDaoFactory"/>
-	<property name="containerTypeFactory" ref="storageContainerTypeFactory"/>
+    <property name="daoFactory" ref="biospecimenDaoFactory"/>
+    <property name="containerTypeFactory" ref="storageContainerTypeFactory"/>
   </bean>
   
   <bean id="distributionProtocolFactory" class="com.krishagni.catissueplus.core.administrative.domain.factory.impl.DistributionProtocolFactoryImpl">

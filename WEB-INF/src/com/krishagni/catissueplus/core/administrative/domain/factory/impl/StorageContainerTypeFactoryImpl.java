@@ -23,25 +23,24 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 	}
 	
 	@Override
-	public StorageContainerType createStorageContainerType(StorageContainerTypeDetail detail, StorageContainerType canHold) {
+	public StorageContainerType createStorageContainerType(StorageContainerTypeDetail detail) {
 		StorageContainerType containerType = new StorageContainerType();
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 		containerType.setId(detail.getId());
-		containerType.setCanStoreSpecimen(detail.isCanStoreSpecimen());
+		containerType.setStoreSpecimenEnabled(detail.isStoreSpecimenEnabled());
 		setName(detail, containerType, ose);
 		setDimension(detail, containerType, ose);
 		setLabelingSchemes(detail, containerType, ose);
 		setTemperature(detail, containerType, ose);
 		setAbbreviation(detail, containerType, ose);
-		if(canHold != null) {
-			containerType.setCanHold(canHold);
-		}
+		setCanHold(detail, containerType, ose);
 		
 		ose.checkAndThrow();
 		return containerType;
 	}
 	
-	private void setName(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
+	private void setName(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
 		String name = detail.getName();
 		if (StringUtils.isBlank(name)) {
 			ose.addError(StorageContainerTypeErrorCode.NAME_REQUIRED);
@@ -50,21 +49,15 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		
 		containerType.setName(name);
 	}
-	
-	private void setTemperature(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
-		containerType.setTemperature(detail.getTemperature());
-	}
-	
-	private void setAbbreviation(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
-		containerType.setAbbreviation(detail.getAbbreviation());
-	}
 		
-	private void setDimension(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
+	private void setDimension(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
 		setNoOfColumns(detail, containerType, ose);
 		setNoOfRows(detail, containerType, ose);
 	}
 	
-	private void setNoOfColumns(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
+	private void setNoOfColumns(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
 		int noOfCols = detail.getNoOfColumns();		
 		if (noOfCols <= 0) {
 			ose.addError(StorageContainerTypeErrorCode.INVALID_DIMENSION_CAPACITY);			
@@ -73,7 +66,8 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		containerType.setNoOfColumns(noOfCols);	
 	}
 	
-	private void setNoOfRows(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
+	private void setNoOfRows(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
 		int noOfRows = detail.getNoOfRows();
 		if (noOfRows <= 0) {
 			ose.addError(StorageContainerTypeErrorCode.INVALID_DIMENSION_CAPACITY);
@@ -82,12 +76,14 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		containerType.setNoOfRows(noOfRows);		
 	}
 	
-	private void setLabelingSchemes(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
+	private void setLabelingSchemes(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
 		setColumnLabelingScheme(detail, containerType, ose);
 		setRowLabelingScheme(detail, containerType, ose);
 	}
 	
-	private void setColumnLabelingScheme(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
+	private void setColumnLabelingScheme(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
 		String columnLabelingScheme = detail.getColumnLabelingScheme();
 		if (StringUtils.isBlank(columnLabelingScheme)) {
 			columnLabelingScheme = StorageContainer.NUMBER_LABELING_SCHEME;
@@ -100,7 +96,8 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		containerType.setColumnLabelingScheme(columnLabelingScheme);		
 	}
 	
-	private void setRowLabelingScheme(StorageContainerTypeDetail detail, StorageContainerType containerType, OpenSpecimenException ose) {
+	private void setRowLabelingScheme(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
 		String rowLabelingScheme = detail.getRowLabelingScheme();
 		if (StringUtils.isBlank(rowLabelingScheme)) {
 			rowLabelingScheme = containerType.getColumnLabelingScheme();
@@ -112,5 +109,38 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		
 		containerType.setRowLabelingScheme(rowLabelingScheme);		
 	}
-
+	
+	private void setTemperature(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
+		containerType.setTemperature(detail.getTemperature());
+	}
+	
+	private void setAbbreviation(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
+		containerType.setAbbreviation(detail.getAbbreviation());
+	}
+	
+	private void setCanHold(StorageContainerTypeDetail detail, StorageContainerType containerType, 
+			                  OpenSpecimenException ose) {
+		StorageContainerType canHold = null;
+		if(detail.getCanHold() == null) {
+			return;
+		}
+		Long id = detail.getCanHold().getId();
+		String name = detail.getCanHold().getName();
+		if (id != null) {
+			canHold = daoFactory.getStorageContainerTypeDao().getById(id);
+			if(canHold == null) {
+				ose.addError(StorageContainerTypeErrorCode.ID_NOT_FOUND, id);
+			}
+		} else if (StringUtils.isNotBlank(name)) {
+			canHold = daoFactory.getStorageContainerTypeDao().getByName(name);
+			if (canHold == null) {
+				ose.addError(StorageContainerTypeErrorCode.NAME_NOT_FOUND, name);
+			}
+		}
+		
+		containerType.setCanHold(canHold);
+	}
+	
 }

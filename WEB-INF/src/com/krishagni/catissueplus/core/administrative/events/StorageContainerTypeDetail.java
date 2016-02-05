@@ -8,17 +8,17 @@ public class StorageContainerTypeDetail {
 	
 	private String name;
 	
-	private int noOfRows;
-	
 	private int noOfColumns;
 	
-	private String rowLabelingScheme;
+	private int noOfRows;
 	
 	private String columnLabelingScheme;
 	
+	private String rowLabelingScheme;
+	
 	private Double temperature;
 	
-	private boolean canStoreSpecimen;
+	private boolean storeSpecimenEnabled;
 	
 	private String abbreviation;
 	
@@ -40,14 +40,6 @@ public class StorageContainerTypeDetail {
 		this.name = name;
 	}
 
-	public int getNoOfRows() {
-		return noOfRows;
-	}
-
-	public void setNoOfRows(int noOfRows) {
-		this.noOfRows = noOfRows;
-	}
-
 	public int getNoOfColumns() {
 		return noOfColumns;
 	}
@@ -56,12 +48,12 @@ public class StorageContainerTypeDetail {
 		this.noOfColumns = noOfColumns;
 	}
 
-	public String getRowLabelingScheme() {
-		return rowLabelingScheme;
+	public int getNoOfRows() {
+		return noOfRows;
 	}
 
-	public void setRowLabelingScheme(String rowLabelingScheme) {
-		this.rowLabelingScheme = rowLabelingScheme;
+	public void setNoOfRows(int noOfRows) {
+		this.noOfRows = noOfRows;
 	}
 
 	public String getColumnLabelingScheme() {
@@ -72,6 +64,14 @@ public class StorageContainerTypeDetail {
 		this.columnLabelingScheme = columnLabelingScheme;
 	}
 
+	public String getRowLabelingScheme() {
+		return rowLabelingScheme;
+	}
+
+	public void setRowLabelingScheme(String rowLabelingScheme) {
+		this.rowLabelingScheme = rowLabelingScheme;
+	}
+
 	public Double getTemperature() {
 		return temperature;
 	}
@@ -79,13 +79,13 @@ public class StorageContainerTypeDetail {
 	public void setTemperature(Double temperature) {
 		this.temperature = temperature;
 	}
-	
-	public boolean isCanStoreSpecimen() {
-		return canStoreSpecimen;
+
+	public boolean isStoreSpecimenEnabled() {
+		return storeSpecimenEnabled;
 	}
 
-	public void setCanStoreSpecimen(boolean canStoreSpecimen) {
-		this.canStoreSpecimen = canStoreSpecimen;
+	public void setStoreSpecimenEnabled(boolean storeSpecimenEnabled) {
+		this.storeSpecimenEnabled = storeSpecimenEnabled;
 	}
 
 	public String getAbbreviation() {
@@ -105,19 +105,21 @@ public class StorageContainerTypeDetail {
 	}
 
 	public static StorageContainerTypeDetail from(StorageContainerType containerType) {
+		if (containerType == null) {
+			return null;
+		}
+		
 		StorageContainerTypeDetail result = new StorageContainerTypeDetail();
 		result.setId(containerType.getId());
 		result.setName(containerType.getName());
-		result.setNoOfRows(containerType.getNoOfRows());
 		result.setNoOfColumns(containerType.getNoOfColumns());
-		result.setRowLabelingScheme(containerType.getRowLabelingScheme());
+		result.setNoOfRows(containerType.getNoOfRows());
 		result.setColumnLabelingScheme(containerType.getColumnLabelingScheme());
-		result.setCanStoreSpecimen(containerType.isCanStoreSpecimen());
+		result.setRowLabelingScheme(containerType.getRowLabelingScheme());
 		result.setTemperature(containerType.getTemperature());
+		result.setStoreSpecimenEnabled(containerType.isStoreSpecimenEnabled());
 		result.setAbbreviation(containerType.getAbbreviation());
-		if(containerType.getCanHold() != null) {
-			result.setCanHold(StorageContainerTypeDetail.from(containerType.getCanHold()));
-		}
+		result.setCanHold(StorageContainerTypeDetail.from(containerType.getCanHold()));
 		return result;
 	}
 }

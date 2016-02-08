@@ -10,4 +10,6 @@ public interface StorageContainerTypeService {
 
 	public ResponseEvent<StorageContainerTypeDetail> createStorageContainerType(RequestEvent<StorageContainerTypeDetail> req);
 	
+	public ResponseEvent<StorageContainerTypeDetail> updateStorageContainerType(RequestEvent<StorageContainerTypeDetail> req);
+	
 }

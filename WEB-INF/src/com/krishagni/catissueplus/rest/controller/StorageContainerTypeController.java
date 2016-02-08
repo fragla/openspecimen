@@ -50,6 +50,25 @@ public class StorageContainerTypeController {
 		return resp.getPayload();
 	}
 	
+	@RequestMapping(method = RequestMethod.PUT, value="{id}")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public StorageContainerTypeDetail updateStorageContainerType(
+			@PathVariable("id")
+			Long containerTypeId,
+			
+			@RequestBody
+			StorageContainerTypeDetail detail) {
+		
+		detail.setId(containerTypeId);
+		
+		RequestEvent<StorageContainerTypeDetail> req = new RequestEvent<StorageContainerTypeDetail>(detail);
+		ResponseEvent<StorageContainerTypeDetail> resp = storageContainerTypeSvc.updateStorageContainerType(req);
+		resp.throwErrorIfUnsuccessful();
+		
+		return resp.getPayload();
+	}
+	
 	private StorageContainerTypeDetail getContainerType(ContainerTypeQueryCriteria crit) {
 		RequestEvent<ContainerTypeQueryCriteria> req = new RequestEvent<ContainerTypeQueryCriteria>(crit);
 		ResponseEvent<StorageContainerTypeDetail> resp = storageContainerTypeSvc.getStorageContainerType(req);

@@ -92,5 +92,17 @@ public class StorageContainerType extends BaseEntity {
 	public void setCanHold(StorageContainerType canHold) {
 		this.canHold = canHold;
 	}
+	
+	public void update(StorageContainerType containerType) {
+		setName(containerType.name);
+		setTemperature(containerType.temperature);
+		setNoOfColumns(containerType.noOfColumns);
+		setNoOfRows(containerType.noOfRows);
+		setColumnLabelingScheme(containerType.columnLabelingScheme);
+		setRowLabelingScheme(containerType.rowLabelingScheme);
+		setStoreSpecimenEnabled(containerType.storeSpecimenEnabled);
+		setAbbreviation(containerType.abbreviation);
+		setCanHold(containerType.canHold);
+	}
 
 }

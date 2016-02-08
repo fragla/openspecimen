@@ -10,7 +10,6 @@ import com.krishagni.catissueplus.core.administrative.events.StorageContainerTyp
 import com.krishagni.catissueplus.core.administrative.services.StorageContainerTypeService;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
-import com.krishagni.catissueplus.core.common.errors.ErrorCode;
 import com.krishagni.catissueplus.core.common.errors.ErrorType;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
@@ -64,13 +63,37 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 			if (!AuthUtil.isAdmin()) {
 				throw new OpenSpecimenException(ErrorType.USER_ERROR, RbacErrorCode.ADMIN_RIGHTS_REQUIRED);
 			}
-			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 			StorageContainerTypeDetail input = req.getPayload();
 			StorageContainerType containerType = containerTypeFactory.createStorageContainerType(input);
 			
-			ensureUniqueConstraints(null, containerType, ose);
+			ensureUniqueConstraints(null, containerType);
 			daoFactory.getStorageContainerTypeDao().saveOrUpdate(containerType, true);
 			return ResponseEvent.response(StorageContainerTypeDetail.from(containerType));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+	
+	@Override
+	@PlusTransactional
+	public ResponseEvent<StorageContainerTypeDetail> updateStorageContainerType(RequestEvent<StorageContainerTypeDetail> req) {
+		try {
+			if (!AuthUtil.isAdmin()) {
+				throw new OpenSpecimenException(ErrorType.USER_ERROR, RbacErrorCode.ADMIN_RIGHTS_REQUIRED);
+			}
+			StorageContainerTypeDetail input = req.getPayload();
+			StorageContainerType existing = getContainerType(input.getId(), input.getName());
+			
+			input.setId(existing.getId());
+			StorageContainerType containerType = null;
+			containerType = containerTypeFactory.createStorageContainerType(input);
+			
+			ensureUniqueConstraints(existing, containerType);
+			existing.update(containerType);
+			daoFactory.getStorageContainerTypeDao().saveOrUpdate(existing, true);
+			return ResponseEvent.response(StorageContainerTypeDetail.from(existing));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
@@ -101,8 +124,8 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 		return containerType;
 	}
 	
-	private void ensureUniqueConstraints(StorageContainerType existing, StorageContainerType newContainerType, 
-			                                  OpenSpecimenException ose) {
+	private void ensureUniqueConstraints(StorageContainerType existing, StorageContainerType newContainerType) {
+		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 		if (!isUniqueName(existing, newContainerType)) {
 			ose.addError(StorageContainerTypeErrorCode.DUP_NAME, newContainerType.getName());
 		}
@@ -111,6 +134,9 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 	}
 	
 	private boolean isUniqueName(StorageContainerType existingContainerType, StorageContainerType newContainerType) {
+		if (existingContainerType != null && existingContainerType.getName().equals(newContainerType.getName())) {
+			return true;
+		}
 		StorageContainerType containerType = daoFactory.getStorageContainerTypeDao().getByName(newContainerType
 				                                       .getName());
 		return containerType == null;

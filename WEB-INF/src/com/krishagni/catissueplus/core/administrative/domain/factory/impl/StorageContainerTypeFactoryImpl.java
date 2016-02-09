@@ -11,7 +11,7 @@ import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.errors.ErrorType;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 
-public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFactory{
+public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFactory {
 	private DaoFactory daoFactory;
 	
 	public DaoFactory getDaoFactory() {
@@ -40,7 +40,7 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 	}
 	
 	private void setName(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
+			OpenSpecimenException ose) {
 		String name = detail.getName();
 		if (StringUtils.isBlank(name)) {
 			ose.addError(StorageContainerTypeErrorCode.NAME_REQUIRED);
@@ -50,14 +50,14 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		containerType.setName(name);
 	}
 		
-	private void setDimension(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
+	private void setDimension(StorageContainerTypeDetail detail, StorageContainerType containerType,
+			OpenSpecimenException ose) {
 		setNoOfColumns(detail, containerType, ose);
 		setNoOfRows(detail, containerType, ose);
 	}
 	
 	private void setNoOfColumns(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
+			OpenSpecimenException ose) {
 		int noOfCols = detail.getNoOfColumns();		
 		if (noOfCols <= 0) {
 			ose.addError(StorageContainerTypeErrorCode.INVALID_DIMENSION_CAPACITY);			
@@ -67,7 +67,7 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 	}
 	
 	private void setNoOfRows(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
+			OpenSpecimenException ose) {
 		int noOfRows = detail.getNoOfRows();
 		if (noOfRows <= 0) {
 			ose.addError(StorageContainerTypeErrorCode.INVALID_DIMENSION_CAPACITY);
@@ -77,13 +77,13 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 	}
 	
 	private void setLabelingSchemes(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
+			OpenSpecimenException ose) {
 		setColumnLabelingScheme(detail, containerType, ose);
 		setRowLabelingScheme(detail, containerType, ose);
 	}
 	
 	private void setColumnLabelingScheme(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
+			OpenSpecimenException ose) {
 		String columnLabelingScheme = detail.getColumnLabelingScheme();
 		if (StringUtils.isBlank(columnLabelingScheme)) {
 			columnLabelingScheme = StorageContainer.NUMBER_LABELING_SCHEME;
@@ -97,7 +97,7 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 	}
 	
 	private void setRowLabelingScheme(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
+			OpenSpecimenException ose) {
 		String rowLabelingScheme = detail.getRowLabelingScheme();
 		if (StringUtils.isBlank(rowLabelingScheme)) {
 			rowLabelingScheme = containerType.getColumnLabelingScheme();
@@ -111,23 +111,27 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 	}
 	
 	private void setCanHold(StorageContainerTypeDetail detail, StorageContainerType containerType, 
-			                  OpenSpecimenException ose) {
+			OpenSpecimenException ose) {
 		if(detail.getCanHold() == null) {
 			return;
 		}
 		StorageContainerType canHold = null;
-		Long id = detail.getCanHold().getId();
 		String name = detail.getCanHold().getName();
-		if (id != null) {
-			canHold = daoFactory.getStorageContainerTypeDao().getById(id);
-			if(canHold == null) {
-				ose.addError(StorageContainerTypeErrorCode.IDENTIFIER_NOT_FOUND, id);
-			}
-		} else if (StringUtils.isNotBlank(name)) {
+		Object key = null;
+		if (detail.getCanHold().getId() != null) {
+			canHold = daoFactory.getStorageContainerTypeDao().getById(detail.getCanHold().getId());
+			key = detail.getCanHold().getId();
+		} else if (StringUtils.isNotBlank(detail.getCanHold().getName())) {
 			canHold = daoFactory.getStorageContainerTypeDao().getByName(name);
-			if (canHold == null) {
-				ose.addError(StorageContainerTypeErrorCode.NAME_NOT_FOUND, name);
+			key = detail.getCanHold().getName();
+		}
+		
+		if (canHold == null) {
+			if (key != null) {
+				ose.addError(StorageContainerTypeErrorCode.NOT_FOUND, key);
 			}
+			
+			return;
 		}
 		
 		containerType.setCanHold(canHold);

@@ -55,12 +55,12 @@ public class StorageContainerTypeController {
 	@ResponseBody
 	public StorageContainerTypeDetail updateStorageContainerType(
 			@PathVariable("id")
-			Long containerTypeId,
+			Long id,
 			
 			@RequestBody
 			StorageContainerTypeDetail detail) {
 		
-		detail.setId(containerTypeId);
+		detail.setId(id);
 		
 		RequestEvent<StorageContainerTypeDetail> req = new RequestEvent<StorageContainerTypeDetail>(detail);
 		ResponseEvent<StorageContainerTypeDetail> resp = storageContainerTypeSvc.updateStorageContainerType(req);

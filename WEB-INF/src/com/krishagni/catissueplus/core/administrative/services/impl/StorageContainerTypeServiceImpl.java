@@ -41,11 +41,12 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 	@Override
 	@PlusTransactional
 	public ResponseEvent<StorageContainerTypeDetail> getStorageContainerType(
-			                 RequestEvent<ContainerTypeQueryCriteria> req) {
+			RequestEvent<ContainerTypeQueryCriteria> req) {
 		try {
 			if (!AuthUtil.isAdmin()) {
 				throw new OpenSpecimenException(ErrorType.USER_ERROR, RbacErrorCode.ADMIN_RIGHTS_REQUIRED);
 			}
+			
 			StorageContainerType containerType = getContainerType(req.getPayload());
 			return ResponseEvent.response(StorageContainerTypeDetail.from(containerType));
 		} catch (OpenSpecimenException ose) {
@@ -57,8 +58,7 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 	
 	@Override
 	@PlusTransactional
-	public ResponseEvent<StorageContainerTypeDetail> createStorageContainerType(
-			                 RequestEvent<StorageContainerTypeDetail> req) {
+	public ResponseEvent<StorageContainerTypeDetail> createStorageContainerType(RequestEvent<StorageContainerTypeDetail> req) {
 		try {
 			if (!AuthUtil.isAdmin()) {
 				throw new OpenSpecimenException(ErrorType.USER_ERROR, RbacErrorCode.ADMIN_RIGHTS_REQUIRED);
@@ -108,37 +108,35 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 	private StorageContainerType getContainerType(Long id, String name) {
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 		StorageContainerType containerType = null;
+		Object key = null;
 		if (id != null) {
 			containerType = daoFactory.getStorageContainerTypeDao().getById(id);
-			if (containerType == null) {
-				ose.addError(StorageContainerTypeErrorCode.IDENTIFIER_NOT_FOUND, id);
-			}
+			key = id;
 		} else if (StringUtils.isNotBlank(name)) {
 			containerType = daoFactory.getStorageContainerTypeDao().getByName(name);
-			if (containerType == null) {
-				ose.addError(StorageContainerTypeErrorCode.NAME_NOT_FOUND, name);
-			}
+			key = name;
 		}
 		
-		ose.checkAndThrow();
+		if (key != null) {
+			throw OpenSpecimenException.userError(StorageContainerTypeErrorCode.NOT_FOUND, key);
+		}
+		
 		return containerType;
 	}
 	
 	private void ensureUniqueConstraints(StorageContainerType existing, StorageContainerType newContainerType) {
-		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 		if (!isUniqueName(existing, newContainerType)) {
-			ose.addError(StorageContainerTypeErrorCode.DUP_NAME, newContainerType.getName());
+			throw OpenSpecimenException.userError(StorageContainerTypeErrorCode.DUP_NAME, newContainerType.getName());
 		}
-		
-		ose.checkAndThrow();
 	}
 	
 	private boolean isUniqueName(StorageContainerType existingContainerType, StorageContainerType newContainerType) {
 		if (existingContainerType != null && existingContainerType.getName().equals(newContainerType.getName())) {
 			return true;
 		}
-		StorageContainerType containerType = daoFactory.getStorageContainerTypeDao().getByName(newContainerType
-				                                       .getName());
+		
+		StorageContainerType containerType = daoFactory.getStorageContainerTypeDao().
+				getByName(newContainerType.getName());
 		return containerType == null;
 	}
 

@@ -4,9 +4,7 @@ package com.krishagni.catissueplus.core.administrative.domain.factory;
 import com.krishagni.catissueplus.core.common.errors.ErrorCode;
 
 public enum StorageContainerTypeErrorCode implements ErrorCode {
-	IDENTIFIER_NOT_FOUND,
-	
-	NAME_NOT_FOUND,
+	NOT_FOUND,
 	
 	NAME_REQUIRED,
 	

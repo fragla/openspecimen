@@ -13,10 +13,6 @@ import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 
 public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFactory {
 	private DaoFactory daoFactory;
-	
-	public DaoFactory getDaoFactory() {
-		return daoFactory;
-	}
 
 	public void setDaoFactory(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;

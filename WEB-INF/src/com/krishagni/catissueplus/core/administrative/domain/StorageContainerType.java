@@ -95,11 +95,11 @@ public class StorageContainerType extends BaseEntity {
 	
 	public void update(StorageContainerType containerType) {
 		setName(containerType.name);
-		setTemperature(containerType.temperature);
 		setNoOfColumns(containerType.noOfColumns);
 		setNoOfRows(containerType.noOfRows);
 		setColumnLabelingScheme(containerType.columnLabelingScheme);
 		setRowLabelingScheme(containerType.rowLabelingScheme);
+		setTemperature(containerType.temperature);
 		setStoreSpecimenEnabled(containerType.storeSpecimenEnabled);
 		setAbbreviation(containerType.abbreviation);
 		setCanHold(containerType.canHold);

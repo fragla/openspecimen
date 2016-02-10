@@ -18,15 +18,15 @@ public class StorageContainerTypeDaoImpl extends AbstractDao<StorageContainerTyp
 	@SuppressWarnings("unchecked")
 	public StorageContainerType getByName(String name) {
 		List<StorageContainerType> result = sessionFactory.getCurrentSession()
-				.getNamedQuery(STORAGE_CONTAINER_TYPES_BY_NAME)
+				.getNamedQuery(STORAGE_CONTAINER_TYPE_BY_NAME)
 				.setParameter("name", name)
 				.list();
 
 		return result.isEmpty() ? null : result.iterator().next();
 	}
 	
-	private static final String STORAGE_CONTAINER_TYPES_FQN = StorageContainerType.class.getName();
+	private static final String STORAGE_CONTAINER_TYPE_FQN = StorageContainerType.class.getName();
 	
-	private static final String STORAGE_CONTAINER_TYPES_BY_NAME = STORAGE_CONTAINER_TYPES_FQN + ".getStorageContainerTypesByName";
+	private static final String STORAGE_CONTAINER_TYPE_BY_NAME = STORAGE_CONTAINER_TYPE_FQN + ".getStorageContainerTypeByName";
 
 }

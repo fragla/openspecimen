@@ -82,6 +82,8 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 	private String code;
 
 	private Boolean distributed;
+
+	private Long freezeThawCycle;
 	
 	public Long getId() {
 		return id;
@@ -398,6 +400,7 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 		result.setCprId(specimen.getVisit().getRegistration().getId());
 		result.setCpId(specimen.getCollectionProtocol().getId());
 		result.setCpShortTitle(specimen.getCollectionProtocol().getShortTitle());
+		result.setFreezeThawCycle();
 	}	
 	
 	public static void fromTo(SpecimenRequirement anticipated, SpecimenInfo result) {

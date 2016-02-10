@@ -258,6 +258,12 @@
         <column>COMMENTS</column>
       </textField>
     </row>
+    
+    <row>
+      <numberField>
+        <name>freezThawCycle</name>
+      </numberField
+    </row>
 
     <row>
       <subForm>

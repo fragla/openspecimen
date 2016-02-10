@@ -284,7 +284,7 @@ public class SpecimenServiceImpl implements SpecimenService {
 				return ResponseEvent.userError(SpecimenErrorCode.INVALID_QTY_OR_CNT);
 			}
 
-
+			//write to set the freezethawcycle count of parent
 			List<SpecimenDetail> aliquots = new ArrayList<SpecimenDetail>();
 			for (int i = 0; i < count; ++i) {
 				SpecimenDetail aliquot = new SpecimenDetail();

@@ -119,6 +119,7 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 		setConcentration(detail, existing, specimen, ose);
 		setBiohazards(detail, existing, specimen, ose);
 		setComments(detail, existing, specimen, ose);
+		setFreezeThawCycle(detail, existing, specimen, ose);
 				
 		if (sr != null && 
 				(!sr.getSpecimenClass().equals(specimen.getSpecimenClass()) ||

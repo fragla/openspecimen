@@ -559,6 +559,12 @@
             <property name="daoFactory" ref="biospecimenDaoFactory"/>
           </bean>
         </entry>
+        <entry key="FrozenEvent">
+          //frozen event filter
+        </entry>
+        <entry key="ThawEvent">
+          //thaw event filter
+        </entry>
       </map>
     </property>
   </bean>

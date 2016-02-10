@@ -109,7 +109,7 @@ public class Specimen extends BaseExtensionEntity {
 	private Set<SpecimenList> specimenLists =  new HashSet<SpecimenList>();
 	
 	private boolean concentrationInit = false;
-	
+
 	@Autowired
 	@Qualifier("specimenLabelGenerator")
 	private LabelGenerator labelGenerator;
@@ -117,6 +117,8 @@ public class Specimen extends BaseExtensionEntity {
 	private transient boolean forceDelete;
 	
 	private transient boolean printLabel;
+
+	private Long freezeThawCycle;
 	
 	public static String getEntityName() {
 		return ENTITY_NAME;

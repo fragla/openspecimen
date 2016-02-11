@@ -112,14 +112,14 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 			return;
 		}
 		StorageContainerType canHold = null;
-		String name = detail.getCanHold().getName();
 		Object key = null;
 		if (detail.getCanHold().getId() != null) {
 			canHold = daoFactory.getStorageContainerTypeDao().getById(detail.getCanHold().getId());
 			key = detail.getCanHold().getId();
 		} else if (StringUtils.isNotBlank(detail.getCanHold().getName())) {
+			String name = detail.getCanHold().getName();
 			canHold = daoFactory.getStorageContainerTypeDao().getByName(name);
-			key = detail.getCanHold().getName();
+			key = name;
 		}
 		
 		if (canHold == null) {

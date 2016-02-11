@@ -46,7 +46,6 @@ public class StorageContainerTypeController {
 		RequestEvent<StorageContainerTypeDetail> req = new RequestEvent<StorageContainerTypeDetail>(detail);
 		ResponseEvent<StorageContainerTypeDetail> resp = storageContainerTypeSvc.createStorageContainerType(req);
 		resp.throwErrorIfUnsuccessful();
-		
 		return resp.getPayload();
 	}
 	
@@ -59,13 +58,11 @@ public class StorageContainerTypeController {
 			
 			@RequestBody
 			StorageContainerTypeDetail detail) {
-		
 		detail.setId(id);
 		
 		RequestEvent<StorageContainerTypeDetail> req = new RequestEvent<StorageContainerTypeDetail>(detail);
 		ResponseEvent<StorageContainerTypeDetail> resp = storageContainerTypeSvc.updateStorageContainerType(req);
 		resp.throwErrorIfUnsuccessful();
-		
 		return resp.getPayload();
 	}
 	
@@ -73,7 +70,6 @@ public class StorageContainerTypeController {
 		RequestEvent<ContainerTypeQueryCriteria> req = new RequestEvent<ContainerTypeQueryCriteria>(crit);
 		ResponseEvent<StorageContainerTypeDetail> resp = storageContainerTypeSvc.getStorageContainerType(req);
 		resp.throwErrorIfUnsuccessful();
-		
 		return resp.getPayload();
 	}	
 

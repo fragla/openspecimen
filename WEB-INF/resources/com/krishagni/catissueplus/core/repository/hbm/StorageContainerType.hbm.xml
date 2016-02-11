@@ -29,10 +29,7 @@
 
     <property name="abbreviation" column="ABBREVIATION"/>
 
-    <many-to-one
-      name="canHold" 
-      class="com.krishagni.catissueplus.core.administrative.domain.StorageContainerType"
-      column="CAN_HOLD"/>
+    <many-to-one name="canHold" column="CAN_HOLD"/>
      
     <query name="getStorageContainerTypeByName">
       from

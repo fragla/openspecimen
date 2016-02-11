@@ -123,10 +123,7 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 		}
 		
 		if (canHold == null) {
-			if (key != null) {
-				ose.addError(StorageContainerTypeErrorCode.NOT_FOUND, key);
-			}
-			
+			ose.addError(StorageContainerTypeErrorCode.NOT_FOUND, key);
 			return;
 		}
 		

@@ -34,7 +34,8 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 			RequestEvent<ContainerTypeQueryCriteria> req) {
 		try {
 			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
-			StorageContainerType containerType = getContainerType(req.getPayload());
+			ContainerTypeQueryCriteria crit = req.getPayload();
+			StorageContainerType containerType = getContainerType(crit.getId(), crit.getName());
 			return ResponseEvent.response(StorageContainerTypeDetail.from(containerType));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -51,8 +52,8 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
 			StorageContainerTypeDetail input = req.getPayload();
 			StorageContainerType containerType = containerTypeFactory.createStorageContainerType(input);
-			
 			ensureUniqueConstraints(null, containerType);
+			
 			daoFactory.getStorageContainerTypeDao().saveOrUpdate(containerType, true);
 			return ResponseEvent.response(StorageContainerTypeDetail.from(containerType));
 		} catch (OpenSpecimenException ose) {
@@ -71,20 +72,16 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 			StorageContainerTypeDetail input = req.getPayload();
 			StorageContainerType existing = getContainerType(input.getId(), input.getName());
 			StorageContainerType containerType = containerTypeFactory.createStorageContainerType(input);
-			
 			ensureUniqueConstraints(existing, containerType);
+			
 			existing.update(containerType);
-			daoFactory.getStorageContainerTypeDao().saveOrUpdate(existing, true);
+			daoFactory.getStorageContainerTypeDao().saveOrUpdate(existing);
 			return ResponseEvent.response(StorageContainerTypeDetail.from(existing));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
 			return ResponseEvent.serverError(e);
 		}
-	}
-	
-	private StorageContainerType getContainerType(ContainerTypeQueryCriteria crit) {
-		return getContainerType(crit.getId(), crit.getName());
 	}
 	
 	private StorageContainerType getContainerType(Long id, String name) {
@@ -106,19 +103,14 @@ public class StorageContainerTypeServiceImpl implements StorageContainerTypeServ
 	}
 	
 	private void ensureUniqueConstraints(StorageContainerType existing, StorageContainerType newContainerType) {
-		if (!isUniqueName(existing, newContainerType)) {
-			throw OpenSpecimenException.userError(StorageContainerTypeErrorCode.DUP_NAME, newContainerType.getName());
-		}
-	}
-	
-	private boolean isUniqueName(StorageContainerType existingContainerType, StorageContainerType newContainerType) {
-		if (existingContainerType != null && existingContainerType.getName().equals(newContainerType.getName())) {
-			return true;
+		if(existing != null && existing.getName().equals(newContainerType.getName())) {
+			return;
 		}
 		
-		StorageContainerType containerType = daoFactory.getStorageContainerTypeDao().
-				getByName(newContainerType.getName());
-		return containerType == null;
+		StorageContainerType containerType = daoFactory.getStorageContainerTypeDao().getByName(newContainerType.getName());
+		if(containerType != null) {
+			throw OpenSpecimenException.userError(StorageContainerTypeErrorCode.DUP_NAME, newContainerType.getName());
+		}
 	}
 
 }

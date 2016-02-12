@@ -15,7 +15,7 @@ public class StorageContainerType extends BaseEntity {
 	
 	private Double temperature;
 	
-	private boolean storeSpecimenEnabled = false;
+	private boolean storeSpecimenEnabled;
 	
 	private String abbreviation;
 	

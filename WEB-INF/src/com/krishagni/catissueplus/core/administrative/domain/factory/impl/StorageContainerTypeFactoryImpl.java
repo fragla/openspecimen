@@ -108,18 +108,19 @@ public class StorageContainerTypeFactoryImpl implements StorageContainerTypeFact
 	
 	private void setCanHold(StorageContainerTypeDetail detail, StorageContainerType containerType, 
 			OpenSpecimenException ose) {
-		if(detail.getCanHold() == null) {
+		StorageContainerTypeDetail typeDetail = detail.getCanHold();
+		if (typeDetail == null) {
 			return;
 		}
-		StorageContainerType canHold = null;
+		
 		Object key = null;
-		if (detail.getCanHold().getId() != null) {
-			canHold = daoFactory.getStorageContainerTypeDao().getById(detail.getCanHold().getId());
-			key = detail.getCanHold().getId();
-		} else if (StringUtils.isNotBlank(detail.getCanHold().getName())) {
-			String name = detail.getCanHold().getName();
-			canHold = daoFactory.getStorageContainerTypeDao().getByName(name);
-			key = name;
+		StorageContainerType canHold = null;
+		if (typeDetail.getId() != null) {
+			key = typeDetail.getId();
+			canHold = daoFactory.getStorageContainerTypeDao().getById(typeDetail.getId());
+		} else if (StringUtils.isNotBlank(typeDetail.getName())) {
+			key = typeDetail.getName();
+			canHold = daoFactory.getStorageContainerTypeDao().getByName(typeDetail.getName());
 		}
 		
 		if (canHold == null) {

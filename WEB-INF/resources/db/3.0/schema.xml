@@ -50,5 +50,22 @@
       <column name="CAN_HOLD" type="${int.type}"/>
     </createTable>
   </changeSet>
+
+  <changeSet author="mdnasim" id="Add FK to container type's can hold">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_ST_CONT_TYPE_CAN_HOLD"
+      baseTableName="OS_STORAGE_CONTAINER_TYPES"
+      baseColumnNames="CAN_HOLD"
+      referencedTableName="OS_STORAGE_CONTAINER_TYPES"
+      referencedColumnNames="IDENTIFIER" />
+  </changeSet>
+
+  <changeSet author="mdnasim" id="Container types table sequence" dbms="oracle">
+    <createSequence
+      sequenceName="OS_STORAGE_CONTAINER_TYPES_SEQ"
+      startValue="1"
+      incrementBy="1"
+      ordered="true" />
+  </changeSet>
   
 </databaseChangeLog>

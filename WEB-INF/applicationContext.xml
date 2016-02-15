@@ -377,13 +377,13 @@
     <property name="mapExporter" ref="containerMapExporter"/>
   </bean>
   
-  <bean id="storageContainerTypeFactory" class="com.krishagni.catissueplus.core.administrative.domain.factory.impl.StorageContainerTypeFactoryImpl">
+  <bean id="containerTypeFactory" class="com.krishagni.catissueplus.core.administrative.domain.factory.impl.ContainerTypeFactoryImpl">
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
   </bean>
   
-  <bean id="storageContainerTypeSvc" class="com.krishagni.catissueplus.core.administrative.services.impl.StorageContainerTypeServiceImpl">
+  <bean id="containerTypeSvc" class="com.krishagni.catissueplus.core.administrative.services.impl.ContainerTypeServiceImpl">
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
-    <property name="containerTypeFactory" ref="storageContainerTypeFactory"/>
+    <property name="containerTypeFactory" ref="containerTypeFactory"/>
   </bean>
   
   <bean id="distributionProtocolFactory" class="com.krishagni.catissueplus.core.administrative.domain.factory.impl.DistributionProtocolFactoryImpl">

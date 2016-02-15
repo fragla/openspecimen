@@ -17,8 +17,8 @@
       constraintName="MRN_SITE_UNIQUE"/>
   </changeSet>
   
-  <changeSet author="mdnasim" id="Table to store storage container types">
-    <createTable tableName="OS_STORAGE_CONTAINER_TYPES">
+  <changeSet author="mdnasim" id="Table to store container types">
+    <createTable tableName="OS_CONTAINER_TYPES">
       <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
         <constraints primaryKey="true" nullable="false"/>
       </column>
@@ -53,16 +53,16 @@
 
   <changeSet author="mdnasim" id="Add FK to container type's can hold">
     <addForeignKeyConstraint
-      constraintName="FK_OS_ST_CONT_TYPE_CAN_HOLD"
-      baseTableName="OS_STORAGE_CONTAINER_TYPES"
+      constraintName="FK_OS_CONT_TYPE_CAN_HOLD"
+      baseTableName="OS_CONTAINER_TYPES"
       baseColumnNames="CAN_HOLD"
-      referencedTableName="OS_STORAGE_CONTAINER_TYPES"
+      referencedTableName="OS_CONTAINER_TYPES"
       referencedColumnNames="IDENTIFIER" />
   </changeSet>
 
   <changeSet author="mdnasim" id="Container types table sequence" dbms="oracle">
     <createSequence
-      sequenceName="OS_STORAGE_CONTAINER_TYPES_SEQ"
+      sequenceName="OS_CONTAINER_TYPES_SEQ"
       startValue="1"
       incrementBy="1"
       ordered="true" />

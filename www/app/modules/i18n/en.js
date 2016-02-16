@@ -265,7 +265,7 @@
     "last_name": "Last Name",
     "middle_name": "Middle Name",
     "birth_date": "Birth Date",
-    "uid": "National Identity Number",
+    "uid": "National ID",
     "uid_short": "NIN",
     "mpi": "Master Patient Index",
     "gender": "Gender",
@@ -313,9 +313,11 @@
 
     "bulk_reg_participants": "Bulk Register Participants",
     "bulk_update_participants": "Bulk Update Participants",
+    "bulk_import_master_specimens": "Bulk Import Master Specimens",
     "part_updates": "Participant Updates",
     "part_extensions": "Participant Forms",
     "registrations": "Participant Registrations",
+    "master_specimens": "Master Specimens",
     "registered_cps": "Registered Protocols",
     "other_cps": "Other Protocols",
     
@@ -1058,6 +1060,10 @@
       "delete": "Click to delete Form",
       "search": "Click to search Form",
       "attach_form_to_cp": "Click to attach form to a Collection Protocol"
+    },
+
+    "filter": {
+      "title": "Filters"
     }
   },
 

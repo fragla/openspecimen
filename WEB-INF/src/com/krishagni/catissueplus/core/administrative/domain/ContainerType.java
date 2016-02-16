@@ -1,7 +1,10 @@
 package com.krishagni.catissueplus.core.administrative.domain;
 
+import org.hibernate.envers.Audited;
+
 import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
 
+@Audited
 public class ContainerType extends BaseEntity {
 	private String name;
 	

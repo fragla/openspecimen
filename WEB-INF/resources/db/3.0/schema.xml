@@ -17,57 +17,6 @@
       constraintName="MRN_SITE_UNIQUE"/>
   </changeSet>
   
-  <changeSet author="mdnasim" id="Table to store container types">
-    <createTable tableName="OS_CONTAINER_TYPES">
-      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
-        <constraints primaryKey="true" nullable="false"/>
-      </column>
-
-      <column name="NAME" type="${text.type}(64)">
-        <constraints unique="true" nullable="false" />
-      </column>
-
-      <column name="TEMPERATURE" type="${double.type}"/>
-     
-      <column name="NO_OF_COLS" type="${int.type}">
-        <constraints nullable="false"/>
-      </column>
-     
-      <column name="NO_OF_ROWS" type="${int.type}">
-        <constraints nullable="false"/>
-      </column>
-     
-      <column name="COLUMN_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers"/>
-     
-      <column name="ROW_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers"/>
-      
-      <column name="STORE_SPECIMENS" type="${boolean.type}" defaultValueBoolean="0">
-        <constraints nullable="false"/>
-      </column>
-      
-      <column name="ABBREVIATION" type="${text.type}(64)"/>
-      
-      <column name="CAN_HOLD" type="${int.type}"/>
-    </createTable>
-  </changeSet>
-
-  <changeSet author="mdnasim" id="Add FK to container type's can hold">
-    <addForeignKeyConstraint
-      constraintName="FK_OS_CONT_TYPE_CAN_HOLD"
-      baseTableName="OS_CONTAINER_TYPES"
-      baseColumnNames="CAN_HOLD"
-      referencedTableName="OS_CONTAINER_TYPES"
-      referencedColumnNames="IDENTIFIER" />
-  </changeSet>
-
-  <changeSet author="mdnasim" id="Container types table sequence" dbms="oracle">
-    <createSequence
-      sequenceName="OS_CONTAINER_TYPES_SEQ"
-      startValue="1"
-      incrementBy="1"
-      ordered="true" />
-  </changeSet>
-  
   <changeSet author="nmarwaha" id="Added PMBC specimen type under class Cell">
     <preConditions onFail="MARK_RAN">
       <sqlCheck expectedResult="0">
@@ -196,5 +145,56 @@
       tableName="OS_USER_API_CALLS_LOG" 
       columnName="AUTH_TOKEN"
       columnDataType="${text.type}(64)" />
+  </changeSet>
+  
+  <changeSet author="mdnasim" id="Container types">
+    <createTable tableName="OS_CONTAINER_TYPES">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="NAME" type="${text.type}(64)">
+        <constraints unique="true" nullable="false" />
+      </column>
+
+      <column name="TEMPERATURE" type="${double.type}"/>
+     
+      <column name="NO_OF_COLS" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+     
+      <column name="NO_OF_ROWS" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+     
+      <column name="COLUMN_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers"/>
+     
+      <column name="ROW_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers"/>
+      
+      <column name="STORE_SPECIMENS" type="${boolean.type}" defaultValueBoolean="0">
+        <constraints nullable="false"/>
+      </column>
+      
+      <column name="ABBREVIATION" type="${text.type}(64)"/>
+      
+      <column name="CAN_HOLD" type="${int.type}"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="mdnasim" id="FK on container types can hold">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_CONT_TYPE_CAN_HOLD"
+      baseTableName="OS_CONTAINER_TYPES"
+      baseColumnNames="CAN_HOLD"
+      referencedTableName="OS_CONTAINER_TYPES"
+      referencedColumnNames="IDENTIFIER" />
+  </changeSet>
+
+  <changeSet author="mdnasim" id="Container types sequence" dbms="oracle">
+    <createSequence
+      sequenceName="OS_CONTAINER_TYPES_SEQ"
+      startValue="1"
+      incrementBy="1"
+      ordered="true" />
   </changeSet>
 </databaseChangeLog>

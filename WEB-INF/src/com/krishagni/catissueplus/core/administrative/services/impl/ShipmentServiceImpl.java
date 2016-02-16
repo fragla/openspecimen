@@ -37,6 +37,7 @@ import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.common.service.EmailService;
+import com.krishagni.catissueplus.core.common.service.ObjectStateParamsResolver;
 import com.krishagni.catissueplus.core.common.util.ConfigUtil;
 import com.krishagni.catissueplus.core.common.util.MessageUtil;
 import com.krishagni.catissueplus.core.common.util.Utility;
@@ -51,7 +52,7 @@ import com.krishagni.rbac.common.errors.RbacErrorCode;
 
 import edu.common.dynamicextensions.query.WideRowMode;
 
-public class ShipmentServiceImpl implements ShipmentService {
+public class ShipmentServiceImpl implements ShipmentService, ObjectStateParamsResolver {
 	private static final String SHIPMENT_SHIPPED_EMAIL_TMPL = "shipment_shipped";
 	
 	private static final String SHIPMENT_RECEIVED_EMAIL_TMPL = "shipment_received";
@@ -144,14 +145,15 @@ public class ShipmentServiceImpl implements ShipmentService {
 			ensureValidNotifyUsers(shipment, ose);
 			ose.checkAndThrow();
 			
-			//
-			//  Saved to obtain IDs to make shipment events
-			//
-			getShipmentDao().saveOrUpdate(shipment, true);
 			Status status = Status.fromName(detail.getStatus());
 			if (status == Status.SHIPPED) {
 				shipment.ship();
 			}
+			
+			//
+			//  Saved to obtain IDs to make shipment events
+			//
+			getShipmentDao().saveOrUpdate(shipment, true);
 			
 			sendEmailNotifications(shipment, null, detail.isSendMail());
 			return ResponseEvent.response(ShipmentDetail.from(shipment));
@@ -251,7 +253,22 @@ public class ShipmentServiceImpl implements ShipmentService {
 		
 		return new ResponseEvent<QueryDataExportResult>(exportShipmentReport(shipment, query));
 	}
-	
+
+	@Override
+	public String getObjectName() {
+		return "shipment";
+	}
+
+	@Override
+	@PlusTransactional
+	public Map<String, Object> resolve(String key, Object value) {
+		if (key.equals("id")) {
+			value = Long.valueOf(value.toString());
+		}
+
+		return daoFactory.getShipmentDao().getShipmentIds(key, value);
+	}
+
 	private List<Specimen> getValidSpecimens(List<String> specimenLabels, OpenSpecimenException ose) {
 		List<Pair<Long, Long>> siteCpPairs = AccessCtrlMgr.getInstance().getReadAccessSpecimenSiteCps();
 		if (siteCpPairs != null && siteCpPairs.isEmpty()) {

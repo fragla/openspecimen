@@ -2,11 +2,14 @@
 package com.krishagni.catissueplus.core.biospecimen.events;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocolRegistration;
@@ -49,7 +52,7 @@ public class ParticipantDetail extends AttributeModifiedSupport {
 	
 	private boolean phiAccess;
 	
-	private Set<String> registeredCps;
+	private Set<CprSummary> registeredCps;
 	
 	private ExtensionDetail extensionDetail;
 	
@@ -186,11 +189,11 @@ public class ParticipantDetail extends AttributeModifiedSupport {
 		this.phiAccess = phiAccess;
 	}
 
-	public Set<String> getRegisteredCps() {
+	public Set<CprSummary> getRegisteredCps() {
 		return registeredCps;
 	}
 
-	public void setRegisteredCps(Set<String> registeredCps) {
+	public void setRegisteredCps(Set<CprSummary> registeredCps) {
 		this.registeredCps = registeredCps;
 	}
 
@@ -219,8 +222,12 @@ public class ParticipantDetail extends AttributeModifiedSupport {
 	public void setPpid(String ppid) {
 		this.ppid = ppid;
 	}
-
+	
 	public static ParticipantDetail from(Participant participant, boolean excludePhi) {
+		return from(participant, excludePhi, null);
+	}
+
+	public static ParticipantDetail from(Participant participant, boolean excludePhi, List<CollectionProtocolRegistration> cprs) {
 		ParticipantDetail result = new ParticipantDetail();
 		result.setId(participant.getId());
 		result.setFirstName(excludePhi ? "###" : participant.getFirstName());
@@ -238,13 +245,8 @@ public class ParticipantDetail extends AttributeModifiedSupport {
 		result.setUid(excludePhi ? "###" : participant.getUid());
 		result.setVitalStatus(participant.getVitalStatus());
 		result.setPhiAccess(!excludePhi);
-		
-		Set<String> cps = new HashSet<String>();
-		for (CollectionProtocolRegistration cpr : participant.getCprs()) {
-			cps.add(cpr.getCollectionProtocol().getShortTitle());
-		}
-		result.setRegisteredCps(cps);
-		result.setExtensionDetail(ExtensionDetail.from(participant.getExtension()));
+		result.setRegisteredCps(getCprSummaries(cprs));
+		result.setExtensionDetail(ExtensionDetail.from(participant.getExtension(), excludePhi));
 		return result;
 	}
 	
@@ -255,5 +257,21 @@ public class ParticipantDetail extends AttributeModifiedSupport {
 		}
 		
 		return result;
+	}
+	
+	public static Set<CprSummary> getCprSummaries(List<CollectionProtocolRegistration> cprs) {
+		if (CollectionUtils.isEmpty(cprs)) {
+			return Collections.emptySet();
+		}
+
+		return cprs.stream().map(ParticipantDetail::getCprSummary).collect(Collectors.toSet());
+	}
+
+	private static CprSummary getCprSummary(CollectionProtocolRegistration cpr) {
+		CprSummary cprSummary = new CprSummary();
+		cprSummary.setCpId(cpr.getCollectionProtocol().getId());
+		cprSummary.setCprId(cpr.getId());
+		cprSummary.setCpShortTitle(cpr.getCollectionProtocol().getShortTitle());
+		return cprSummary;
 	}
 }

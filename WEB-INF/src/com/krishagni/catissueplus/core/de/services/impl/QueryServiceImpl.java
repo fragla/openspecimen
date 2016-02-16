@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,11 +49,13 @@ import com.krishagni.catissueplus.core.common.service.TemplateService;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
 import com.krishagni.catissueplus.core.common.util.ConfigUtil;
 import com.krishagni.catissueplus.core.de.domain.AqlBuilder;
+import com.krishagni.catissueplus.core.de.domain.Filter;
 import com.krishagni.catissueplus.core.de.domain.QueryAuditLog;
 import com.krishagni.catissueplus.core.de.domain.QueryFolder;
 import com.krishagni.catissueplus.core.de.domain.SavedQuery;
 import com.krishagni.catissueplus.core.de.domain.factory.QueryFolderFactory;
 import com.krishagni.catissueplus.core.de.events.ExecuteQueryEventOp;
+import com.krishagni.catissueplus.core.de.events.ExecuteSavedQueryOp;
 import com.krishagni.catissueplus.core.de.events.FacetDetail;
 import com.krishagni.catissueplus.core.de.events.GetFacetValuesOp;
 import com.krishagni.catissueplus.core.de.events.ListFolderQueriesCriteria;
@@ -111,9 +114,9 @@ public class QueryServiceImpl implements QueryService {
 	private static final int EXPORT_THREAD_POOL_SIZE = getThreadPoolSize();
 	
 	private static final int ONLINE_EXPORT_TIMEOUT_SECS = 30;
-	
+
 	private static ExecutorService exportThreadPool = Executors.newFixedThreadPool(EXPORT_THREAD_POOL_SIZE);
-		
+
 	private DaoFactory daoFactory;
 
 	private UserDao userDao;
@@ -316,9 +319,14 @@ public class QueryServiceImpl implements QueryService {
 				indices = queryResult.getColumnIndices(opDetail.getIndexOf());
 			}
 			
-			return ResponseEvent.response(QueryExecResult.create(
-					queryResult.getColumnLabels(), queryResult.getStringifiedRows(), 
-					queryResult.getDbRowsCount(), indices));
+			return ResponseEvent.response(
+				new QueryExecResult()
+					.setColumnLabels(queryResult.getColumnLabels())
+					.setColumnUrls(queryResult.getColumnUrls())
+					.setRows(queryResult.getStringifiedRows())
+					.setDbRowsCount(queryResult.getDbRowsCount())
+					.setColumnIndices(indices)
+			);
 		} catch (QueryParserException qpe) {
 			return ResponseEvent.userError(SavedQueryErrorCode.MALFORMED);
 		} catch (IllegalArgumentException iae) {
@@ -341,6 +349,49 @@ public class QueryServiceImpl implements QueryService {
 					e.printStackTrace();
 				}				
 			}
+		}
+	}
+
+	@Override
+	@PlusTransactional
+	public ResponseEvent<QueryExecResult> executeSavedQuery(RequestEvent<ExecuteSavedQueryOp> req) {
+		try {
+			ExecuteSavedQueryOp input = req.getPayload();
+			SavedQuery query = daoFactory.getSavedQueryDao().getQuery(input.getSavedQueryId());
+			if (query == null) {
+				throw OpenSpecimenException.userError(SavedQueryErrorCode.NOT_FOUND, input.getSavedQueryId());
+			}
+
+			query = query.copy();
+			for (Filter filter : query.getFilters()) {
+				ExecuteSavedQueryOp.Criterion criterion = input.getCriterion(filter.getId());
+				if (criterion == null || CollectionUtils.isEmpty(criterion.getValues())) {
+					continue;
+				}
+
+				switch (criterion.getSearchType()) {
+					case EQUALS:
+						filter.setEqValues(criterion.getValues());
+						break;
+
+					case RANGE:
+						filter.setRangeValues(criterion.getValues());
+						break;
+				}
+			}
+
+			ExecuteQueryEventOp op = new ExecuteQueryEventOp();
+			op.setCpId(query.getCpId());
+			op.setDrivingForm(input.getDrivingForm());
+			op.setRunType(input.getRunType());
+			op.setWideRowMode(input.getWideRowMode());
+			op.setSavedQueryId(query.getId());
+			op.setAql(query.getAql() + " limit " + input.getStartAt() + ", " + input.getMaxResults());
+			return executeQuery(new RequestEvent<ExecuteQueryEventOp>(op));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
 		}
 	}
 
@@ -742,7 +793,7 @@ public class QueryServiceImpl implements QueryService {
 	@PlusTransactional
 	public QueryDataExportResult exportQueryData(final ExecuteQueryEventOp opDetail, final ExportProcessor processor) {
 		OutputStream out = null;
-		
+
 		try {
 			final Authentication auth = AuthUtil.getAuth();
 			final User user = AuthUtil.getCurrentUser();
@@ -769,6 +820,8 @@ public class QueryServiceImpl implements QueryService {
 					} catch (Exception e) {
 						e.printStackTrace();
 						throw OpenSpecimenException.serverError(e);
+					} finally {
+						IOUtils.closeQuietly(fout);
 					}
 
 					return true;
@@ -791,7 +844,9 @@ public class QueryServiceImpl implements QueryService {
 
 			boolean completed = false;
 			try {
+				out = null;
 				completed = result.get(ONLINE_EXPORT_TIMEOUT_SECS, TimeUnit.SECONDS);
+				out = fout;
 			} catch (TimeoutException te) {
 				completed = false;
 			}
@@ -802,7 +857,9 @@ public class QueryServiceImpl implements QueryService {
 		} catch (Exception e) {
 			throw OpenSpecimenException.serverError(e);
 		} finally {
-			IOUtils.closeQuietly(out);
+			if (out != null) {
+				IOUtils.closeQuietly(out);
+			}
 		}
 	}
 	

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.krishagni.catissueplus.core.biospecimen.ConfigParams;
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol;
+import com.krishagni.catissueplus.core.biospecimen.domain.Specimen;
 import com.krishagni.catissueplus.core.biospecimen.domain.Visit;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.VisitErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.VisitFactory;
@@ -25,12 +27,14 @@ import com.krishagni.catissueplus.core.biospecimen.events.SprLockDetail;
 import com.krishagni.catissueplus.core.biospecimen.events.VisitDetail;
 import com.krishagni.catissueplus.core.biospecimen.events.VisitSpecimenDetail;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
+import com.krishagni.catissueplus.core.biospecimen.repository.SpecimenListCriteria;
 import com.krishagni.catissueplus.core.biospecimen.repository.VisitsListCriteria;
 import com.krishagni.catissueplus.core.biospecimen.services.DocumentDeIdentifier;
 import com.krishagni.catissueplus.core.biospecimen.services.SpecimenService;
 import com.krishagni.catissueplus.core.biospecimen.services.SprPdfGenerator;
 import com.krishagni.catissueplus.core.biospecimen.services.VisitService;
 import com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider;
+import com.krishagni.catissueplus.core.common.Pair;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
 import com.krishagni.catissueplus.core.common.errors.ErrorType;
@@ -43,10 +47,11 @@ import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.common.service.ConfigurationService;
 import com.krishagni.catissueplus.core.common.service.LabelGenerator;
 import com.krishagni.catissueplus.core.common.service.LabelPrinter;
+import com.krishagni.catissueplus.core.common.service.ObjectStateParamsResolver;
 import com.krishagni.catissueplus.core.common.util.ConfigUtil;
 import com.krishagni.catissueplus.core.common.util.Utility;
 
-public class VisitServiceImpl implements VisitService {
+public class VisitServiceImpl implements VisitService, ObjectStateParamsResolver {
 	private DaoFactory daoFactory;
 
 	private VisitFactory visitFactory;
@@ -91,8 +96,8 @@ public class VisitServiceImpl implements VisitService {
 		try {
 			EntityQueryCriteria crit = req.getPayload();			
 			Visit visit = getVisit(crit.getId(), crit.getName());
-			AccessCtrlMgr.getInstance().ensureReadVisitRights(visit);
-			return ResponseEvent.response(VisitDetail.from(visit));			
+			boolean allowPhi = AccessCtrlMgr.getInstance().ensureReadVisitRights(visit);
+			return ResponseEvent.response(VisitDetail.from(visit, false, !allowPhi));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
@@ -116,7 +121,7 @@ public class VisitServiceImpl implements VisitService {
 		while (iterator.hasNext()) {
 			Visit visit = iterator.next();
 			try {
-				AccessCtrlMgr.getInstance().ensureReadVisitRights(visit);
+				AccessCtrlMgr.getInstance().ensureReadVisitRights(visit, false);
 			} catch (OpenSpecimenException ose) {
 				if (ose.getErrorType().equals(ErrorType.USER_ERROR)) {
 					visits.remove(visit);
@@ -172,7 +177,7 @@ public class VisitServiceImpl implements VisitService {
 		try {
 			EntityQueryCriteria crit = req.getPayload();
 			Visit visit = getVisit(crit.getId(), crit.getName());
-			AccessCtrlMgr.getInstance().ensureReadVisitRights(visit);
+			AccessCtrlMgr.getInstance().ensureReadVisitRights(visit, false);
 			return ResponseEvent.response(visit.getDependentEntities());
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -201,12 +206,26 @@ public class VisitServiceImpl implements VisitService {
 	@PlusTransactional
 	public ResponseEvent<VisitSpecimenDetail> collectVisitAndSpecimens(RequestEvent<VisitSpecimenDetail> req) {		
 		try {
+			//
+			// Step 1: Create visit
+			//
 			VisitDetail inputVisit = req.getPayload().getVisit();
 			VisitDetail savedVisit = saveOrUpdateVisit(inputVisit, inputVisit.getId() != null, false);			
 			
 			List<SpecimenDetail> specimens = req.getPayload().getSpecimens();
 			setVisitId(savedVisit.getId(), specimens);
-						
+			
+			// 
+			// Step 2: Set IDs of specimens that are pre-created for the visit
+			// 
+			Visit visit = daoFactory.getVisitsDao().getById(savedVisit.getId());
+			Map<Long, Specimen> reqSpecimenMap = visit.getSpecimens().stream()
+				.collect(Collectors.toMap(s -> s.getSpecimenRequirement().getId(), s -> s));
+			setSpecimenIds(specimens, reqSpecimenMap);
+			
+			// 
+			// Step 3: Collect specimens
+			//
 			RequestEvent<List<SpecimenDetail>> collectSpecimensReq = new RequestEvent<List<SpecimenDetail>>(specimens);
 			ResponseEvent<List<SpecimenDetail>> collectSpecimensResp = specimenSvc.collectSpecimens(collectSpecimensReq);
 			collectSpecimensResp.throwErrorIfUnsuccessful();
@@ -221,7 +240,7 @@ public class VisitServiceImpl implements VisitService {
 			return ResponseEvent.serverError(e);
 		}
 	}
-	
+
 	@Override
 	@PlusTransactional
 	public ResponseEvent<FileDetail> getSpr(RequestEvent<SprFileDownloadDetail> req) {
@@ -389,7 +408,37 @@ public class VisitServiceImpl implements VisitService {
 		return (LabelPrinter<Visit>)OpenSpecimenAppCtxProvider.getAppCtx().getBean(beanName);
 	}
 
-	private VisitDetail saveOrUpdateVisit(VisitDetail input, boolean update, boolean partial) {		
+	@PlusTransactional
+	@Override
+	public List<Visit> getSpecimenVisits(List<String> specimenLabels) {
+		List<Pair<Long, Long>> siteCps = AccessCtrlMgr.getInstance().getReadAccessSpecimenSiteCps();
+		if (siteCps != null && siteCps.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		SpecimenListCriteria crit = new SpecimenListCriteria()
+				.labels(specimenLabels)
+				.siteCps(siteCps)
+				.useMrnSites(AccessCtrlMgr.getInstance().isAccessRestrictedBasedOnMrn());
+		return daoFactory.getSpecimenDao().getSpecimenVisits(crit);
+	}
+
+	@Override
+	public String getObjectName() {
+		return "visit";
+	}
+
+	@Override
+	@PlusTransactional
+	public Map<String, Object> resolve(String key, Object value) {
+		if (key.equals("id")) {
+			value = Long.valueOf(value.toString());
+		}
+
+		return daoFactory.getVisitsDao().getCprVisitIds(key, value);
+	}
+
+	private VisitDetail saveOrUpdateVisit(VisitDetail input, boolean update, boolean partial) {
 		Visit existing = null;
 		String prevStatus = null;   
 		
@@ -430,7 +479,7 @@ public class VisitServiceImpl implements VisitService {
 		daoFactory.getVisitsDao().saveOrUpdate(existing);
 		existing.addOrUpdateExtension();
 		existing.prePrintLabels(prevStatus);
-		return VisitDetail.from(existing);		
+		return VisitDetail.from(existing, false, false);
 	}
 	
 	private Visit getVisit(Long visitId, String visitName) {
@@ -572,5 +621,33 @@ public class VisitServiceImpl implements VisitService {
 	
 	private boolean isPdfType(FileType type) {
 		return type != null && type.equals(FileType.PDF);
+	}
+	
+	private void setSpecimenIds(List<SpecimenDetail> inputSpecimens, Map<Long, Specimen> reqSpecimenMap) {
+		if (reqSpecimenMap.isEmpty()) {
+			return;
+		}
+		
+		for (SpecimenDetail specimenDetail : inputSpecimens) {
+			if (specimenDetail.getReqId() != null) {
+				Specimen specimen = reqSpecimenMap.get(specimenDetail.getReqId());
+				if (specimen == null) {
+					//
+					// Anticipated specimen not yet created; therefore none of its children either
+					//
+					continue;
+				}
+
+				specimenDetail.setId(specimen.getId());
+			}
+
+			if (CollectionUtils.isNotEmpty(specimenDetail.getSpecimensPool())) {
+				setSpecimenIds(specimenDetail.getSpecimensPool(), reqSpecimenMap);
+			}
+			
+			if (CollectionUtils.isNotEmpty(specimenDetail.getChildren())) {
+				setSpecimenIds(specimenDetail.getChildren(), reqSpecimenMap);
+			}
+		}
 	}
 }

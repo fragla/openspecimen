@@ -157,12 +157,18 @@
     "view_details": "View Details",
     "view_participants": "View Participants",
     "disable_pre_print_warning": "Turning off pre-printing at collection protocol level will turn it off for all specimen requirements too",
+    "print_settings": "Print Settings",
+    "lineage": "Lineage",
+    "when_to_print": "When to Print",
+    "copies": "Copies",
 
     "consents_waived": "Is participant consent waived?",
     "consents_waived_updated": "Participant consent {{waived ? 'waived' : 'enabled'}} successfully.",
     "unsigned_consent_url": "Unsigned Consent Form URL",
     "consent_tiers": "Consent Tiers", 
     "add_consent_tier": "Add Statement...",
+    "no_consents": "No consents to show",
+    "consents_are_waived": "Consents are waived",
 
     "default_site": "Default Site",
     "clinical_diagnosis": "Clinical Diagnosis",
@@ -215,8 +221,10 @@
       "repository": "Repository",
       "select_repository": "Select Repository"
     },
+
     "label_formats" : "Label Formats",
     "anticipated_participant_count": "Expected Registrations",
+
     "label_format": {
       "specimen": "Specimen",
       "visit": "Visit",
@@ -235,6 +243,12 @@
     "spmn_label_pre_print_modes": {
       "ON_VISIT": "On Visit",
       "NONE": "None"
+    },
+
+     "spmn_lineages": {
+      "New": "Primary",
+      "Derived": "Derivative",
+      "Aliquot": "Aliquot"
     }
   },
 
@@ -251,7 +265,7 @@
     "last_name": "Last Name",
     "middle_name": "Middle Name",
     "birth_date": "Birth Date",
-    "uid": "National Identity Number",
+    "uid": "National ID",
     "uid_short": "NIN",
     "mpi": "Master Patient Index",
     "gender": "Gender",
@@ -299,9 +313,11 @@
 
     "bulk_reg_participants": "Bulk Register Participants",
     "bulk_update_participants": "Bulk Update Participants",
+    "bulk_import_master_specimens": "Bulk Import Master Specimens",
     "part_updates": "Participant Updates",
     "part_extensions": "Participant Forms",
     "registrations": "Participant Registrations",
+    "master_specimens": "Master Specimens",
     "registered_cps": "Registered Protocols",
     "other_cps": "Other Protocols",
     
@@ -545,6 +561,20 @@
       "created_on_lt_parent": "Created on time of specimen less than that of parent specimen",
       "created_on_gt_curr_time": "Created on time of specimen greater than current time",
       "aliquot_label_mismatch": "There is a mismatch in number of specified labels and aliquots"
+    },
+
+    "bulk_events": {
+      "title": "Bulk Events",
+      "create": "Create Bulk Event",
+      "add_event": "Add Event",
+      "select_specimens": "Select Specimens",
+      "add_event_details": "Add Event Details",
+      "select_event": "Select Event",
+      "no_specimens_in_list": "No specimens in list to add event. Add at least one specimen",
+      "enter_specimen_label": "To add specimens to list, enter labels separated by a comma, tab or newline and click add",
+      "details": "Event Details",
+      "copy_first_to_all": "Copy First To All",
+      "specimens_not_found_or_no_access": "One or more specimens could not be loaded either because they do not exists or you do not have sufficient rights to access them"
     }
   },
 
@@ -566,7 +596,8 @@
     "pathology": "Pathology",
     "storage_type": "Storage Type",
     "label_fmt": "Label Format",
-    "auto_print_label": "Auto Print Label",
+    "when_to_print": "When to Print",
+    "label_print_copies": "Label Print Copies",
     "available_qty": "Available Quantity",
     "aliquot_cnt": "Count of Aliquots",
     "qty_per_aliquot": "Quantity per Aliquot",
@@ -1020,8 +1051,8 @@
     "confirm_delete": "{{caption}} form will be deleted forever. Are you sure you want to proceed?",
     "confirm_delete_with_data": "You will lose data if you delete the {{caption}} form. Do you want to continue?",
     "form_deleted": "{{caption}} form deleted successfully",
-    "confirm_delete_association": "Are you sure you want to delete this form at <b>{{level.name}}</b> level from <b>{{!collectionProtocol.id ? 'All Protocols' : collectionProtocol.shortTitle}}</b>? \n Please note you will no longer be able to access data for this form",
-    "association_deleted": "Successfully deleted form at {{level.name}} level from {{!collectionProtocol.id ? 'All Protocols' : collectionProtocol.shortTitle}}",
+    "confirm_delete_association": "Are you sure you want to delete this form at <b>{{level.caption}}</b> level from <b>{{!collectionProtocol.id ? 'All Protocols' : collectionProtocol.shortTitle}}</b>? \n Please note you will no longer be able to access data for this form",
+    "association_deleted": "Successfully deleted form at {{level.caption}} level from {{!collectionProtocol.id ? 'All Protocols' : collectionProtocol.shortTitle}}",
 
     "tooltip": {
       "add": "Click to add new Form",
@@ -1029,6 +1060,10 @@
       "delete": "Click to delete Form",
       "search": "Click to search Form",
       "attach_form_to_cp": "Click to attach form to a Collection Protocol"
+    },
+
+    "filter": {
+      "title": "Filters"
     }
   },
 
@@ -1329,11 +1364,13 @@
     "shared_lists": "Shared Carts",
     "info": "Information",
     "cart_info": "Cart Information",
-    "more_specimens": "One or more specimens in cart could not be displayed because you do not have enough rights to view them",
+    "more_specimens_no_rights": "One or more specimens in cart could not be displayed because you do not have enough rights to view them",
+    "more_specimens_limit_reached": "One or more specimens in cart could not be displayed because only 1000 specimens can be displayed at a time",
     "no_specimens": "There are no specimens to show in selected cart",
     "description": "Description",
     "cp": "Collection Protocol",
     "label": "Label",
+    "location": "Location",
     "quantity": "Quantity",
     "lineage": "Lineage",
     "remove_specimens": "Removing specimens from cart {{name}}",
@@ -1345,7 +1382,13 @@
     "no_specimens_for_deletion": "Please select at least one specimen for deletion",
     "no_specimens_for_distribution": "Please select at least one specimen to create distribution order",
     "no_specimens_for_shipment": "Please select at least one specimen to create shipment",
-    "created_by": "Created By"
+    "created_by": "Created By",
+    "add_event": "Add Event",
+    "visit": "Visit",
+    "ppid": "PPID",
+    "location": "Storage Location",
+    "no_specimens_to_add_event": "Please select at least one specimen to add event",
+    "events_saved": "Event saved successfully"
   },
 
   "orders": {

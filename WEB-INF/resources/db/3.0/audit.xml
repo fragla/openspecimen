@@ -53,7 +53,7 @@
     </addColumn>
   </changeSet>
   
-  <changeSet author="mdnasim" id="Audit table to store container types">
+  <changeSet author="mdnasim" id="Audit container types">
     <createTable tableName="OS_CONTAINER_TYPES_AUD">
       <column name="IDENTIFIER" type="${int.type}">
         <constraints nullable="false"/>

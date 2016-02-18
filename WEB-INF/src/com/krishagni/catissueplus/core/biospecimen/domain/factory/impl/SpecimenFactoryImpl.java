@@ -119,7 +119,7 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 		setConcentration(detail, existing, specimen, ose);
 		setBiohazards(detail, existing, specimen, ose);
 		setComments(detail, existing, specimen, ose);
-		setFreezeThawCycle(detail, existing, specimen, ose);
+		setFreezeThawCycle(detail, existing, parent, specimen, ose);
 				
 		if (sr != null && 
 				(!sr.getSpecimenClass().equals(specimen.getSpecimenClass()) ||
@@ -666,6 +666,21 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 			specimen.setComment(detail.getComments());
 		} else {
 			specimen.setComment(existing.getComment());
+		}
+	}
+
+	private void setFreezeThawCycle(SpecimenDetail detail, Specimen existing, Specimen parent, Specimen specimen,
+		OpenSpecimenException ose) {
+		if (existing == null && parent != null && detail.isAttrModified("freezeThawCycle") &&
+			parent.getFreezeThawCycle() > detail.getFreezeThawCycle()) {
+			ose.addError(SpecimenErrorCode.INVALID_FREEZE_THAW_CYCLE);
+			return;
+		}
+
+		if (existing == null || detail.isAttrModified("freezeThawCycle")) {
+			specimen.setFreezeThawCycle(detail.getFreezeThawCycle());
+		} else {
+			specimen.setFreezeThawCycle(existing.getFreezeThawCycle());
 		}
 	}
 	

@@ -55,9 +55,9 @@
         <height>2</height>
       </textArea>
     </row>
-    <row>
+    <!--<row>
 
       //checkbox to increase freeze thaw cycle
-    </row>
+    </row>-->
   </view>
 </form>

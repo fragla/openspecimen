@@ -504,6 +504,14 @@ public class Specimen extends BaseExtensionEntity {
 		this.printLabel = printLabel;
 	}
 
+	public Long getFreezeThawCycle() {
+		return freezeThawCycle;
+	}
+
+	public void setFreezeThawCycle(Long freezeThawCycle) {
+		this.freezeThawCycle = freezeThawCycle;
+	}
+
 	public boolean isActive() {
 		return Status.ACTIVITY_STATUS_ACTIVE.getStatus().equals(getActivityStatus());
 	}
@@ -673,6 +681,7 @@ public class Specimen extends BaseExtensionEntity {
 		setExtension(specimen.getExtension());
 		setPrintLabel(specimen.isPrintLabel());
 		updatePosition(specimen.getPosition());
+		setFreezeThawCycle(specimen.getFreezeThawCycle());
 		checkQtyConstraints();
 	}
 	

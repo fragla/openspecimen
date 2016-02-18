@@ -49,7 +49,7 @@ angular.module('os.biospecimen.participant.collect-specimens',
               specimen.printLabel = (specimen.labelAutoPrintMode == 'ON_COLLECTION');
             }
 
-            if (specimen.closeAfterChildrenCreation) {
+            if (specimen.closeAfterChildrenCreation || specimen.increaseFreezeThaw) {
               specimen.selected = true;
             }
 
@@ -488,7 +488,8 @@ angular.module('os.biospecimen.participant.collect-specimens',
             if (visited.indexOf(uiSpecimen) >= 0 || // already visited
                 !uiSpecimen.selected || // not selected
                 (uiSpecimen.existingStatus == 'Collected' && 
-                !uiSpecimen.closeAfterChildrenCreation)) { // collected and not close after children creation
+                !uiSpecimen.closeAfterChildrenCreation && !uiSpecimen.increaseFreezeThaw)) {
+                // collected and not close after children creation
               return;
             }
 
@@ -530,6 +531,8 @@ angular.module('os.biospecimen.participant.collect-specimens',
           status: uiSpecimen.status,
           closeAfterChildrenCreation: uiSpecimen.closeAfterChildrenCreation,
           createdOn: uiSpecimen.lineage != 'New' ? uiSpecimen.createdOn : undefined,
+          freezeThawCycle: uiSpecimen.freezeThawCycle,
+          increaseFreezeThaw: uiSpecimen.increaseFreezeThaw,
           extensionDetail: uiSpecimen.extensionDetail
         };
 

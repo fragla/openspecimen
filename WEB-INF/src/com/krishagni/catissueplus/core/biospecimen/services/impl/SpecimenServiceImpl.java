@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 
 import com.krishagni.catissueplus.core.administrative.events.StorageLocationSummary;
 import com.krishagni.catissueplus.core.biospecimen.ConfigParams;
@@ -574,22 +575,21 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 
 			specimen = saveOrUpdate(detail, existing, parent);
 		}
-		
+
+		if (detail.isIncreaseFreezeThaw() && specimen.getFreezeThawCycle() != null) {
+			specimen.setFreezeThawCycle(specimen.getFreezeThawCycle() + 1);
+		}
+
 		if (CollectionUtils.isNotEmpty(detail.getChildren())) {
 			for (SpecimenDetail childDetail : detail.getChildren()) {
 				collectSpecimen(childDetail, specimen);
 			}
 		}
-		
-		boolean closeAfterChildrenCreation = false;
-		if (detail.getCloseAfterChildrenCreation() != null) {
-			closeAfterChildrenCreation = detail.getCloseAfterChildrenCreation();
-		}
-		
-		if (closeAfterChildrenCreation) {
+
+		if (BooleanUtils.isTrue(detail.getCloseAfterChildrenCreation())) {
 			specimen.close(AuthUtil.getCurrentUser(), Calendar.getInstance().getTime(), "");
 		}
-		
+
 		return specimen;
 	}
 	

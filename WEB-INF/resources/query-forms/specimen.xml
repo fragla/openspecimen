@@ -262,11 +262,11 @@
       </textField>
     </row>
     
-    <row>
+    <!--<row>
       <numberField>
         <name>freezThawCycle</name>
       </numberField
-    </row>
+    </row>-->
 
     <row>
       <subForm>

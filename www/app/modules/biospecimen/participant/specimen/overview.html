@@ -1,4 +1,3 @@
-//show freezethaw cycle value else not specified
 
 <div class="clearfix">
   <div class="col-xs-8">
@@ -125,6 +124,11 @@
       <li class="item">
         <strong class="key key-sm" translate="specimens.created_on">Created On</strong>
         <span class="value value-md">{{specimen.createdOn | date: global.dateTimeFmt | osNoValue}}</span>
+      </li>
+
+      <li class="item">
+        <strong class="key key-sm" translate="specimens.freeze_thaw_cycle">Freeze/Thaw Cycle</strong>
+        <span class="value value-md">{{specimen.freezeThawCycle | osNoValue}}</span>
       </li>
     </ul>
 

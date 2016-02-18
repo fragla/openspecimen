@@ -448,6 +448,8 @@
     "qty_per_aliquot": "Quantity per Aliquot",
     "close_parent_q": "Do you want to close parent specimen?",
     "concentration": "Concentration",
+    "freeze_thaw_cycle": "Freeze/Thaw Cycle",
+    "increase_parent_freeze_thaw": "Increase parent's Freeze/Thaw",
     "comments": "Comments",
     "qty": "Quantity",
     "aliquot": "Aliquot",
@@ -513,6 +515,7 @@
     "create_aliquots": "Create Aliquots",
     "specimen_type": "Specimen Type",
     "anatomic_site": "Anatomic Site",
+    "parent_child_freeze_thaw_error": "Child's freeze/thaw cycle can not be less than parent specimen",
 
     "col_event": {
       "title": "Collection Details",

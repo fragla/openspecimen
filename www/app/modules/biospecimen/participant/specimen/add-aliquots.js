@@ -2,13 +2,18 @@
 angular.module('os.biospecimen.specimen.addaliquots', [])
   .controller('AddAliquotsCtrl', function(
     $scope, $rootScope, $state, $stateParams, specimen, cpr, visit, extensionCtxt,
-    CollectSpecimensSvc, SpecimenUtil, Util) {
+    CollectSpecimensSvc, SpecimenUtil, Util, Alerts) {
 
     function init() {
       $scope.parentSpecimen = specimen;
       $scope.cpr = cpr;
       $scope.visit = visit;
       $scope.aliquotSpec = {createdOn : new Date()};
+
+      if ($scope.parentSpecimen.freezeThawCycle) {
+        $scope.aliquotSpec.increaseParentFreezeThaw = true;
+        setFreezeThaw();
+      }
 
       //
       // On successful collection of aliquots, direct user to specimen detail view
@@ -26,6 +31,16 @@ angular.module('os.biospecimen.specimen.addaliquots', [])
     function getState() {
       return {state: $state.current, params: $stateParams};
     }
+
+    function setFreezeThaw() {
+      if ($scope.aliquotSpec.increaseParentFreezeThaw) {
+        $scope.aliquotSpec.freezeThawCycle = $scope.parentSpecimen.freezeThawCycle + 1;
+      } else {
+        $scope.aliquotSpec.freezeThawCycle = $scope.parentSpecimen.freezeThawCycle;
+      }
+    }
+
+    $scope.setFreezeThaw = setFreezeThaw;
 
     $scope.collectAliquots = function() {
       var specimens = SpecimenUtil.collectAliquots($scope);

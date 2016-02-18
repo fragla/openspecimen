@@ -30,6 +30,15 @@ angular.module('os.biospecimen.specimen')
       parent.depth = 0;
       parent.closeAfterChildrenCreation = spec.closeParent;
 
+      if (parent.freezeThawCycle) {
+        parent.increaseFreezeThaw = spec.increaseParentFreezeThaw;
+        if (spec.increaseParentFreezeThaw && parent.freezeThawCycle >= spec.freezeThawCycle ||
+          !spec.increaseParentFreezeThaw && parent.freezeThawCycle > spec.freezeThawCycle) {
+          Alerts.error('specimens.parent_child_freeze_thaw_error');
+          return;
+        }
+      }
+
       var aliquot = new Specimen({
         lineage: 'Aliquot',
         specimenClass: parent.specimenClass,
@@ -42,6 +51,7 @@ angular.module('os.biospecimen.specimen')
         cprId: scope.cpr.id,
         visitId: parent.visitId,
         createdOn: spec.createdOn,
+        freezeThawCycle: spec.freezeThawCycle,
 
         selected: true,
         parent: parent,

@@ -102,12 +102,33 @@ add here the code to add freeze thaw cycle set it to parent and add option of in
         </div>
       </div>
 
+      <div class="form-group" ng-if="!!parentSpecimen.freezeThawCycle">
+        <label class="col-xs-3 control-label" translate="specimens.freeze_thaw_cycle">Freeze/Thaw Cycle</label>
+        <div class="col-xs-2">
+          <input name="freezeThawCycle" ng-model="aliquotSpec.freezeThawCycle"
+            class="form-control" type="text" placeholder="{{'specimens.freeze_thaw_cycle' | translate}}"
+            ng-pattern="/^[0-9]*$/">
+          <div os-field-error field="aliquotForm.freezeThawCycle"></div>
+        </div>
+      </div>
+
+      <div class="form-group" ng-if="!!parentSpecimen.freezeThawCycle">
+        <div class="col-xs-offset-3 col-xs-6 os-text-checkbox">
+          <div class="checkbox">
+            <os-checkbox ng-model="aliquotSpec.increaseParentFreezeThaw" ng-change="setFreezeThaw()"></os-checkbox>
+          </div>
+          <div class="message os-ctrl-padding-top">
+            <span translate="specimens.increase_parent_freeze_thaw">Increase parent's Freeze/Thaw</span>
+          </div>
+        </div>
+      </div>
+
       <div class="os-entity-extn-form-fields" ng-if="!!extnOpts">
         <div id='de-form' class='os-extn-form' os-de-form opts="extnOpts" ctrl="deFormCtrl"></div>
       </div>
 
-      <div class="form-group clearfix">
-        <div class="col-xs-offset-3 col-xs-6 os-spmn-close-parent">
+      <div class="form-group">
+        <div class="col-xs-offset-3 col-xs-6 os-text-checkbox">
           <div class="checkbox">
             <os-checkbox ng-model="aliquotSpec.closeParent"></os-checkbox>
           </div>

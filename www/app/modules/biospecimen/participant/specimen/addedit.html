@@ -1,4 +1,3 @@
-//add optional field to store freeze thaw cycle
 
 <div>
   <div os-page-header>
@@ -156,6 +155,16 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label class="col-xs-3 control-label" translate="specimens.freeze_thaw_cycle">Freeze/Thaw Cycle</label>
+        <div class="col-xs-6">
+          <input name="freezeThawCycle" ng-model="currSpecimen.freezeThawCycle"
+                 class="form-control" type="text" placeholder="{{'specimens.freeze_thaw_cycle' | translate}}"
+                 ng-pattern="/^[0-9]*$/">
+          <div os-field-error field="sform.freezeThawCycle"></div>
+        </div>
+      </div>
+
       <div class="form-group" ng-if="currSpecimen.lineage != 'Aliquot' && !currSpecimen.poolSpecimen">
         <label class="col-xs-3 control-label" translate="specimens.pathology_status">Pathology Status</label>
         <div class="col-xs-6">
@@ -185,6 +194,8 @@
             <div os-field-error field="sform.laterality"></div>
           </div>
         </div>
+
+
 
         <div class="form-group">
           <label class="col-xs-3 control-label">

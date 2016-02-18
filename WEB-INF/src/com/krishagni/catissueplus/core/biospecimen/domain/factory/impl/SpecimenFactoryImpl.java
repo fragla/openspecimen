@@ -14,6 +14,7 @@ import static com.krishagni.catissueplus.core.common.service.PvValidator.isValid
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -610,13 +611,18 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 			//
 			return;
 		}
+		
+		Date currentDate = Calendar.getInstance().getTime();
+		if (!specimen.isPrimary() && detail.getCreatedOn() != null && detail.getCreatedOn().after(currentDate)) {
+			ose.addError(SpecimenErrorCode.CREATED_ON_GT_CURRENT);
+		}
 
 		if (specimen.isPrimary() && detail.getReceivedEvent() != null) {
 			specimen.setCreatedOn(detail.getReceivedEvent().getTime());
-		} else if (detail.getCreatedOn() != null) {
+		} else if (!specimen.isPrimary() && detail.getCreatedOn() != null) {
 			specimen.setCreatedOn(detail.getCreatedOn());
 		} else {
-			specimen.setCreatedOn(Calendar.getInstance().getTime());
+			specimen.setCreatedOn(currentDate);
 		}
 	}
 	

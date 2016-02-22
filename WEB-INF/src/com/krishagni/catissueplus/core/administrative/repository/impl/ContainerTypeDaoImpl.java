@@ -18,15 +18,15 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 	@SuppressWarnings("unchecked")
 	public ContainerType getByName(String name) {
 		List<ContainerType> result = sessionFactory.getCurrentSession()
-				.getNamedQuery(CONTAINER_TYPE_BY_NAME)
-				.setParameter("name", name)
-				.list();
+			.getNamedQuery(CONTAINER_TYPE_BY_NAME)
+			.setParameter("name", name)
+			.list();
 
 		return result.isEmpty() ? null : result.iterator().next();
 	}
 	
 	private static final String CONTAINER_TYPE_FQN = ContainerType.class.getName();
 	
-	private static final String CONTAINER_TYPE_BY_NAME = CONTAINER_TYPE_FQN + ".getContainerTypeByName";
+	private static final String CONTAINER_TYPE_BY_NAME = CONTAINER_TYPE_FQN + ".getByName";
 
 }

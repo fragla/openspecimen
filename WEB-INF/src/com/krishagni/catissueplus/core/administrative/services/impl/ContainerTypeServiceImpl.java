@@ -30,10 +30,10 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 	
 	@Override
 	@PlusTransactional
-	public ResponseEvent<ContainerTypeDetail> getContainerType(
-			RequestEvent<ContainerTypeQueryCriteria> req) {
+	public ResponseEvent<ContainerTypeDetail> getContainerType(RequestEvent<ContainerTypeQueryCriteria> req) {
 		try {
 			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
+
 			ContainerTypeQueryCriteria crit = req.getPayload();
 			ContainerType containerType = getContainerType(crit.getId(), crit.getName());
 			return ResponseEvent.response(ContainerTypeDetail.from(containerType));
@@ -46,10 +46,10 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 	
 	@Override
 	@PlusTransactional
-	public ResponseEvent<ContainerTypeDetail> createContainerType(
-			RequestEvent<ContainerTypeDetail> req) {
+	public ResponseEvent<ContainerTypeDetail> createContainerType(RequestEvent<ContainerTypeDetail> req) {
 		try {
 			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
+
 			ContainerTypeDetail input = req.getPayload();
 			ContainerType containerType = containerTypeFactory.createContainerType(input);
 			ensureUniqueConstraints(null, containerType);
@@ -65,10 +65,10 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 	
 	@Override
 	@PlusTransactional
-	public ResponseEvent<ContainerTypeDetail> updateContainerType(
-			RequestEvent<ContainerTypeDetail> req) {
+	public ResponseEvent<ContainerTypeDetail> updateContainerType(RequestEvent<ContainerTypeDetail> req) {
 		try {
 			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
+
 			ContainerTypeDetail input = req.getPayload();
 			ContainerType existing = getContainerType(input.getId(), input.getName());
 			ContainerType containerType = containerTypeFactory.createContainerType(input);
@@ -88,11 +88,11 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 		ContainerType containerType = null;
 		Object key = null;
 		if (id != null) {
-			containerType = daoFactory.getContainerTypeDao().getById(id);
 			key = id;
+			containerType = daoFactory.getContainerTypeDao().getById(id);
 		} else if (StringUtils.isNotBlank(name)) {
-			containerType = daoFactory.getContainerTypeDao().getByName(name);
 			key = name;
+			containerType = daoFactory.getContainerTypeDao().getByName(name);
 		}
 		
 		if (containerType == null) {
@@ -103,14 +103,13 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 	}
 	
 	private void ensureUniqueConstraints(ContainerType existing, ContainerType newContainerType) {
-		if(existing != null && existing.getName().equals(newContainerType.getName())) {
+		if (existing != null && existing.getName().equals(newContainerType.getName())) {
 			return;
 		}
 		
 		ContainerType containerType = daoFactory.getContainerTypeDao().getByName(newContainerType.getName());
-		if(containerType != null) {
+		if (containerType != null) {
 			throw OpenSpecimenException.userError(ContainerTypeErrorCode.DUP_NAME, newContainerType.getName());
 		}
 	}
-
 }

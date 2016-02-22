@@ -31,7 +31,7 @@
 
     <many-to-one name="canHold" column="CAN_HOLD"/>
      
-    <query name="getContainerTypeByName">
+    <query name="getByName">
       from
         com.krishagni.catissueplus.core.administrative.domain.ContainerType containerType
       where

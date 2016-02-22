@@ -28,14 +28,14 @@ public class ContainerTypesController {
 	@RequestMapping(method = RequestMethod.GET, value="{id}")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public ContainerTypeDetail getContainer(@PathVariable("id") Long containerId) {
-		return getContainerType(new ContainerTypeQueryCriteria(containerId));
+	public ContainerTypeDetail getContainerType(@PathVariable("id") Long typeId) {
+		return getContainerType(new ContainerTypeQueryCriteria(typeId));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="/byname")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public ContainerTypeDetail getContainer(@RequestParam(value = "name", required = true) String name) {
+	public ContainerTypeDetail getContainerType(@RequestParam(value = "name", required = true) String name) {
 		return getContainerType(new ContainerTypeQueryCriteria(name));
 	}
 	

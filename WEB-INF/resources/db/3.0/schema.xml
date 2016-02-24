@@ -169,11 +169,11 @@
       </column>
      
       <column name="COLUMN_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers">
-      	<constraints nullable="false"/>
+        <constraints nullable="false"/>
       </column>
      
       <column name="ROW_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers">
-      	<constraints nullable="false"/>
+        <constraints nullable="false"/>
       </column>
       
       <column name="STORE_SPECIMENS" type="${boolean.type}" defaultValueBoolean="0">
@@ -181,7 +181,7 @@
       </column>
       
       <column name="ABBREVIATION" type="${text.type}(64)">
-      	<constraints nullable="false"/>
+        <constraints nullable="false"/>
       </column>
       
       <column name="CAN_HOLD" type="${int.type}">

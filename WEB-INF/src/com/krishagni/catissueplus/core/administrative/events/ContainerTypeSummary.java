@@ -1,5 +1,11 @@
 package com.krishagni.catissueplus.core.administrative.events;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+
 import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
 
 public class ContainerTypeSummary {
@@ -87,5 +93,11 @@ public class ContainerTypeSummary {
 		ContainerTypeSummary result = new ContainerTypeSummary();
 		copy(containerType, result);
 		return result;
+	}
+	
+	public static List<ContainerTypeSummary> from (List<ContainerType> containerTypes) {
+		return containerTypes.stream()
+			.map(ContainerTypeSummary::from)
+			.collect(Collectors.toList());
 	}
 }

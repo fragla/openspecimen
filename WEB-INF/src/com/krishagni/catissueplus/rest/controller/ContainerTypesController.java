@@ -1,6 +1,8 @@
 
 package com.krishagni.catissueplus.rest.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.krishagni.catissueplus.core.administrative.events.ContainerTypeDetail;
+import com.krishagni.catissueplus.core.administrative.events.ContainerTypeSummary;
+import com.krishagni.catissueplus.core.administrative.repository.ContainerTypeListCriteria;
 import com.krishagni.catissueplus.core.administrative.services.ContainerTypeService;
 import com.krishagni.catissueplus.core.common.events.EntityQueryCriteria;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
@@ -24,6 +28,34 @@ public class ContainerTypesController {
 
 	@Autowired
 	private ContainerTypeService containerTypeSvc;
+	
+	@RequestMapping(method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public List<ContainerTypeSummary> getContainerTypes(
+			@RequestParam(value="name", required = false) 
+			String name,
+			
+			@RequestParam(value = "exactMatch", required= false, defaultValue = "false")
+			boolean exactMatch,
+			
+			@RequestParam(value = "startAt", required = false, defaultValue = "0")
+			int startAt,
+			
+			@RequestParam(value = "maxResults", required = false, defaultValue = "100") 
+			int maxResults
+			) {
+		ContainerTypeListCriteria crit = new ContainerTypeListCriteria()
+				.query(name)
+				.exactMatch(exactMatch)
+				.startAt(startAt)
+				.maxResults(maxResults);
+		
+		RequestEvent<ContainerTypeListCriteria> req = new RequestEvent<ContainerTypeListCriteria>(crit);
+		ResponseEvent<List<ContainerTypeSummary>> resp = containerTypeSvc.getContainerTypes(req);
+		resp.throwErrorIfUnsuccessful();
+		return resp.getPayload();
+	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="{id}")
 	@ResponseStatus(HttpStatus.OK)

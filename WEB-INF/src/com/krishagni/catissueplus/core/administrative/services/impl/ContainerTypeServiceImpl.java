@@ -1,11 +1,15 @@
 package com.krishagni.catissueplus.core.administrative.services.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
 import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeFactory;
 import com.krishagni.catissueplus.core.administrative.events.ContainerTypeDetail;
+import com.krishagni.catissueplus.core.administrative.events.ContainerTypeSummary;
+import com.krishagni.catissueplus.core.administrative.repository.ContainerTypeListCriteria;
 import com.krishagni.catissueplus.core.administrative.services.ContainerTypeService;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
@@ -26,6 +30,20 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 
 	public void setContainerTypeFactory(ContainerTypeFactory containerTypeFactory) {
 		this.containerTypeFactory = containerTypeFactory;
+	}
+	
+	@Override
+	@PlusTransactional
+	public ResponseEvent<List<ContainerTypeSummary>> getContainerTypes(RequestEvent<ContainerTypeListCriteria> req) {
+		try {
+			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
+			List<ContainerType> containerTypes = daoFactory.getContainerTypeDao().getContainerTypes(req.getPayload());
+			return ResponseEvent.response(ContainerTypeSummary.from(containerTypes));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
 	}
 	
 	@Override

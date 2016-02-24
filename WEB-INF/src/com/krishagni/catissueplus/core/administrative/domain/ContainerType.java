@@ -2,7 +2,9 @@ package com.krishagni.catissueplus.core.administrative.domain;
 
 import org.hibernate.envers.Audited;
 
+import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
+import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 
 @Audited
 public class ContainerType extends BaseEntity {
@@ -23,6 +25,8 @@ public class ContainerType extends BaseEntity {
 	private String abbreviation;
 	
 	private ContainerType canHold;
+	
+	private String activityStatus;
 	
 	public String getName() {
 		return name;
@@ -96,16 +100,50 @@ public class ContainerType extends BaseEntity {
 		this.canHold = canHold;
 	}
 	
-	public void update(ContainerType containerType) {
-		setName(containerType.name);
-		setNoOfColumns(containerType.noOfColumns);
-		setNoOfRows(containerType.noOfRows);
-		setColumnLabelingScheme(containerType.columnLabelingScheme);
-		setRowLabelingScheme(containerType.rowLabelingScheme);
-		setTemperature(containerType.temperature);
-		setStoreSpecimenEnabled(containerType.storeSpecimenEnabled);
-		setAbbreviation(containerType.abbreviation);
-		setCanHold(containerType.canHold);
+	public String getActivityStatus() {
+		return activityStatus;
 	}
 
+	public void setActivityStatus(String activityStatus) {
+		this.activityStatus = activityStatus;
+	}
+
+	public void update(ContainerType containerType) {
+		setName(containerType.getName());
+		setNoOfColumns(containerType.getNoOfColumns());
+		setNoOfRows(containerType.getNoOfRows());
+		setColumnLabelingScheme(containerType.getColumnLabelingScheme());
+		setRowLabelingScheme(containerType.getRowLabelingScheme());
+		setTemperature(containerType.getTemperature());
+		setStoreSpecimenEnabled(containerType.isStoreSpecimenEnabled());
+		setAbbreviation(containerType.getAbbreviation());
+		setActivityStatus(containerType.getActivityStatus());
+		
+		updateCanHold(containerType.getCanHold());
+	}
+
+	private void updateCanHold(ContainerType canHold) {
+		if (cycleExistsInHierarchy(canHold)) {
+			throw OpenSpecimenException.userError(ContainerTypeErrorCode.HIERARCHY_CONTAINS_CYCLE, canHold.getName());
+		}
+		
+		setCanHold(canHold);
+	}
+
+	private boolean cycleExistsInHierarchy(ContainerType canHold) {
+		if (canHold == null) {
+			return false;
+		}
+		
+		ContainerType other = canHold;
+		while (other != null) {
+			if (other.getId() == this.getId()) {
+				return true;
+			}
+			
+			other = other.getCanHold();
+		}
+		
+		return false;
+	}
 }

@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.krishagni.catissueplus.core.administrative.events.ContainerTypeQueryCriteria;
 import com.krishagni.catissueplus.core.administrative.events.ContainerTypeDetail;
 import com.krishagni.catissueplus.core.administrative.services.ContainerTypeService;
+import com.krishagni.catissueplus.core.common.events.EntityQueryCriteria;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 
@@ -29,14 +29,14 @@ public class ContainerTypesController {
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public ContainerTypeDetail getContainerType(@PathVariable("id") Long typeId) {
-		return getContainerType(new ContainerTypeQueryCriteria(typeId));
+		return getContainerType(new EntityQueryCriteria(typeId));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="/byname")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public ContainerTypeDetail getContainerType(@RequestParam(value = "name", required = true) String name) {
-		return getContainerType(new ContainerTypeQueryCriteria(name));
+		return getContainerType(new EntityQueryCriteria(name));
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
@@ -66,8 +66,8 @@ public class ContainerTypesController {
 		return resp.getPayload();
 	}
 	
-	private ContainerTypeDetail getContainerType(ContainerTypeQueryCriteria crit) {
-		RequestEvent<ContainerTypeQueryCriteria> req = new RequestEvent<ContainerTypeQueryCriteria>(crit);
+	private ContainerTypeDetail getContainerType(EntityQueryCriteria crit) {
+		RequestEvent<EntityQueryCriteria> req = new RequestEvent<EntityQueryCriteria>(crit);
 		ResponseEvent<ContainerTypeDetail> resp = containerTypeSvc.getContainerType(req);
 		resp.throwErrorIfUnsuccessful();
 		return resp.getPayload();

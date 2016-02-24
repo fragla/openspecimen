@@ -3,58 +3,14 @@ package com.krishagni.catissueplus.core.administrative.events;
 
 import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
 
-public class ContainerTypeDetail {
-	private Long id;
-	
-	private String name;
-	
-	private int noOfColumns;
-	
-	private int noOfRows;
-	
+public class ContainerTypeDetail extends ContainerTypeSummary {
 	private String columnLabelingScheme;
 	
 	private String rowLabelingScheme;
 	
-	private Double temperature;
-	
 	private boolean storeSpecimenEnabled;
 	
-	private String abbreviation;
-	
-	private ContainerTypeDetail canHold;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getNoOfColumns() {
-		return noOfColumns;
-	}
-
-	public void setNoOfColumns(int noOfColumns) {
-		this.noOfColumns = noOfColumns;
-	}
-
-	public int getNoOfRows() {
-		return noOfRows;
-	}
-
-	public void setNoOfRows(int noOfRows) {
-		this.noOfRows = noOfRows;
-	}
+	private ContainerTypeSummary canHold;
 
 	public String getColumnLabelingScheme() {
 		return columnLabelingScheme;
@@ -72,14 +28,6 @@ public class ContainerTypeDetail {
 		this.rowLabelingScheme = rowLabelingScheme;
 	}
 
-	public Double getTemperature() {
-		return temperature;
-	}
-
-	public void setTemperature(Double temperature) {
-		this.temperature = temperature;
-	}
-
 	public boolean isStoreSpecimenEnabled() {
 		return storeSpecimenEnabled;
 	}
@@ -88,19 +36,11 @@ public class ContainerTypeDetail {
 		this.storeSpecimenEnabled = storeSpecimenEnabled;
 	}
 
-	public String getAbbreviation() {
-		return abbreviation;
-	}
-
-	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
-	}
-
-	public ContainerTypeDetail getCanHold() {
+	public ContainerTypeSummary getCanHold() {
 		return canHold;
 	}
 
-	public void setCanHold(ContainerTypeDetail canHold) {
+	public void setCanHold(ContainerTypeSummary canHold) {
 		this.canHold = canHold;
 	}
 
@@ -109,17 +49,12 @@ public class ContainerTypeDetail {
 			return null;
 		}
 		
-		ContainerTypeDetail result = new ContainerTypeDetail();
-		result.setId(containerType.getId());
-		result.setName(containerType.getName());
-		result.setNoOfColumns(containerType.getNoOfColumns());
-		result.setNoOfRows(containerType.getNoOfRows());
-		result.setColumnLabelingScheme(containerType.getColumnLabelingScheme());
-		result.setRowLabelingScheme(containerType.getRowLabelingScheme());
-		result.setTemperature(containerType.getTemperature());
-		result.setStoreSpecimenEnabled(containerType.isStoreSpecimenEnabled());
-		result.setAbbreviation(containerType.getAbbreviation());
-		result.setCanHold(ContainerTypeDetail.from(containerType.getCanHold()));
-		return result;
+		ContainerTypeDetail detail = new ContainerTypeDetail();
+		ContainerTypeDetail.copy(containerType, detail);
+		detail.setColumnLabelingScheme(containerType.getColumnLabelingScheme());
+		detail.setRowLabelingScheme(containerType.getRowLabelingScheme());
+		detail.setStoreSpecimenEnabled(containerType.isStoreSpecimenEnabled());
+		detail.setCanHold(ContainerTypeSummary.from(containerType.getCanHold()));
+		return detail;
 	}
 }

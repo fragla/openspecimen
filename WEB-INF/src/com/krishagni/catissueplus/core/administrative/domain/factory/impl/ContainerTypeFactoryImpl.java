@@ -7,9 +7,12 @@ import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
 import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeFactory;
 import com.krishagni.catissueplus.core.administrative.events.ContainerTypeDetail;
+import com.krishagni.catissueplus.core.administrative.events.ContainerTypeSummary;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
+import com.krishagni.catissueplus.core.common.errors.ActivityStatusErrorCode;
 import com.krishagni.catissueplus.core.common.errors.ErrorType;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
+import com.krishagni.catissueplus.core.common.util.Status;
 
 public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 	private DaoFactory daoFactory;
@@ -26,12 +29,13 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 		containerType.setId(detail.getId());
 		containerType.setTemperature(detail.getTemperature());
 		containerType.setStoreSpecimenEnabled(detail.isStoreSpecimenEnabled());
-		containerType.setAbbreviation(detail.getAbbreviation());
 
 		setName(detail, containerType, ose);
+		setAbbreviation(detail, containerType, ose);
 		setDimension(detail, containerType, ose);
 		setLabelingSchemes(detail, containerType, ose);
 		setCanHold(detail, containerType, ose);
+		setActivityStatus(detail, containerType, ose);
 		
 		ose.checkAndThrow();
 		return containerType;
@@ -46,6 +50,16 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 		
 		containerType.setName(name);
 	}
+	
+	private void setAbbreviation(ContainerTypeDetail detail, ContainerType containerType, OpenSpecimenException ose) {
+		String abbreviation = detail.getAbbreviation();
+		if (StringUtils.isBlank(abbreviation)) {
+			ose.addError(ContainerTypeErrorCode.ABBREVIATION_REQUIRED);
+			return;
+		}
+		
+		containerType.setAbbreviation(abbreviation);
+	}
 		
 	private void setDimension(ContainerTypeDetail detail, ContainerType containerType, OpenSpecimenException ose) {
 		setNoOfColumns(detail, containerType, ose);
@@ -55,7 +69,7 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 	private void setNoOfColumns(ContainerTypeDetail detail, ContainerType containerType, OpenSpecimenException ose) {
 		int noOfCols = detail.getNoOfColumns();		
 		if (noOfCols <= 0) {
-			ose.addError(ContainerTypeErrorCode.INVALID_DIMENSION_CAPACITY, noOfCols);
+			ose.addError(ContainerTypeErrorCode.INVALID_CAPACITY, noOfCols);
 		}
 		
 		containerType.setNoOfColumns(noOfCols);	
@@ -64,7 +78,7 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 	private void setNoOfRows(ContainerTypeDetail detail, ContainerType containerType, OpenSpecimenException ose) {
 		int noOfRows = detail.getNoOfRows();
 		if (noOfRows <= 0) {
-			ose.addError(ContainerTypeErrorCode.INVALID_DIMENSION_CAPACITY, noOfRows);
+			ose.addError(ContainerTypeErrorCode.INVALID_CAPACITY, noOfRows);
 		}
 				
 		containerType.setNoOfRows(noOfRows);		
@@ -82,7 +96,7 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 		}
 		
 		if (!StorageContainer.isValidScheme(columnLabelingScheme)) {
-			ose.addError(ContainerTypeErrorCode.INVALID_DIMENSION_LABELING_SCHEME, columnLabelingScheme);
+			ose.addError(ContainerTypeErrorCode.INVALID_LABELING_SCHEME, columnLabelingScheme);
 		}
 		
 		containerType.setColumnLabelingScheme(columnLabelingScheme);		
@@ -95,14 +109,14 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 		}
 		
 		if (!StorageContainer.isValidScheme(rowLabelingScheme)) {
-			ose.addError(ContainerTypeErrorCode.INVALID_DIMENSION_LABELING_SCHEME, rowLabelingScheme);
+			ose.addError(ContainerTypeErrorCode.INVALID_LABELING_SCHEME, rowLabelingScheme);
 		}
 		
 		containerType.setRowLabelingScheme(rowLabelingScheme);		
 	}
 	
 	private void setCanHold(ContainerTypeDetail detail, ContainerType containerType, OpenSpecimenException ose) {
-		ContainerTypeDetail typeDetail = detail.getCanHold();
+		ContainerTypeSummary typeDetail = detail.getCanHold();
 		if (typeDetail == null) {
 			return;
 		}
@@ -123,5 +137,17 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 		}
 		
 		containerType.setCanHold(canHold);
+	}
+	
+	private void setActivityStatus(ContainerTypeSummary detail, ContainerType containerType, OpenSpecimenException ose) {
+		String status = detail.getActivityStatus();
+		
+		if (StringUtils.isBlank(status)) {
+			containerType.setActivityStatus(Status.ACTIVITY_STATUS_ACTIVE.getStatus());
+		} else if (Status.isValidActivityStatus(status)) {
+			containerType.setActivityStatus(status);
+		} else {
+			ose.addError(ActivityStatusErrorCode.INVALID, status);
+		}
 	}
 }

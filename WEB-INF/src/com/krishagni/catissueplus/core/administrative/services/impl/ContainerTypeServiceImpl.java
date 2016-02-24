@@ -5,13 +5,13 @@ import org.apache.commons.lang.StringUtils;
 import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
 import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeFactory;
-import com.krishagni.catissueplus.core.administrative.events.ContainerTypeQueryCriteria;
 import com.krishagni.catissueplus.core.administrative.events.ContainerTypeDetail;
 import com.krishagni.catissueplus.core.administrative.services.ContainerTypeService;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
+import com.krishagni.catissueplus.core.common.events.EntityQueryCriteria;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 
@@ -30,11 +30,11 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 	
 	@Override
 	@PlusTransactional
-	public ResponseEvent<ContainerTypeDetail> getContainerType(RequestEvent<ContainerTypeQueryCriteria> req) {
+	public ResponseEvent<ContainerTypeDetail> getContainerType(RequestEvent<EntityQueryCriteria> req) {
 		try {
 			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
 
-			ContainerTypeQueryCriteria crit = req.getPayload();
+			EntityQueryCriteria crit = req.getPayload();
 			ContainerType containerType = getContainerType(crit.getId(), crit.getName());
 			return ResponseEvent.response(ContainerTypeDetail.from(containerType));
 		} catch (OpenSpecimenException ose) {

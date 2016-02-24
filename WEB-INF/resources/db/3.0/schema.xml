@@ -157,7 +157,8 @@
         <constraints unique="true" nullable="false" />
       </column>
 
-      <column name="TEMPERATURE" type="${double.type}"/>
+      <column name="TEMPERATURE" type="${double.type}">
+      </column>
      
       <column name="NO_OF_COLS" type="${int.type}">
         <constraints nullable="false"/>
@@ -167,17 +168,27 @@
         <constraints nullable="false"/>
       </column>
      
-      <column name="COLUMN_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers"/>
+      <column name="COLUMN_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers">
+      	<constraints nullable="false"/>
+      </column>
      
-      <column name="ROW_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers"/>
+      <column name="ROW_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers">
+      	<constraints nullable="false"/>
+      </column>
       
       <column name="STORE_SPECIMENS" type="${boolean.type}" defaultValueBoolean="0">
         <constraints nullable="false"/>
       </column>
       
-      <column name="ABBREVIATION" type="${text.type}(64)"/>
+      <column name="ABBREVIATION" type="${text.type}(64)">
+      	<constraints nullable="false"/>
+      </column>
       
-      <column name="CAN_HOLD" type="${int.type}"/>
+      <column name="CAN_HOLD" type="${int.type}">
+      </column>
+      
+      <column name="ACTIVITY_STATUS" type="${text.type}(16)">
+      </column>
     </createTable>
   </changeSet>
 

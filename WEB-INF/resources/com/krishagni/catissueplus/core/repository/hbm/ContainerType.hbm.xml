@@ -30,12 +30,18 @@
     <property name="abbreviation" column="ABBREVIATION"/>
 
     <many-to-one name="canHold" column="CAN_HOLD"/>
+    
+    <property name="activityStatus" column="ACTIVITY_STATUS"/>
+    
+    <filter name="activeEntity"/>
      
     <query name="getByName">
       from
         com.krishagni.catissueplus.core.administrative.domain.ContainerType containerType
       where
-        containerType.name = :name
+        containerType.name = :name and 
+        activityStatus = 'Active' 
     </query>
+
   </class>
 </hibernate-mapping>

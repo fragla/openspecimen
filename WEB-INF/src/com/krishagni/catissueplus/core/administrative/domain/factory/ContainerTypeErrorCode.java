@@ -8,15 +8,20 @@ public enum ContainerTypeErrorCode implements ErrorCode {
 	
 	NAME_REQUIRED,
 	
+	ABBREVIATION_REQUIRED,
+	
+	ID_OR_NAME_REQ,
+	
 	DUP_NAME,
 	
-	INVALID_DIMENSION_CAPACITY,
+	INVALID_CAPACITY,
 	
-	INVALID_DIMENSION_LABELING_SCHEME;
+	INVALID_LABELING_SCHEME, 
+	
+	HIERARCHY_CONTAINS_CYCLE;
 	
 	@Override
 	public String code() {
 		return "CONTAINER_TYPE_" + this.name();
 	}
-
 }

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.krishagni.catissueplus.core.administrative.events.AssignPositionsOp;
+import com.krishagni.catissueplus.core.administrative.events.ContainerHierarchyDetail;
 import com.krishagni.catissueplus.core.common.events.ExportedFileDetail;
 import com.krishagni.catissueplus.core.administrative.events.ContainerQueryCriteria;
 import com.krishagni.catissueplus.core.administrative.events.ContainerReplicationDetail;
@@ -297,6 +298,18 @@ public class StorageContainersController {
 		resp.throwErrorIfUnsuccessful();
 
 		return Collections.singletonMap("status", true);
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST, value="/create-hierarchy")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public List<StorageContainerSummary> createContainerHierarchy(@RequestBody ContainerHierarchyDetail detail) {
+		RequestEvent<ContainerHierarchyDetail> req = new RequestEvent<ContainerHierarchyDetail>(detail);
+		ResponseEvent<List<StorageContainerSummary>> resp = storageContainerSvc.createContainerHierarchy(req);
+		resp.throwErrorIfUnsuccessful();
+		
+		return resp.getPayload();
 	}
 
 	private StorageContainerDetail getContainer(ContainerQueryCriteria crit) {

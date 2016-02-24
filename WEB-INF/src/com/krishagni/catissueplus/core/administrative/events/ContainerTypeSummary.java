@@ -90,6 +90,10 @@ public class ContainerTypeSummary {
 	}
 	
 	public static ContainerTypeSummary from (ContainerType containerType) {
+		if (containerType == null) {
+			return null;
+		}
+		
 		ContainerTypeSummary result = new ContainerTypeSummary();
 		copy(containerType, result);
 		return result;

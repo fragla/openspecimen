@@ -11,14 +11,17 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
 import com.krishagni.catissueplus.core.administrative.domain.Site;
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainer;
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainerPosition;
 import com.krishagni.catissueplus.core.administrative.domain.User;
+import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.SiteErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerFactory;
 import com.krishagni.catissueplus.core.administrative.domain.factory.UserErrorCode;
+import com.krishagni.catissueplus.core.administrative.events.ContainerHierarchyDetail;
 import com.krishagni.catissueplus.core.administrative.events.StorageContainerDetail;
 import com.krishagni.catissueplus.core.administrative.events.StorageLocationSummary;
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol;
@@ -27,6 +30,7 @@ import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.errors.ActivityStatusErrorCode;
 import com.krishagni.catissueplus.core.common.errors.ErrorType;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
+import com.krishagni.catissueplus.core.common.events.UserSummary;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
 import com.krishagni.catissueplus.core.common.util.Status;
 
@@ -63,6 +67,39 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		setAllowedSpecimenTypes(detail, container, ose);
 		setAllowedCps(detail, container, ose);
 		setComputedRestrictions(container);
+		
+		ose.checkAndThrow();
+		return container;
+	}
+	
+	public StorageContainer createStorageContainer(ContainerHierarchyDetail hierarchyDetail) {
+		StorageContainer container = new StorageContainer();
+		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
+		
+		ContainerType containerType = getContainerType(hierarchyDetail.getContainerTypeId(), hierarchyDetail.getContainerTypeName());
+		copy(containerType, container);
+		setSiteAndParentContainer(hierarchyDetail, container, ose);
+		setAllowedSpecimenClasses(hierarchyDetail.getAllowedSpecimenClasses(), container, ose);
+		setAllowedSpecimenTypes(hierarchyDetail.getAllowedSpecimenTypes(), container, ose);
+		setAllowedCps(hierarchyDetail.getAllowedCollectionProtocols(), container, ose);
+		setComputedRestrictions(container);
+		setPosition((StorageLocationSummary) null, container, ose);
+		setCreatedBy((UserSummary) null, container, ose);
+		setActivityStatus((String) null, container, ose);
+		
+		ose.checkAndThrow();
+		return container;
+	}
+	
+	@Override
+	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer) {
+		StorageContainer container = new StorageContainer();
+		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
+		copy(containerType, container);
+		setSiteAndParentContainer(parentContainer, container, ose);
+		setPosition((StorageLocationSummary) null, container, ose);
+		setCreatedBy((UserSummary) null, container, ose);
+		setActivityStatus((String) null, container, ose);
 		
 		ose.checkAndThrow();
 		return container;
@@ -108,7 +145,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		
 		container.setName(name);
 	}
-	
+
 	private void setName(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
 		if (detail.isAttrModified("name")) {
 			setName(detail, container, ose);
@@ -239,6 +276,32 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		}
 	}
 	
+	private void setSiteAndParentContainer(StorageContainer parentContainer, StorageContainer container, OpenSpecimenException ose) {		
+		if (parentContainer == null) {
+			ose.addError(StorageContainerErrorCode.REQUIRED_SITE_OR_PARENT_CONT);
+			return;
+		}
+		
+		container.setParentContainer(parentContainer);
+		container.setSite(parentContainer.getSite());
+	}
+	
+	private void setSiteAndParentContainer(ContainerHierarchyDetail hierarchyDetail, StorageContainer container, OpenSpecimenException ose) {
+		Site site = setSite(hierarchyDetail.getParentSite(), container, ose);
+		StorageContainer parentContainer = setParentContainer(hierarchyDetail.getParentContainer(), container, ose);
+		
+		if (site == null && parentContainer == null) {
+			ose.addError(StorageContainerErrorCode.REQUIRED_SITE_OR_PARENT_CONT);
+			return;
+		}
+		
+		if (site == null) {
+			container.setSite(parentContainer.getSite());
+		} else if (parentContainer != null && !parentContainer.getSite().equals(site)) {
+			ose.addError(StorageContainerErrorCode.INVALID_SITE_AND_PARENT_CONT);
+		}
+	}
+	
 	private void setSiteAndParentContainer(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
 		if (detail.isAttrModified("siteName") || detail.isAttrModified("storageLocation")) {
 			setSiteAndParentContainer(detail, container, ose);
@@ -250,6 +313,10 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	
 	private Site setSite(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
 		String siteName = detail.getSiteName();
+		return setSite(siteName, container, ose);		
+	}
+
+	private Site setSite(String siteName, StorageContainer container, OpenSpecimenException ose) {
 		if (StringUtils.isBlank(siteName)) {
 			return null;
 		}
@@ -260,7 +327,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		}
 			
 		container.setSite(site);
-		return site;		
+		return site;
 	}
 	
 	private StorageContainer setParentContainer(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
@@ -292,11 +359,24 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		return parentContainer;
 	}
 	
+	private StorageContainer setParentContainer(String parentContainerName,StorageContainer container, OpenSpecimenException ose) {
+		if (StringUtils.isBlank(parentContainerName)) {
+			return null;
+		}
+		
+		StorageContainer parentContainer = daoFactory.getStorageContainerDao().getByName(parentContainerName);
+		container.setParentContainer(parentContainer);
+		return parentContainer;
+	}
+	
 	private void setPosition(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
+		setPosition(detail.getStorageLocation(), container, ose);
+	}
+
+	private void setPosition(StorageLocationSummary storageLocation, StorageContainer container, OpenSpecimenException ose) {
 		StorageContainer parentContainer = container.getParentContainer();
 		String posOne = null, posTwo = null;
 		
-		StorageLocationSummary storageLocation = detail.getStorageLocation();
 		if (storageLocation != null) {
 			posOne = storageLocation.getPositionX();
 			posTwo = storageLocation.getPositionY();
@@ -335,11 +415,15 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	private void setCreatedBy(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
+		setCreatedBy(detail.getCreatedBy(), container, ose);
+	}
+
+	private void setCreatedBy(UserSummary createdBy, StorageContainer container, OpenSpecimenException ose) {
 		Long userId = null;
-		if (detail.getCreatedBy() == null) {
+		if (createdBy == null) {
 			userId = AuthUtil.getCurrentUser().getId();
 		} else {
-			userId = detail.getCreatedBy().getId();
+			userId = createdBy.getId();
 		}
 
 		User user = daoFactory.getUserDao().getById(userId);
@@ -361,6 +445,10 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	
 	private void setActivityStatus(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
 		String activityStatus = detail.getActivityStatus();
+		setActivityStatus(activityStatus, container, ose);
+	}
+
+	private void setActivityStatus(String activityStatus, StorageContainer container, OpenSpecimenException ose) {
 		if (activityStatus == null) {
 			activityStatus = Status.ACTIVITY_STATUS_ACTIVE.getStatus();
 		}
@@ -382,7 +470,11 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	private void setComments(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
-		container.setComments(detail.getComments());
+		setComments(detail.getComments(), container, ose);
+	}
+
+	private void setComments(String comments, StorageContainer container, OpenSpecimenException ose) {
+		container.setComments(comments);
 	}	
 	
 	private void setComments(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
@@ -394,13 +486,16 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	private void setAllowedSpecimenClasses(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
-		Set<String> allowedSpecimenClasses = detail.getAllowedSpecimenClasses();		
+		setAllowedSpecimenClasses(detail.getAllowedSpecimenClasses(), container, ose);		
+	}
+
+	private void setAllowedSpecimenClasses(Set<String> allowedSpecimenClasses, StorageContainer container, OpenSpecimenException ose) {
 		if (!areValid(SPECIMEN_CLASS, allowedSpecimenClasses)) {
 			ose.addError(SpecimenErrorCode.INVALID_SPECIMEN_CLASS);
 			return;
 		}
 						
-		container.setAllowedSpecimenClasses(allowedSpecimenClasses);		
+		container.setAllowedSpecimenClasses(allowedSpecimenClasses);
 	}
 	
 	private void setAllowedSpecimenClasses(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
@@ -413,12 +508,16 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	
 	private void setAllowedSpecimenTypes(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
 		Set<String> allowedSpecimenTypes = detail.getAllowedSpecimenTypes();
+		setAllowedSpecimenTypes(allowedSpecimenTypes, container, ose);		
+	}
+
+	private void setAllowedSpecimenTypes(Set<String> allowedSpecimenTypes, StorageContainer container, OpenSpecimenException ose) {
 		if (!areValid(SPECIMEN_CLASS, 1, allowedSpecimenTypes)) {
 			ose.addError(SpecimenErrorCode.INVALID_SPECIMEN_TYPE);
 			return;
 		}
 						
-		container.setAllowedSpecimenTypes(allowedSpecimenTypes);		
+		container.setAllowedSpecimenTypes(allowedSpecimenTypes);
 	}
 	
 	private void setAllowedSpecimenTypes(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
@@ -430,8 +529,10 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	private void setAllowedCps(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
-		Set<String> allowedCps = detail.getAllowedCollectionProtocols();
-		
+		setAllowedCps(detail.getAllowedCollectionProtocols(), container, ose);		
+	}
+
+	private void setAllowedCps(Set<String> allowedCps, StorageContainer container, OpenSpecimenException ose) {
 		List<CollectionProtocol> cps = new ArrayList<CollectionProtocol>();		
 		if (CollectionUtils.isNotEmpty(allowedCps) && container.getSite() != null) {
 			cps = daoFactory.getCollectionProtocolDao().getCpsByShortTitle(allowedCps, container.getSite().getName());
@@ -441,7 +542,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 			}			
 		}
 
-		container.setAllowedCps(new HashSet<CollectionProtocol>(cps));		
+		container.setAllowedCps(new HashSet<CollectionProtocol>(cps));
 	}
 	
 	private void setAllowedCps(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
@@ -457,4 +558,35 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		container.setCompAllowedSpecimenTypes(container.computeAllowedSpecimenTypes());
 		container.setCompAllowedCps(container.computeAllowedCps());
 	}
+	
+
+	private void copy(ContainerType containerType, StorageContainer container) {
+		container.setRowLabelingScheme(containerType.getRowLabelingScheme());
+		container.setColumnLabelingScheme(containerType.getColumnLabelingScheme());
+		container.setNoOfColumns(containerType.getNoOfColumns());
+		container.setNoOfRows(containerType.getNoOfRows());
+		container.setTemperature(containerType.getTemperature());
+	}
+
+	private ContainerType getContainerType(Long id, String name) {
+		ContainerType containerType = null;
+		Object key = null;
+		if (id != null) {
+			containerType = daoFactory.getContainerTypeDao().getById(id);
+			key = id;
+		} else if (StringUtils.isNotBlank(name)) {
+			containerType = daoFactory.getContainerTypeDao().getByName(name);
+			key = name;
+		}
+		
+		if (containerType == null) {
+			if (key == null) {
+				OpenSpecimenException.userError(StorageContainerErrorCode.CONTAINER_TYPE_REQUIRED);
+			} else {
+				OpenSpecimenException.userError(ContainerTypeErrorCode.NOT_FOUND, key);
+			}
+		}
+		return containerType;
+	}
+
 }

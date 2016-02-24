@@ -10,11 +10,14 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainer;
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainerPosition;
+import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerFactory;
 import com.krishagni.catissueplus.core.administrative.events.AssignPositionsOp;
+import com.krishagni.catissueplus.core.administrative.events.ContainerHierarchyDetail;
 import com.krishagni.catissueplus.core.administrative.events.ContainerQueryCriteria;
 import com.krishagni.catissueplus.core.administrative.events.ContainerReplicationDetail;
 import com.krishagni.catissueplus.core.administrative.events.ContainerReplicationDetail.DestinationDetail;
@@ -147,11 +150,7 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		try {
 			StorageContainerDetail input = req.getPayload();			
 			StorageContainer container = containerFactory.createStorageContainer(input);
-			AccessCtrlMgr.getInstance().ensureCreateContainerRights(container);
-			
-			ensureUniqueConstraints(null, container);
-			container.validateRestrictions();			
-			daoFactory.getStorageContainerDao().saveOrUpdate(container, true);
+			container = saveStorageContainer(container);
 			return ResponseEvent.response(StorageContainerDetail.from(container));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -300,7 +299,54 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 			return ResponseEvent.serverError(e);
 		}
 	}
-
+	
+	@Override
+	@PlusTransactional
+	public ResponseEvent<List<StorageContainerSummary>> createContainerHierarchy(RequestEvent<ContainerHierarchyDetail> req) {
+		ContainerHierarchyDetail hierarchyDetail = req.getPayload();
+		List<StorageContainer> containers = new ArrayList<StorageContainer>();
+		try {
+			
+			//TODO: This will get rid once we map storage container with container type
+			ContainerType containerType = getContainerType(hierarchyDetail.getContainerTypeId(),
+					hierarchyDetail.getContainerTypeName());
+			
+			int totalSiteContainers = getTotalSiteContainers(hierarchyDetail);
+			
+			for (int i = 1; i <= hierarchyDetail.getNumOfContainers(); i++) {
+				StorageContainer container = containerFactory.createStorageContainer(hierarchyDetail);
+				
+				/**
+				 * Set name of the container
+				 * 1.For root level container 
+				 *   container name = abbreviation + (total no of containers in parent site + 1)
+				 * 2.For child container
+				 *   container name = parent container name + abbreviation + (total no. of containers in parent + 1)     
+				**/
+				StorageContainer parentContainer = container.getParentContainer();
+				if (parentContainer != null) {
+					int totalChildContainers = parentContainer.getOccupiedPositions().size();
+					container.setName(parentContainer.getName() + containerType.getAbbreviation() + ++totalChildContainers);
+				} else {
+					container.setName(containerType.getAbbreviation() + ++totalSiteContainers);
+				}
+				
+				container = saveStorageContainer(container);
+				if (container.getParentContainer() != null) {
+					container.getParentContainer().addPosition(container.getPosition());
+				}
+				
+				createContainerHierarchy(containerType.getCanHold(), container);
+				containers.add(container);
+			}
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+		return ResponseEvent.response(StorageContainerDetail.from(containers));
+	}
+	
 	@Override
 	public String getObjectName() {
 		return "container";
@@ -342,6 +388,15 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		}
 		
 		ose.checkAndThrow();
+		return container;
+	}
+
+	private StorageContainer saveStorageContainer(StorageContainer container) {
+		AccessCtrlMgr.getInstance().ensureCreateContainerRights(container);
+		
+		ensureUniqueConstraints(null, container);
+		container.validateRestrictions();			
+		daoFactory.getStorageContainerDao().saveOrUpdate(container, true);
 		return container;
 	}
 	
@@ -538,6 +593,57 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		if (replica.getParentContainer() != null && replica.getPosition() != null) {
 			replica.getParentContainer().addPosition(replica.getPosition());
 		}
+	}
+	
+	private void createContainerHierarchy(ContainerType containerType, StorageContainer parentContainer) {
+		if (containerType == null) {
+			return;
+		}
+		
+		int totalChildContainers = parentContainer.getOccupiedPositions().size();
+		for (int row = 1 ; row <= parentContainer.getNoOfRows(); row++) {
+			for (int col = 1; col <= parentContainer.getNoOfColumns(); col++) {
+				StorageContainer container = containerFactory.createStorageContainer(containerType, parentContainer);
+				container.setName(parentContainer.getName() + containerType.getAbbreviation() + ++totalChildContainers);
+				container = saveStorageContainer(container);
+				parentContainer.addPosition(container.getPosition());
+				
+				createContainerHierarchy(containerType.getCanHold(), container);
+			}
+		}
+	}
+	
+	private int getTotalSiteContainers(ContainerHierarchyDetail hierarchyDetail) {
+		String parentContainer = hierarchyDetail.getParentContainer();
+		if (StringUtils.isNotBlank(parentContainer)) {
+			return 0;
+		}
+			
+		StorageContainerListCriteria crit = new StorageContainerListCriteria()
+				.siteName(hierarchyDetail.getParentSite())
+				.exactMatch(true)
+				.topLevelContainers(true)
+				.maxResults(1000);
+				
+		return daoFactory.getStorageContainerDao().getStorageContainers(crit).size();
+	}
+	
+	private ContainerType getContainerType(Long id, String name) {
+		ContainerType containerType = null;
+		Object key = null;
+		if (id != null) {
+			key = id;
+			containerType = daoFactory.getContainerTypeDao().getById(id);
+		} else if (StringUtils.isNotBlank(name)) {
+			key = name;
+			containerType = daoFactory.getContainerTypeDao().getByName(name);
+		}
+		
+		if (containerType == null) {
+			throw OpenSpecimenException.userError(ContainerTypeErrorCode.NOT_FOUND, key);
+		}
+		
+		return containerType;
 	}
 	
 	private StorageContainer getContainerCopy(StorageContainer source) {

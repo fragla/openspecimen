@@ -34,7 +34,7 @@ angular.module('os.biospecimen.specimen')
         parent.increaseFreezeThaw = spec.increaseParentFreezeThaw;
         if (spec.increaseParentFreezeThaw && parent.freezeThawCycle >= spec.freezeThawCycle ||
           !spec.increaseParentFreezeThaw && parent.freezeThawCycle > spec.freezeThawCycle) {
-          Alerts.error('specimens.parent_child_freeze_thaw_error');
+          Alerts.error('specimens.child_freeze_thaw_cycle_lt_parent');
           return;
         }
       }
@@ -87,13 +87,27 @@ angular.module('os.biospecimen.specimen')
         return;
       }
 
+      var parent = scope.parentSpecimen;
+      var increaseParentFreezeThaw = scope.derivative.increaseParentFreezeThaw;
+      if (parent.freezeThawCycle) {
+        parent.increaseFreezeThaw = increaseParentFreezeThaw;
+        if (increaseParentFreezeThaw && parent.freezeThawCycle >= scope.derivative.freezeThawCycle ||
+          !increaseParentFreezeThaw && parent.freezeThawCycle > scope.derivative.freezeThawCycle) {
+          Alerts.error('specimens.child_freeze_thaw_cycle_lt_parent');
+          return;
+        }
+
+        delete scope.derivative.increaseParentFreezeThaw;
+      }
+
       var specimensToSave = undefined;
-      if (closeParent) {
+      if (closeParent || increaseParentFreezeThaw) {
         specimensToSave = [new Specimen({
           id: scope.parentSpecimen.id,
           lineage: scope.parentSpecimen.lineage,
           visitId: scope.visit.id,
-          closeAfterChildrenCreation: true,
+          closeAfterChildrenCreation: closeParent,
+          increaseFreezeThaw: scope.parentSpecimen.increaseFreezeThaw,
           children: [scope.derivative]
         })];
       } else {

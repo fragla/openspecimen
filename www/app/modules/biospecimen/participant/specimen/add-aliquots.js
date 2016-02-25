@@ -2,7 +2,7 @@
 angular.module('os.biospecimen.specimen.addaliquots', [])
   .controller('AddAliquotsCtrl', function(
     $scope, $rootScope, $state, $stateParams, specimen, cpr, visit, extensionCtxt,
-    CollectSpecimensSvc, SpecimenUtil, Util, Alerts) {
+    CollectSpecimensSvc, SpecimenUtil, Util) {
 
     function init() {
       $scope.parentSpecimen = specimen;

@@ -84,6 +84,8 @@ public class Specimen extends BaseExtensionEntity {
 	
 	private Set<String> biohazards = new HashSet<String>();
 
+	private Short freezeThawCycle;
+
 	private Visit visit;
 
 	private SpecimenRequirement specimenRequirement;
@@ -118,8 +120,6 @@ public class Specimen extends BaseExtensionEntity {
 	
 	private transient boolean printLabel;
 
-	private Long freezeThawCycle;
-	
 	public static String getEntityName() {
 		return ENTITY_NAME;
 	}
@@ -354,6 +354,14 @@ public class Specimen extends BaseExtensionEntity {
 		}
 	}
 
+	public Short getFreezeThawCycle() {
+		return freezeThawCycle;
+	}
+
+	public void setFreezeThawCycle(Short freezeThawCycle) {
+		this.freezeThawCycle = freezeThawCycle;
+	}
+
 	public Visit getVisit() {
 		return visit;
 	}
@@ -502,14 +510,6 @@ public class Specimen extends BaseExtensionEntity {
 
 	public void setPrintLabel(boolean printLabel) {
 		this.printLabel = printLabel;
-	}
-
-	public Long getFreezeThawCycle() {
-		return freezeThawCycle;
-	}
-
-	public void setFreezeThawCycle(Long freezeThawCycle) {
-		this.freezeThawCycle = freezeThawCycle;
 	}
 
 	public boolean isActive() {

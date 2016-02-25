@@ -515,7 +515,7 @@
     "create_aliquots": "Create Aliquots",
     "specimen_type": "Specimen Type",
     "anatomic_site": "Anatomic Site",
-    "parent_child_freeze_thaw_error": "Child's freeze/thaw cycle can not be less than parent specimen",
+    "child_freeze_thaw_cycle_lt_parent": "Child's freeze/thaw cycle can not be less than parent specimen",
 
     "col_event": {
       "title": "Collection Details",

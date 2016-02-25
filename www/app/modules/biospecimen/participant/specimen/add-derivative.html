@@ -159,7 +159,7 @@
       <div class="form-group" ng-if="!!parentSpecimen.freezeThawCycle">
         <div class="col-xs-offset-3 col-xs-6 os-text-checkbox os-no-left-padding">
           <div class="checkbox">
-            <os-checkbox ng-model="aliquotSpec.increaseParentFreezeThaw"></os-checkbox>
+            <os-checkbox ng-model="derivative.increaseParentFreezeThaw" ng-change="setFreezeThaw()"></os-checkbox>
           </div>
           <div class="message os-ctrl-padding-top">
             <span translate="specimens.increase_parent_freeze_thaw">Increase parent's Freeze/Thaw</span>

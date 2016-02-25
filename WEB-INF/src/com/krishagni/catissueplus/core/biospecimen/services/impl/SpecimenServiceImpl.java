@@ -577,7 +577,7 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 		}
 
 		if (detail.isIncreaseFreezeThaw() && specimen.getFreezeThawCycle() != null) {
-			specimen.setFreezeThawCycle(specimen.getFreezeThawCycle() + 1);
+			specimen.setFreezeThawCycle((short) (specimen.getFreezeThawCycle() + 1));
 		}
 
 		if (CollectionUtils.isNotEmpty(detail.getChildren())) {

@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainer;
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainerPosition;
@@ -118,9 +119,9 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 		setQuantity(detail, existing, specimen, ose);
 		setConcentration(detail, existing, specimen, ose);
 		setBiohazards(detail, existing, specimen, ose);
+		setFreezeThawCycle(detail, existing, specimen, ose);
 		setComments(detail, existing, specimen, ose);
-		setFreezeThawCycle(detail, existing, parent, specimen, ose);
-				
+
 		if (sr != null && 
 				(!sr.getSpecimenClass().equals(specimen.getSpecimenClass()) ||
 					!sr.getSpecimenType().equals(specimen.getSpecimenType()))) {
@@ -660,6 +661,22 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 			specimen.setBiohazards(existing.getBiohazards());
 		}
 	}
+
+	private void setFreezeThawCycle(SpecimenDetail detail, Specimen existing, Specimen specimen, OpenSpecimenException ose) {
+		Specimen parent = specimen.getParentSpecimen();
+		if (existing != null && !detail.isAttrModified("freezeThawCycle")) {
+			specimen.setFreezeThawCycle(existing.getFreezeThawCycle());
+			return;
+		}
+
+		if (existing == null && parent != null &&
+			ObjectUtils.compare(parent.getFreezeThawCycle(), detail.getFreezeThawCycle()) > 0) {
+			ose.addError(SpecimenErrorCode.CHILD_FREEZE_THAW_CYCLE_LT_PARENT);
+			return;
+		}
+
+		specimen.setFreezeThawCycle(detail.getFreezeThawCycle());
+	}
 	
 	private void setComments(SpecimenDetail detail, Specimen existing, Specimen specimen, OpenSpecimenException ose) {
 		if (existing == null || detail.isAttrModified("comments")) {
@@ -669,21 +686,6 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 		}
 	}
 
-	private void setFreezeThawCycle(SpecimenDetail detail, Specimen existing, Specimen parent, Specimen specimen,
-		OpenSpecimenException ose) {
-		if (existing == null && parent != null && detail.isAttrModified("freezeThawCycle") &&
-			parent.getFreezeThawCycle() > detail.getFreezeThawCycle()) {
-			ose.addError(SpecimenErrorCode.INVALID_FREEZE_THAW_CYCLE);
-			return;
-		}
-
-		if (existing == null || detail.isAttrModified("freezeThawCycle")) {
-			specimen.setFreezeThawCycle(detail.getFreezeThawCycle());
-		} else {
-			specimen.setFreezeThawCycle(existing.getFreezeThawCycle());
-		}
-	}
-	
 	private void setSpecimenPosition(SpecimenDetail detail, Specimen specimen, OpenSpecimenException ose) {
 		StorageContainer container = null;
 

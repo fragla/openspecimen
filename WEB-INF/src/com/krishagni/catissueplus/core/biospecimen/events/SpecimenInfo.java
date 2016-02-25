@@ -83,7 +83,7 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 
 	private Boolean distributed;
 
-	private Long freezeThawCycle;
+	private Short freezeThawCycle;
 	
 	public Long getId() {
 		return id;
@@ -341,11 +341,11 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 		this.distributed = distributed;
 	}
 
-	public Long getFreezeThawCycle() {
+	public Short getFreezeThawCycle() {
 		return freezeThawCycle;
 	}
 
-	public void setFreezeThawCycle(Long freezeThawCycle) {
+	public void setFreezeThawCycle(Short freezeThawCycle) {
 		this.freezeThawCycle = freezeThawCycle;
 	}
 

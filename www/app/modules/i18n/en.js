@@ -11,6 +11,7 @@
     "roles": "Roles",
     "queries": "Queries",
     "containers": "Containers",
+    "container_types": "Container Types",
     "forms": "Forms",
     "specimen_lists": "Specimen Carts",
     "distribution_orders": "Distribution Orders",
@@ -24,6 +25,7 @@
     "roles_desc": "Create, update user access controls",
     "sites_desc": "Add and update sites",
     "containers_desc": "Manage containers and their restrictions",
+    "container_types_desc": "Manage container types",
     "queries_desc": "Create, share and schedule queries",
     "specimen_lists_desc": "Create, share and manage specimen carts",
     "forms_desc": "Create and manage custom forms",
@@ -981,6 +983,29 @@
 
     "menu_options": {
       "delete": "Delete"
+    }
+  },
+
+  "container_type": {
+    "list": "Container Types",
+    "name": "Name",
+    "create_container_type": "Create Container Type",
+    "update_container_type": "Update Container Type",
+    "dimension": "Dimension",
+    "temperature": "Temperature (Celsius)",
+    "labeling_scheme": "Labeling Scheme",
+    "stores_specimens": "Stores Specimens",
+    "abbreviation": "Abbreviation",
+    "can_hold": "Can Hold",
+
+    "tooltip": {
+      "add": "Click to add new Container Type",
+      "edit": "Click to edit Container Type",
+      "search": "Click to search Container Types"
+    },
+
+    "menu": {
+      "overview": "Overview"
     }
   },
 

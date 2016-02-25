@@ -25,9 +25,9 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 	@Override
 	public List<ContainerType> getContainerTypes(ContainerTypeListCriteria crit) {
 		Criteria query = sessionFactory.getCurrentSession().createCriteria(ContainerType.class)
-				.setFirstResult(crit.startAt())
-				.setMaxResults(crit.maxResults())
-				.addOrder(Order.asc("name"));;
+			.setFirstResult(crit.startAt())
+			.setMaxResults(crit.maxResults())
+			.addOrder(Order.asc("name"));;
 		
 		addSearchConditions(query, crit);
 		

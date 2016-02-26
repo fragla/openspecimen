@@ -1,13 +1,15 @@
 <div class="clearfix">
   <div class="col-xs-9">
-    <ul class="os-key-values os-one-col" os-inline-editors on-save="editContainerType">
+    <ul class="os-key-values os-one-col">
+
+      <li class="item">
+        <strong class="key key-sm" translate="container_type.abbreviation">Abbreviation</strong>
+        <span class="value value-md">{{containerType.abbreviation | osNoValue}}</span>
+      </li>
 
       <li class="item">
         <strong class="key key-sm" translate="container_type.temperature">Temperature (In Celsius)</strong>
-        <os-inline-edit editor="temperatureEditor" name="temperature" class="value value-md" value="containerType.temperature">
-          <span ng-if="temperatureEditor.isDisplayMode()">{{temperatureEditor.viewValue | osNoValue}}</span>
-          <input ng-if="temperatureEditor.isEditMode()" type="number" ng-model="temperatureEditor.editValue" class="form-control">
-        </os-inline-edit>
+        <span class="value value-md">{{containerType.temperature | osNoValue}}</span>
       </li>
 
       <li class="item">
@@ -29,35 +31,13 @@
       </li>
 
       <li class="item">
-        <strong class="key key-sm" translate="container_type.abbreviation">Abbreviation</strong>
-        <os-inline-edit editor="abbreviationEditor" name="abbreviation" class="value value-md" value="containerType.abbreviation">
-          <span ng-if="abbreviationEditor.isDisplayMode()">{{abbreviationEditor.viewValue | osNoValue}}</span>
-          <input ng-if="abbreviationEditor.isEditMode()" type="text" ng-model="abbreviationEditor.editValue" class="form-control" ng-maxlength="255">
-        </os-inline-edit>
-      </li>
-
-      <li class="item" ng-if = "containerType.canHold">
         <strong class="key key-sm" translate="container_type.can_hold">Can Hold</strong>
         <a ui-sref="container-type-detail.overview({containerTypeId: containerType.canHold.id})">
-        <os-inline-edit editor="canHoldEditor" name="canHold" class="value value-md" value="containerType.canHold.name">
-          <span ng-if="canHoldEditor.isDisplayMode()">{{canHoldEditor.viewValue | osNoValue}}</span>
-          <input ng-if="canHoldEditor.isEditMode()" type="text" ng-model="canHoldEditor.editValue" class="form-control" ng-maxlength="255">
-        </os-inline-edit>
+          <span class="value value-md">{{containerType.canHold.name}}</span> 
         </a>
-      </li>
-
-      <li class="item" ng-if = "!containerType.canHold">
-        <strong class="key key-sm" translate="container_type.can_hold">Can Hold</strong>
-        <os-inline-edit editor="canHoldEditor" name="canHold" class="value value-md" value="containerType.canHold.name">
-          <span ng-if="canHoldEditor.isDisplayMode()">{{canHoldEditor.viewValue | osNoValue}}</span>
-          <input ng-if="canHoldEditor.isEditMode()" type="text" ng-model="canHoldEditor.editValue" class="form-control" ng-maxlength="255">
-        </os-inline-edit>
+        <span class="value value-md" ng-if="!containerType.canHold" class="value value-md">Not Specified</span>
       </li>
     </ul>
-
-    
-
-        
   </div>
 </div>
 

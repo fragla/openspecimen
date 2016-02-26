@@ -997,6 +997,11 @@
     "stores_specimens": "Stores Specimens",
     "abbreviation": "Abbreviation",
     "can_hold": "Can Hold",
+    "horizontal_dimension": "Columns",
+    "vertical_dimension": "Rows",
+    "labeling_scheme": "Labeling Scheme",
+    "horizontal_labeling_scheme": "Column Labeling Scheme",
+    "vertical_labeling_scheme": "Row Labeling Scheme",
 
     "tooltip": {
       "add": "Click to add new Container Type",
@@ -1006,6 +1011,10 @@
 
     "menu": {
       "overview": "Overview"
+    },
+
+    "filter": {
+      "title": "Filters"
     }
   },
 

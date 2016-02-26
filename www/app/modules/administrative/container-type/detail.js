@@ -1,24 +1,7 @@
 angular.module('os.administrative.container-type.detail', ['os.administrative.models'])
   .controller('ContainerTypeDetailCtrl', function(
-      $scope, $q, containerType,
-      DeleteUtil) {
+      $scope, containerType) {
 
-    function init() {
-      $scope.containerType = containerType;
-    }
+    $scope.containerType = containerType;
 
-    $scope.editContainerType = function(property, value) {
-      var d = $q.defer();
-      d.resolve({});
-      return d.promise;
-    }
-
-    $scope.deleteContainerType = function() {
-      DeleteUtil.delete($scope.containerType, {
-        onDeleteState: 'container-type-list',
-        confirmDelete: 'container-type.confirm_delete'
-      });
-    }
-
-    init();
   });

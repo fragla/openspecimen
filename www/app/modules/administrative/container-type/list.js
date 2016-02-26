@@ -3,7 +3,7 @@ angular.module('os.administrative.container-type.list', ['os.administrative.mode
 
     function init() {
       $scope.containerTypeFilterOpts = {};
-      loadContainerTypes();
+      loadContainerTypes($scope.containerTypeFilterOpts);
       Util.filter($scope, 'containerTypeFilterOpts', loadContainerTypes);
     }
 
@@ -13,10 +13,9 @@ angular.module('os.administrative.container-type.list', ['os.administrative.mode
           $scope.containerTypeList = containerTypes;
         }
       );
-    }
+    };
 
     $scope.showContainerTypeOverview = function(containerType) {
-      console.log(containerType);
       $state.go('container-type-detail.overview', {containerTypeId: containerType.id});
     };
 

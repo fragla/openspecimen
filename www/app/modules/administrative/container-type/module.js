@@ -4,24 +4,35 @@ angular.module('os.administrative.container-type',
     'ui.router',
     'os.administrative.container-type.list',
     'os.administrative.container-type.detail',
-    'os.administrative.container-type.overview'
+    'os.administrative.container-type.overview',
+    'os.administrative.container-type.addedit'
   ])
 
   .config(function($stateProvider) {
     $stateProvider
-      .state('container-type-root', {
-        abstract: true,
-        template: '<div ui-view></div>',
-        parent: 'signed-in'
-      })
       .state('container-type-list', {
-        url:'/container-type',
+        url:'/container-types',
         templateUrl:'modules/administrative/container-type/list.html',
         controller: 'ContainerTypeListCtrl',
-        parent: 'container-type-root'
+        parent: 'signed-in'
+      })
+      .state('container-type-addedit', {
+        url: '/container-type-addedit/:containerTypeId',
+        templateUrl: 'modules/administrative/container-type/addedit.html',
+        resolve: {
+          containerType: function($stateParams, ContainerType) {
+            if ($stateParams.containerTypeId) {
+              return ContainerType.getById($stateParams.containerTypeId);
+            }
+
+            return new ContainerType();
+          }
+        },
+        controller: 'ContainerTypeAddEditCtrl',
+        parent: 'signed-in'
       })
       .state('container-type-detail', {
-        url: '/container-type/:containerTypeId',
+        url: '/container-types/:containerTypeId',
         templateUrl: 'modules/administrative/container-type/detail.html',
         resolve: {
           containerType: function($stateParams, ContainerType) {
@@ -29,7 +40,7 @@ angular.module('os.administrative.container-type',
           }
         },
         controller: 'ContainerTypeDetailCtrl',
-        parent: 'container-type-root'
+        parent: 'signed-in'
       })
       .state('container-type-detail.overview', {
         url: '/overview',
@@ -37,5 +48,5 @@ angular.module('os.administrative.container-type',
         controller: 'ContainerTypeOverviewCtrl',
         parent: 'container-type-detail'
       })
-    });
+  });
 

@@ -33,18 +33,18 @@ public class ContainerTypesController {
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public List<ContainerTypeSummary> getContainerTypes(
-			@RequestParam(value="name", required = false) 
-			String name,
+		@RequestParam(value="name", required = false)
+		String name,
 			
-			@RequestParam(value = "exactMatch", required= false, defaultValue = "false")
-			boolean exactMatch,
+		@RequestParam(value = "exactMatch", required= false, defaultValue = "false")
+		boolean exactMatch,
 			
-			@RequestParam(value = "startAt", required = false, defaultValue = "0")
-			int startAt,
+		@RequestParam(value = "startAt", required = false, defaultValue = "0")
+		int startAt,
 			
-			@RequestParam(value = "maxResults", required = false, defaultValue = "100") 
-			int maxResults
-			) {
+		@RequestParam(value = "maxResults", required = false, defaultValue = "100")
+		int maxResults) {
+
 		ContainerTypeListCriteria crit = new ContainerTypeListCriteria()
 				.query(name)
 				.exactMatch(exactMatch)
@@ -85,11 +85,12 @@ public class ContainerTypesController {
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public ContainerTypeDetail updateContainerType(
-			@PathVariable("id")
-			Long id,
+		@PathVariable("id")
+		Long id,
 			
-			@RequestBody
-			ContainerTypeDetail detail) {
+		@RequestBody
+		ContainerTypeDetail detail) {
+
 		detail.setId(id);
 		
 		RequestEvent<ContainerTypeDetail> req = new RequestEvent<ContainerTypeDetail>(detail);

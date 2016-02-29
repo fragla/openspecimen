@@ -3,10 +3,12 @@
     <ul os-breadcrumbs>
       <li><a ui-sref="container-type-list" translate="container_type.list">Container Types</a></li>
     </ul>
-    <h3>{{containerType.name}}</h3>
+    <h3>
+       <span>{{containerType.name}}</span>
+    </h3>
     <div class="os-btns right">
-      <button show-if-allowed="containerTypeResource.updateOpts" class="primary"
-        title="{{'container_type.tooltip.add' | translate}}" ui-sref="container-type-addedit({containerTypeId: containerType.id})">
+      <button show-if-admin class="primary" title="{{'container_type.tooltip.add' | translate}}" 
+        ui-sref="container-type-addedit({containerTypeId: containerType.id})">
         <span class="fa fa-pencil"></span>
         <span translate="common.buttons.edit">Edit</span>
       </button>
@@ -17,7 +19,7 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
           <li>
-            <a ui-sref="container-hierarchy({containerType: containerType.name})">
+            <a ui-sref="container-create-hierarchy({containerType: containerType.name})">
               <span class="fa fa-sitemap"></span>
               <span translate="container_type.create_hierarchy">Create Hierarchy</span>
             </a>
@@ -32,12 +34,11 @@
       <li ui-sref-active="active">
         <a ui-sref=".overview">
           <i class="fa fa-eye"></i>
-          <span class="os-title" translate="container_type.menu.overview"> Overview </span>
+          <span class="os-title" translate="container_type.menu.overview">Overview</span>
         </a>
       </li>
     </ul>
   </div>
 
-  <div class="os-side-menu-page-content" ui-view>
-  </div>
+  <div class="os-side-menu-page-content" ui-view></div>
 </div>

@@ -91,8 +91,8 @@ angular.module('os.administrative.container',
         },
         parent: 'container-root'
       })
-      .state('container-hierarchy',  {
-        url: '/container-hierarchy?containerType',
+      .state('container-create-hierarchy',  {
+        url: '/container-create-hierarchy?containerType',
         templateUrl: 'modules/administrative/container/create-hierarchy.html',
         controller: 'ContainerCreateHierarchyCtrl',
         parent: 'container-root'

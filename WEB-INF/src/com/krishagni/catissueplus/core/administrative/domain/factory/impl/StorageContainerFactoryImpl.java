@@ -72,6 +72,37 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		return container;
 	}
 	
+	@Override
+	public StorageContainer createStorageContainer(StorageContainer existing, StorageContainerDetail detail) {
+		StorageContainer container = new StorageContainer();
+		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
+		
+		container.setId(existing.getId());
+		if (detail.isAttrModified("storeSpecimensEnabled")) {
+			container.setStoreSpecimenEnabled(detail.isStoreSpecimensEnabled());
+		} else {
+			container.setStoreSpecimenEnabled(existing.isStoreSpecimenEnabled());
+		}
+		
+		setName(detail, existing, container, ose);
+		setBarcode(detail, existing, container, ose);
+		setTemperature(detail, existing, container, ose);
+		setCapacity(detail, existing, container, ose);
+		setLabelingSchemes(detail, existing, container, ose);
+		setSiteAndParentContainer(detail, existing, container, ose);
+		setPosition(detail, existing, container, ose);
+		setCreatedBy(detail, existing, container, ose);
+		setActivityStatus(detail, existing, container, ose);
+		setComments(detail, existing, container, ose);
+		setAllowedSpecimenClasses(detail, existing, container, ose);
+		setAllowedSpecimenTypes(detail, existing, container, ose);
+		setAllowedCps(detail, existing, container, ose);
+		setComputedRestrictions(container);
+		
+		ose.checkAndThrow();
+		return container;
+	}
+	
 	public StorageContainer createStorageContainer(ContainerHierarchyDetail hierarchyDetail) {
 		StorageContainer container = new StorageContainer();
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
@@ -100,36 +131,6 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		setPosition((StorageLocationSummary) null, container, ose);
 		setCreatedBy((UserSummary) null, container, ose);
 		setActivityStatus((String) null, container, ose);
-		
-		ose.checkAndThrow();
-		return container;
-	}
-	
-	@Override
-	public StorageContainer createStorageContainer(StorageContainer existing, StorageContainerDetail detail) {
-		StorageContainer container = new StorageContainer();
-		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
-		
-		container.setId(existing.getId());
-		if (detail.isAttrModified("storeSpecimensEnabled")) {
-			container.setStoreSpecimenEnabled(detail.isStoreSpecimensEnabled());
-		} else {
-			container.setStoreSpecimenEnabled(existing.isStoreSpecimenEnabled());
-		}
-		
-		setName(detail, existing, container, ose);
-		setBarcode(detail, existing, container, ose);
-		setTemperature(detail, existing, container, ose);
-		setCapacity(detail, existing, container, ose);
-		setLabelingSchemes(detail, existing, container, ose);
-		setSiteAndParentContainer(detail, existing, container, ose);
-		setPosition(detail, existing, container, ose);
-		setCreatedBy(detail, existing, container, ose);
-		setActivityStatus(detail, existing, container, ose);
-		setComments(detail, existing, container, ose);
-		setAllowedSpecimenClasses(detail, existing, container, ose);
-		setAllowedSpecimenTypes(detail, existing, container, ose);
-		setAllowedCps(detail, existing, container, ose);
 		setComputedRestrictions(container);
 		
 		ose.checkAndThrow();
@@ -276,6 +277,15 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		}
 	}
 	
+	private void setSiteAndParentContainer(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
+		if (detail.isAttrModified("siteName") || detail.isAttrModified("storageLocation")) {
+			setSiteAndParentContainer(detail, container, ose);
+		} else {
+			container.setSite(existing.getSite());
+			container.setParentContainer(existing.getParentContainer());
+		}
+	}	
+	
 	private void setSiteAndParentContainer(StorageContainer parentContainer, StorageContainer container, OpenSpecimenException ose) {		
 		if (parentContainer == null) {
 			ose.addError(StorageContainerErrorCode.REQUIRED_SITE_OR_PARENT_CONT);
@@ -302,18 +312,8 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		}
 	}
 	
-	private void setSiteAndParentContainer(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
-		if (detail.isAttrModified("siteName") || detail.isAttrModified("storageLocation")) {
-			setSiteAndParentContainer(detail, container, ose);
-		} else {
-			container.setSite(existing.getSite());
-			container.setParentContainer(existing.getParentContainer());
-		}
-	}
-	
 	private Site setSite(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
-		String siteName = detail.getSiteName();
-		return setSite(siteName, container, ose);		
+		return setSite(detail.getSiteName(), container, ose);		
 	}
 
 	private Site setSite(String siteName, StorageContainer container, OpenSpecimenException ose) {
@@ -426,8 +426,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	private void setActivityStatus(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
-		String activityStatus = detail.getActivityStatus();
-		setActivityStatus(activityStatus, container, ose);
+		setActivityStatus(detail.getActivityStatus(), container, ose);
 	}
 
 	private void setActivityStatus(String activityStatus, StorageContainer container, OpenSpecimenException ose) {
@@ -584,12 +583,11 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		
 		if (containerType == null) {
 			if (key == null) {
-				OpenSpecimenException.userError(StorageContainerErrorCode.CONTAINER_TYPE_REQUIRED);
+				OpenSpecimenException.userError(StorageContainerErrorCode.TYPE_REQUIRED);
 			} else {
 				OpenSpecimenException.userError(ContainerTypeErrorCode.NOT_FOUND, key);
 			}
 		}
 		return containerType;
 	}
-
 }

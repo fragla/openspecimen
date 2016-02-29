@@ -52,7 +52,7 @@ public enum StorageContainerErrorCode implements ErrorCode {
 	
 	INVALID_CPS, 
 	
-	CONTAINER_TYPE_REQUIRED;
+	TYPE_REQUIRED;
 	
 	@Override
 	public String code() {

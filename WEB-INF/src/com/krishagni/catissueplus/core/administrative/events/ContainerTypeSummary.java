@@ -89,7 +89,7 @@ public class ContainerTypeSummary {
 		detail.setActivityStatus(containerType.getActivityStatus());
 	}
 	
-	public static ContainerTypeSummary from (ContainerType containerType) {
+	public static ContainerTypeSummary from(ContainerType containerType) {
 		if (containerType == null) {
 			return null;
 		}
@@ -99,7 +99,7 @@ public class ContainerTypeSummary {
 		return result;
 	}
 	
-	public static List<ContainerTypeSummary> from (List<ContainerType> containerTypes) {
+	public static List<ContainerTypeSummary> from(List<ContainerType> containerTypes) {
 		return containerTypes.stream()
 			.map(ContainerTypeSummary::from)
 			.collect(Collectors.toList());

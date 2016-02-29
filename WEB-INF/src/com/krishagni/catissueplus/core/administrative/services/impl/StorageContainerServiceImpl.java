@@ -339,12 +339,13 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 				createContainerHierarchy(containerType.getCanHold(), container);
 				containers.add(container);
 			}
+			
+			return ResponseEvent.response(StorageContainerDetail.from(containers));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
 			return ResponseEvent.serverError(e);
 		}
-		return ResponseEvent.response(StorageContainerDetail.from(containers));
 	}
 	
 	@Override

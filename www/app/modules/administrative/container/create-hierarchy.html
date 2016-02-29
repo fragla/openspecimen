@@ -10,9 +10,11 @@
   <div class="container">
     <form name="chform" class="form-horizontal" os-form-validator="chform" validator="chformValidator" novalidate>
       <div class="form-group">
-        <label class="col-xs-3 control-label" translate="container.container_type">Container Type</label>
+        <label class="col-xs-3 control-label">
+          <span translate="container.container_type">Container Type</span>
+        </label>
         <div class="col-xs-6">
-          <os-select ng-model="hierarchy.containerTypeName" list="containerTypes"
+          <os-select ng-model="hierarchySpec.containerTypeName" list="containerTypes"
             display-prop="name" select-prop="name" name="containerType"
             placeholder="{{'container_type.container_type' | translate}}" required>
           </os-select>
@@ -21,9 +23,11 @@
       </div>
 
       <div class="form-group">
-        <label class="col-xs-3 control-label" translate="container.parent_site">Parent Site</label>
+        <label class="col-xs-3 control-label">
+          <span translate="container.parent_site">Parent Site</span>
+        </label>
         <div class="col-xs-6">
-          <os-select ng-model="hierarchy.parentSite" list="sites" placeholder="{{'container.site' | translate}}"
+          <os-select ng-model="hierarchySpec.parentSite" list="sites" placeholder="{{'container.site' | translate}}"
             name="parentSite" on-change="onSiteSelect" required>
           </os-select>
           <div os-field-error field="chform.parentSite"></div>
@@ -31,40 +35,48 @@
       </div>
 
       <div class="form-group">
-        <label class="col-xs-3 control-label" translate="container.parent_container">Parent Container</label>
+        <label class="col-xs-3 control-label">
+          <span translate="container.parent_container">Parent Container</span>
+        </label>
         <div class="col-xs-6">
-          <os-select ng-model="hierarchy.parentContainer" list="containers" placeholder="{{'container.container' | translate}}"
+          <os-select ng-model="hierarchySpec.parentContainer" list="containers" placeholder="{{'container.container' | translate}}"
             display-prop="name" select-prop="name" refresh="searchContainers">
           </os-select>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-xs-3 control-label" translate="container_type.no_of_containers">No of Containers</label>
+        <label class="col-xs-3 control-label">
+          <span translate="container_type.no_of_containers">Number of Containers</span>
+        </label>
         <div class="col-xs-6">
-          <input type="text" name="noOfContainers" ng-model="hierarchy.numOfContainers" class="form-control"
+          <input type="text" name="noOfContainers" ng-model="hierarchySpec.numOfContainers" class="form-control"
             placeholder="{{'container_type.no_of_containers' | translate}}" ng-pattern="/^[0-9]*$/" required>
           <div os-field-error field="chform.noOfContainers"></div>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-xs-3 control-label" translate="container.collection_protocol">Collection Protocol</label>
+        <label class="col-xs-3 control-label">
+          <span translate="container.collection_protocol">Collection Protocol</span>
+        </label>
         <div class="col-xs-6">
-          <os-select multiple ng-model="hierarchy.allowedCollectionProtocols" list="cps"
+          <os-select multiple ng-model="hierarchySpec.allowedCollectionProtocols" list="cps"
              placeholder="{{container.collection_protocol | translate}}">
           </os-select>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-xs-3 control-label" translate="container.specimen_types">Specimen Types</label>
+        <label class="col-xs-3 control-label">
+          <span translate="container.specimen_types">Specimen Types</span>
+        </label>
         <div class="col-xs-6">
           <os-group-selector
             placeholder="{{container.specimen_types | translate}}"
             opts="specimenTypeSelectorOpts"
-            selected-categories="hierarchy.allowedSpecimenClasses"
-            selected-category-items="hierarchy.allowedSpecimenTypes">
+            selected-categories="hierarchySpec.allowedSpecimenClasses"
+            selected-category-items="hierarchySpec.allowedSpecimenTypes">
           </os-group-selector>
         </div>
       </div>
@@ -74,7 +86,7 @@
       <div class="form-group">
         <div class="col-xs-offset-3 col-xs-6">
           <button class="btn btn-primary" os-form-submit="create()">
-            <span translate="common.buttons.create"> Create </span>
+            <span translate="common.buttons.create">Create</span>
           </button>
           <button class="btn os-btn-text" ng-click="back()" translate="common.buttons.discard">Discard</button>
         </div>

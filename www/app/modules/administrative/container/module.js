@@ -9,7 +9,8 @@ angular.module('os.administrative.container',
     'os.administrative.container.locations',
     'os.administrative.container.replicate',
     'os.administrative.container.util',
-    'os.administrative.container.map'
+    'os.administrative.container.map',
+    'os.administrative.container.createhierarchy'
   ])
 
   .config(function($stateProvider) {
@@ -88,6 +89,12 @@ angular.module('os.administrative.container',
             return Container.getById($stateParams.containerId);
           }
         },
+        parent: 'container-root'
+      })
+      .state('container-hierarchy',  {
+        url: '/container-hierarchy?containerType',
+        templateUrl: 'modules/administrative/container/create-hierarchy.html',
+        controller: 'ContainerCreateHierarchyCtrl',
         parent: 'container-root'
       })
       .state('container-detail', {

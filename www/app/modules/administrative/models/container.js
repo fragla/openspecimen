@@ -1,6 +1,6 @@
 
 angular.module('os.administrative.models.container', ['os.common.models'])
-  .factory('Container', function(osModel, $q, $http) {
+  .factory('Container', function(osModel, $q, $http, ApiUtil) {
     var Container = new osModel('storage-containers');
 
     Container.prototype.getType = function() {
@@ -115,6 +115,10 @@ angular.module('os.administrative.models.container', ['os.common.models'])
         }
       );
     };
+
+    Container.createHierarchy = function(hierarchyDetail) {
+      return $http.post(Container.url() + 'create-hierarchy', hierarchyDetail).then(ApiUtil.processResp);
+    }
 
     return Container;
   });

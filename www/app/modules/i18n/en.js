@@ -961,6 +961,9 @@
     "bulk_import": "Import Storage Containers",
     "bulk_import_jobs": "Import Storage Containers Jobs List",
 
+    "create_hierarchy": "Create Hierarchy",
+    "container_type": "Container Type",
+
     "tooltip": {
       "view_details": "Click to view Storage Container details",
       "add": "Click to add new Storage Container",
@@ -981,6 +984,33 @@
 
     "menu_options": {
       "delete": "Delete"
+    }
+  },
+
+  "container_type": {
+    "list": "Container Types",
+    "name": "Name",
+    "create_container_type": "Create Container Type",
+    "update_container_type": "Update Container Type",
+    "dimension": "Dimension",
+    "temperature": "Temperature (Celsius)",
+    "labeling_scheme": "Labeling Scheme",
+    "stores_specimens": "Stores Specimens",
+    "abbreviation": "Abbreviation",
+    "can_hold": "Can Hold",
+    "create_hierarchy": "Create Container Hierarchy",
+    "no_of_containers": "No of Containers",
+    "container_type": "Container Type",
+
+
+    "tooltip": {
+      "add": "Click to add new Container Type",
+      "edit": "Click to edit Container Type",
+      "search": "Click to search Container Types"
+    },
+
+    "menu": {
+      "overview": "Overview"
     }
   },
 

@@ -4,11 +4,28 @@
       <span translate="container.list">Storage Containers</span>
     </h3>
     <div class="os-btns right">
-      <button show-if-allowed="containerResource.createOpts" class="primary"
-        title="{{'container.tooltip.add' | translate}}" ui-sref="container-addedit({containerId: ''})">
-        <span class="fa fa-plus"></span>
-        <span translate="common.buttons.create">Create</span>
-      </button>
+      <div dropdown class="inline">
+        <button show-if-allowed="containerResource.createOpts" class="primary dropdown-toggle"
+          title="{{'container.tooltip.add' | translate}}" ui-sref="container-addedit({containerId: ''})">
+          <span class="fa fa-plus"></span>
+          <span translate="common.buttons.create">Create</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a ui-sref="container-addedit({containerId: ''})">
+              <i class="fa fa-plus"></i>
+              <span translate="common.buttons.create">Create</span>
+            </a>
+          </li>
+          <li>
+            <a ui-sref="container-hierarchy">
+              <i class="fa fa-sitemap"></i>
+              <span translate="">Create Hierarchy</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
       <div show-if-allowed="containerResource.createOpts" dropdown class="inline">
         <button class="default dropdown-toggle">
           <span translate="common.buttons.import">Import</span>

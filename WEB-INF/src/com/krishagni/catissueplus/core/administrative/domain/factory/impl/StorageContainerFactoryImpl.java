@@ -331,30 +331,12 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	private StorageContainer setParentContainer(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
-		StorageContainer parentContainer = null;
-		Object key = null;
-		
 		StorageLocationSummary storageLocation = detail.getStorageLocation();
 		if (storageLocation == null) {
 			return null;
 		}
 		
-		if (storageLocation.getId() != null) {
-			parentContainer = daoFactory.getStorageContainerDao().getById(storageLocation.getId());
-			key = storageLocation.getId();
-		} else if (StringUtils.isNotBlank(storageLocation.getName())) {
-			parentContainer = daoFactory.getStorageContainerDao().getByName(storageLocation.getName());
-			key = storageLocation.getName();
-		}
-		
-		if (parentContainer == null) { 
-			if (key != null) {
-				ose.addError(StorageContainerErrorCode.PARENT_CONT_NOT_FOUND, key);
-			}
-			
-			return null;
-		}
-		
+		StorageContainer parentContainer = getContainer(storageLocation.getId(), storageLocation.getName(), ose);
 		container.setParentContainer(parentContainer);
 		return parentContainer;
 	}
@@ -364,7 +346,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 			return null;
 		}
 		
-		StorageContainer parentContainer = daoFactory.getStorageContainerDao().getByName(parentContainerName);
+		StorageContainer parentContainer = getContainer(null, parentContainerName, ose); 
 		container.setParentContainer(parentContainer);
 		return parentContainer;
 	}
@@ -566,6 +548,27 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		container.setNoOfColumns(containerType.getNoOfColumns());
 		container.setNoOfRows(containerType.getNoOfRows());
 		container.setTemperature(containerType.getTemperature());
+	}
+	
+	private StorageContainer getContainer(Long id, String name, OpenSpecimenException ose) {
+		StorageContainer parentContainer = null;
+		Object key = null;
+		if (id != null) {
+			parentContainer = daoFactory.getStorageContainerDao().getById(id);
+			key = id;
+		} else if (StringUtils.isNotBlank(name)) {
+			parentContainer = daoFactory.getStorageContainerDao().getByName(name);
+			key = name;
+		}
+		
+		if (parentContainer == null) { 
+			if (key != null) {
+				ose.addError(StorageContainerErrorCode.PARENT_CONT_NOT_FOUND, key);
+			}
+			
+			return null;
+		}
+		return parentContainer;
 	}
 
 	private ContainerType getContainerType(Long id, String name) {

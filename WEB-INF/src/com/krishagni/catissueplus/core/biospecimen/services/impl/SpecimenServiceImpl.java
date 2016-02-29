@@ -286,7 +286,7 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 				return ResponseEvent.userError(SpecimenErrorCode.INVALID_QTY_OR_CNT);
 			}
 
-			//write to set the freezethawcycle count of parent
+			//write to set the freezethawcycles count of parent
 			List<SpecimenDetail> aliquots = new ArrayList<SpecimenDetail>();
 			for (int i = 0; i < count; ++i) {
 				SpecimenDetail aliquot = new SpecimenDetail();
@@ -576,8 +576,8 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 			specimen = saveOrUpdate(detail, existing, parent);
 		}
 
-		if (detail.isIncreaseFreezeThaw() && specimen.getFreezeThawCycle() != null) {
-			specimen.setFreezeThawCycle((short) (specimen.getFreezeThawCycle() + 1));
+		if (detail.isIncrementFreezeThaw() && specimen.getFreezeThawCycles() != null) {
+			specimen.setFreezeThawCycles(specimen.getFreezeThawCycles() + 1);
 		}
 
 		if (CollectionUtils.isNotEmpty(detail.getChildren())) {

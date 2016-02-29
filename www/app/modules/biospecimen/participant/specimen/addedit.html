@@ -158,10 +158,10 @@
       <div class="form-group">
         <label class="col-xs-3 control-label" translate="specimens.freeze_thaw_cycle">Freeze/Thaw Cycle</label>
         <div class="col-xs-6">
-          <input name="freezeThawCycle" ng-model="currSpecimen.freezeThawCycle"
-                 class="form-control" type="text" placeholder="{{'specimens.freeze_thaw_cycle' | translate}}"
-                 ng-pattern="/^[0-9]*$/">
-          <div os-field-error field="sform.freezeThawCycle"></div>
+          <input name="freezeThawCycles" ng-model="currSpecimen.freezeThawCycles"
+            class="form-control" type="text" placeholder="{{'specimens.freeze_thaw_cycle' | translate}}"
+            ng-pattern="/^[0-9]*$/">
+          <div os-field-error field="sform.freezeThawCycles"></div>
         </div>
       </div>
 
@@ -185,6 +185,7 @@
             <div os-field-error field="sform.anatomicSite"></div>
           </div>
         </div>
+
         <div class="form-group">
           <label class="col-xs-3 control-label" translate="specimens.laterality">Laterality</label>
           <div class="col-xs-6">
@@ -194,8 +195,6 @@
             <div os-field-error field="sform.laterality"></div>
           </div>
         </div>
-
-
 
         <div class="form-group">
           <label class="col-xs-3 control-label">
@@ -221,7 +220,6 @@
               </os-users>
               <div os-field-error field="sform.collector"></div>
             </div>
-
             <div class="os-date-time clearfix">
               <div class="col-xs-2 input">
                 <os-date-picker name="collectionDate" date="currSpecimen.collectionEvent.time"

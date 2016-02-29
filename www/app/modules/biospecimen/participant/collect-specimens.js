@@ -49,7 +49,7 @@ angular.module('os.biospecimen.participant.collect-specimens',
               specimen.printLabel = (specimen.labelAutoPrintMode == 'ON_COLLECTION');
             }
 
-            if (specimen.closeAfterChildrenCreation || specimen.increaseFreezeThaw) {
+            if (specimen.closeAfterChildrenCreation || specimen.incrementFreezeThaw) {
               specimen.selected = true;
             }
 
@@ -488,8 +488,8 @@ angular.module('os.biospecimen.participant.collect-specimens',
             if (visited.indexOf(uiSpecimen) >= 0 || // already visited
                 !uiSpecimen.selected || // not selected
                 (uiSpecimen.existingStatus == 'Collected' && 
-                !uiSpecimen.closeAfterChildrenCreation && !uiSpecimen.increaseFreezeThaw)) {
-                // collected and not close after children creation
+                !uiSpecimen.closeAfterChildrenCreation && !uiSpecimen.incrementFreezeThaw)) {
+                // collected and not close after children creation and not incrementing freeze/thaw cycle
               return;
             }
 
@@ -531,8 +531,8 @@ angular.module('os.biospecimen.participant.collect-specimens',
           status: uiSpecimen.status,
           closeAfterChildrenCreation: uiSpecimen.closeAfterChildrenCreation,
           createdOn: uiSpecimen.lineage != 'New' ? uiSpecimen.createdOn : undefined,
-          freezeThawCycle: uiSpecimen.freezeThawCycle,
-          increaseFreezeThaw: uiSpecimen.increaseFreezeThaw,
+          freezeThawCycles: uiSpecimen.freezeThawCycles,
+          incrementFreezeThaw: uiSpecimen.incrementFreezeThaw,
           extensionDetail: uiSpecimen.extensionDetail
         };
 

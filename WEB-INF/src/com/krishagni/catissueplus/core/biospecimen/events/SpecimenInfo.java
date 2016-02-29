@@ -83,7 +83,7 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 
 	private Boolean distributed;
 
-	private Short freezeThawCycle;
+	private Integer freezeThawCycles;
 	
 	public Long getId() {
 		return id;
@@ -341,12 +341,12 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 		this.distributed = distributed;
 	}
 
-	public Short getFreezeThawCycle() {
-		return freezeThawCycle;
+	public Integer getFreezeThawCycles() {
+		return freezeThawCycles;
 	}
 
-	public void setFreezeThawCycle(Short freezeThawCycle) {
-		this.freezeThawCycle = freezeThawCycle;
+	public void setFreezeThawCycles(Integer freezeThawCycles) {
+		this.freezeThawCycles = freezeThawCycles;
 	}
 
 	public static SpecimenInfo from(Specimen specimen) {
@@ -408,7 +408,7 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 		result.setCprId(specimen.getVisit().getRegistration().getId());
 		result.setCpId(specimen.getCollectionProtocol().getId());
 		result.setCpShortTitle(specimen.getCollectionProtocol().getShortTitle());
-		result.setFreezeThawCycle(specimen.getFreezeThawCycle());
+		result.setFreezeThawCycles(specimen.getFreezeThawCycles());
 	}	
 	
 	public static void fromTo(SpecimenRequirement anticipated, SpecimenInfo result) {

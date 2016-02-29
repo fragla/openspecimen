@@ -84,7 +84,7 @@ public class Specimen extends BaseExtensionEntity {
 	
 	private Set<String> biohazards = new HashSet<String>();
 
-	private Short freezeThawCycle;
+	private Integer freezeThawCycles;
 
 	private Visit visit;
 
@@ -354,12 +354,12 @@ public class Specimen extends BaseExtensionEntity {
 		}
 	}
 
-	public Short getFreezeThawCycle() {
-		return freezeThawCycle;
+	public Integer getFreezeThawCycles() {
+		return freezeThawCycles;
 	}
 
-	public void setFreezeThawCycle(Short freezeThawCycle) {
-		this.freezeThawCycle = freezeThawCycle;
+	public void setFreezeThawCycles(Integer freezeThawCycles) {
+		this.freezeThawCycles = freezeThawCycles;
 	}
 
 	public Visit getVisit() {
@@ -681,7 +681,7 @@ public class Specimen extends BaseExtensionEntity {
 		setExtension(specimen.getExtension());
 		setPrintLabel(specimen.isPrintLabel());
 		updatePosition(specimen.getPosition());
-		setFreezeThawCycle(specimen.getFreezeThawCycle());
+		setFreezeThawCycles(specimen.getFreezeThawCycles());
 		checkQtyConstraints();
 	}
 	

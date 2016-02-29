@@ -11,8 +11,8 @@ angular.module('os.biospecimen.specimen.addderivative', [])
       SpecimenUtil.loadSpecimenClasses($scope);
       SpecimenUtil.loadPathologyStatuses($scope);
 
-      if ($scope.parentSpecimen.freezeThawCycle) {
-        $scope.derivative.increaseParentFreezeThaw = true;
+      if ($scope.parentSpecimen.freezeThawCycles != null) {
+        $scope.derivative.incrementParentFreezeThaw = true;
         setFreezeThaw();
       }
 
@@ -22,10 +22,10 @@ angular.module('os.biospecimen.specimen.addderivative', [])
     }
 
     function setFreezeThaw() {
-      if ($scope.derivative.increaseParentFreezeThaw) {
-        $scope.derivative.freezeThawCycle = $scope.parentSpecimen.freezeThawCycle + 1;
+      if ($scope.derivative.incrementParentFreezeThaw) {
+        $scope.derivative.freezeThawCycles = $scope.parentSpecimen.freezeThawCycles + 1;
       } else {
-        $scope.derivative.freezeThawCycle = $scope.parentSpecimen.freezeThawCycle;
+        $scope.derivative.freezeThawCycles = $scope.parentSpecimen.freezeThawCycles;
       }
     }
 

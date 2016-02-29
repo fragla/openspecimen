@@ -119,7 +119,7 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 		setQuantity(detail, existing, specimen, ose);
 		setConcentration(detail, existing, specimen, ose);
 		setBiohazards(detail, existing, specimen, ose);
-		setFreezeThawCycle(detail, existing, specimen, ose);
+		setFreezeThawCycles(detail, existing, specimen, ose);
 		setComments(detail, existing, specimen, ose);
 
 		if (sr != null && 
@@ -662,20 +662,30 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 		}
 	}
 
-	private void setFreezeThawCycle(SpecimenDetail detail, Specimen existing, Specimen specimen, OpenSpecimenException ose) {
+	private void setFreezeThawCycles(SpecimenDetail detail, Specimen existing, Specimen specimen, OpenSpecimenException ose) {
 		Specimen parent = specimen.getParentSpecimen();
-		if (existing != null && !detail.isAttrModified("freezeThawCycle")) {
-			specimen.setFreezeThawCycle(existing.getFreezeThawCycle());
+		if ((existing == null || existing.getFreezeThawCycles() == null) && parent == null && detail.getFreezeThawCycles() == null) {
+			specimen.setFreezeThawCycles(0);
+			//
+			//for new parent specimen, default value is zero.
+			//
 			return;
 		}
 
-		if (existing == null && parent != null &&
-			ObjectUtils.compare(parent.getFreezeThawCycle(), detail.getFreezeThawCycle()) > 0) {
-			ose.addError(SpecimenErrorCode.CHILD_FREEZE_THAW_CYCLE_LT_PARENT);
+		if (existing != null && !detail.isAttrModified("freezeThawCycles")) {
+			specimen.setFreezeThawCycles(existing.getFreezeThawCycles());
 			return;
 		}
 
-		specimen.setFreezeThawCycle(detail.getFreezeThawCycle());
+		if (existing == null && parent != null && ObjectUtils.compare(parent.getFreezeThawCycles(), detail.getFreezeThawCycles()) > 0) {
+			ose.addError(SpecimenErrorCode.FREEZE_THAW_CYCLE_LT_PARENT);
+			//
+			// At point of child creation, ensuring its freeze thaw is >= parent's
+			//
+			return;
+		}
+
+		specimen.setFreezeThawCycles(detail.getFreezeThawCycles());
 	}
 	
 	private void setComments(SpecimenDetail detail, Specimen existing, Specimen specimen, OpenSpecimenException ose) {

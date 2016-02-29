@@ -43,8 +43,8 @@
 		
     <property name="tissueSite" type="string" column="TISSUE_SITE" />
 
-    <property name="freezeThawCycle" column="FREEZE_THAW_CYCLE"/>
-  
+    <property name="freezeThawCycles" column="FREEZE_THAW_CYCLES"/>
+
     <set name="biohazards" table="OS_SPECIMEN_BIOHAZARDS" cascade="all-delete-orphan">
       <key column="SPECIMEN_ID" />
       <element column="BIOHAZARD" type="string" />

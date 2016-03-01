@@ -120,7 +120,6 @@ angular.module('os.administrative.container.util', ['os.common.box'])
       var allowedTypes = parentContainer.calcAllowedSpecimenTypes;
       scope.specimenTypeSelectorOpts.allowAll = allowedClasses;
 
-
       var filtered = allSpecimenTypes.filter(
         function(specimenType) {
           return allowedClasses.indexOf(specimenType.parent) >= 0 ||

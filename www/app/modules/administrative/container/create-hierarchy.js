@@ -1,7 +1,7 @@
 angular.module('os.administrative.container.createhierarchy', ['os.administrative.models'])
   .controller('ContainerCreateHierarchyCtrl', function(
     $scope, $state, $stateParams,
-    ContainerType, Container, Site, CollectionProtocol, PvManager, ContainerUtil, Util) {
+    ContainerType, Container, Site, ContainerUtil, Util) {
     var siteContainersMap = {};
 
     function init() {
@@ -13,8 +13,6 @@ angular.module('os.administrative.container.createhierarchy', ['os.administrativ
 
       $scope.specimenTypes = [];
 
-      loadPvs();
-
       $scope.specimenTypeSelectorOpts = {
         items: $scope.specimenTypes,
         categoryAttr: 'parent',
@@ -22,10 +20,13 @@ angular.module('os.administrative.container.createhierarchy', ['os.administrativ
         allowAll: undefined
       };
 
+      loadPvs();
+
       //
       // If user creates hierarchy from container type, container type should be pre selected
       //
       $scope.hierarchySpec.containerTypeName = $stateParams.containerType || undefined;
+
 
       watchParentContainer();
     }
@@ -96,9 +97,8 @@ angular.module('os.administrative.container.createhierarchy', ['os.administrativ
       Container.createHierarchy($scope.hierarchySpec).then(
         function(resp) {
           if ($scope.hierarchySpec.parentContainer) {
-            $state.go('container-detail.overview', {containerId: resp.data[0].storageLocation.id});
-          }
-          else {
+            $state.go('container-detail.overview', {containerId: resp[0].storageLocation.id});
+          } else {
             $state.go('container-list');
           }
         }

@@ -110,17 +110,14 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		ContainerType containerType = getContainerType(hierarchyDetail.getContainerTypeId(), hierarchyDetail.getContainerTypeName());
 		copy(containerType, container);
 		
+		setSiteAndParentContainer(hierarchyDetail, container, ose);
 		setPosition((StorageLocationSummary) null, container, ose);
 		setCreatedBy((UserSummary) null, container, ose);
 		setActivityStatus((String) null, container, ose);
-		
-		setSiteAndParentContainer(hierarchyDetail, container, ose);
 		setAllowedSpecimenClasses(hierarchyDetail.getAllowedSpecimenClasses(), container, ose);
 		setAllowedSpecimenTypes(hierarchyDetail.getAllowedSpecimenTypes(), container, ose);
 		setAllowedCps(hierarchyDetail.getAllowedCollectionProtocols(), container, ose);
 		setComputedRestrictions(container);
-		
-		
 		
 		ose.checkAndThrow();
 		return container;
@@ -271,7 +268,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		Site site = setSite(detail, container, ose);
 		StorageContainer parentContainer = setParentContainer(detail, container, ose);
 		
-		setSite(container, site, parentContainer, ose);
+		setSite(site, parentContainer, container, ose);
 	}
 
 	private void setSiteAndParentContainer(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
@@ -297,11 +294,10 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		Site site = setSite(hierarchyDetail.getSiteName(), container, ose);
 		StorageContainer parentContainer = setParentContainer(hierarchyDetail.getParentContainer(), container, ose);
 		
-		setSite(container, site, parentContainer, ose);
+		setSite(site, parentContainer, container, ose);
 	}
 	
-	private void setSite(StorageContainer container, Site site, StorageContainer parentContainer,
-			OpenSpecimenException ose) {
+	private void setSite(Site site, StorageContainer parentContainer, StorageContainer container, OpenSpecimenException ose) {
 		if (site == null && parentContainer == null) {
 			ose.addError(StorageContainerErrorCode.REQUIRED_SITE_OR_PARENT_CONT);
 			return;
@@ -343,7 +339,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		return parentContainer;
 	}
 	
-	private StorageContainer setParentContainer(String parentContainerName,StorageContainer container, OpenSpecimenException ose) {
+	private StorageContainer setParentContainer(String parentContainerName, StorageContainer container, OpenSpecimenException ose) {
 		if (StringUtils.isBlank(parentContainerName)) {
 			return null;
 		}
@@ -541,7 +537,6 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		container.setCompAllowedSpecimenTypes(container.computeAllowedSpecimenTypes());
 		container.setCompAllowedCps(container.computeAllowedCps());
 	}
-	
 
 	private void copy(ContainerType containerType, StorageContainer container) {
 		container.setRowLabelingScheme(containerType.getRowLabelingScheme());
@@ -581,14 +576,12 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		} else if (StringUtils.isNotBlank(name)) {
 			containerType = daoFactory.getContainerTypeDao().getByName(name);
 			key = name;
+		} else {
+			throw OpenSpecimenException.userError(StorageContainerErrorCode.TYPE_REQUIRED);
 		}
 		
 		if (containerType == null) {
-			if (key == null) {
-				OpenSpecimenException.userError(StorageContainerErrorCode.TYPE_REQUIRED);
-			} else {
-				OpenSpecimenException.userError(ContainerTypeErrorCode.NOT_FOUND, key);
-			}
+			throw OpenSpecimenException.userError(ContainerTypeErrorCode.NOT_FOUND, key);
 		}
 		return containerType;
 	}

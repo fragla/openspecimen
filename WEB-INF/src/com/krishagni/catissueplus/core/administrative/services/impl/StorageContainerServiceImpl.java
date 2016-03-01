@@ -306,13 +306,11 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		ContainerHierarchyDetail hierarchyDetail = req.getPayload();
 		List<StorageContainer> containers = new ArrayList<StorageContainer>();
 		try {
-			
 			//TODO: This will get rid once we map storage container with container type
 			ContainerType containerType = getContainerType(hierarchyDetail.getContainerTypeId(),
 					hierarchyDetail.getContainerTypeName());
 			
 			int totalSiteContainers = getTotalSiteContainers(hierarchyDetail);
-			
 			for (int i = 1; i <= hierarchyDetail.getNumOfContainers(); i++) {
 				StorageContainer container = containerFactory.createStorageContainer(hierarchyDetail);
 				

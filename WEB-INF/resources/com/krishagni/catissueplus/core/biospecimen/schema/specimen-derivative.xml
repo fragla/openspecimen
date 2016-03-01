@@ -58,7 +58,7 @@
     </field>
 
     <field>
-      <caption>#getMessage("specimen_freeze_thaw_cycle")</caption>
+      <caption>#getMessage("specimen_freeze_thaw_cycles")</caption>
       <attribute>freezeThawCycles</attribute>
     </field>
 

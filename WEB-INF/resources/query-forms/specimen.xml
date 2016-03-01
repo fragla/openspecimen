@@ -266,7 +266,7 @@
       <numberField>
         <name>freezThawCycle</name>
         <udn>freezeThawCycle</udn>
-        <caption>#getMessage("specimen_freeze_thaw_cycle")</caption>
+        <caption>#getMessage("specimen_freeze_thaw_cycles")</caption>
         <column>FREEZE_THAW_CYCLES</column>
       </numberField>
     </row>

@@ -62,7 +62,7 @@ public class SpecimenDetail extends SpecimenInfo {
 
 	private boolean printLabel;
 
-	private boolean incrementFreezeThaw;
+	private Integer incrementFreezeThaw;
 
 	public CollectionEventDetail getCollectionEvent() {
 		return collectionEvent;
@@ -212,12 +212,12 @@ public class SpecimenDetail extends SpecimenInfo {
 	}
 
 	@JsonIgnore
-	public boolean isIncrementFreezeThaw() {
+	public Integer getIncrementFreezeThaw() {
 		return incrementFreezeThaw;
 	}
 
 	@JsonProperty
-	public void setIncrementFreezeThaw(boolean incrementFreezeThaw) {
+	public void setIncrementFreezeThaw(Integer incrementFreezeThaw) {
 		this.incrementFreezeThaw = incrementFreezeThaw;
 	}
 

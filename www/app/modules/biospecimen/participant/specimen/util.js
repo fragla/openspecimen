@@ -31,7 +31,7 @@ angular.module('os.biospecimen.specimen')
       parent.closeAfterChildrenCreation = spec.closeParent;
 
       if (parent.freezeThawCycles != null) {
-        parent.incrementFreezeThaw = spec.incrementParentFreezeThaw;
+        parent.incrementFreezeThaw = spec.incrementParentFreezeThaw ? 1 : 0;
         if (spec.incrementParentFreezeThaw && parent.freezeThawCycles >= spec.freezeThawCycles ||
           !spec.incrementParentFreezeThaw && parent.freezeThawCycles > spec.freezeThawCycles) {
           Alerts.error('specimens.freeze_thaw_cycle_lt_parent');
@@ -90,7 +90,7 @@ angular.module('os.biospecimen.specimen')
       var parent = scope.parentSpecimen;
       var incrementParentFreezeThaw = scope.derivative.incrementParentFreezeThaw;
       if (parent.freezeThawCycles != null) {
-        parent.incrementFreezeThaw = incrementParentFreezeThaw;
+        parent.incrementFreezeThaw = incrementParentFreezeThaw ? 1 : 0;
         if (incrementParentFreezeThaw && parent.freezeThawCycles >= scope.derivative.freezeThawCycles ||
           !incrementParentFreezeThaw && parent.freezeThawCycles > scope.derivative.freezeThawCycles) {
           Alerts.error('specimens.freeze_thaw_cycle_lt_parent');

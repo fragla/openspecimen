@@ -562,12 +562,16 @@
             <property name="daoFactory" ref="biospecimenDaoFactory"/>
           </bean>
         </entry>
-        <!--<entry key="FrozenEvent">
-          //frozen event filter
+        <entry key="SpecimenFrozenEvent">
+          <bean id="frozenEventFilter" class="com.krishagni.catissueplus.core.biospecimen.services.impl.SpecimenFrozenEventFilter">
+            <property name="daoFactory" ref="biospecimenDaoFactory"/>
+          </bean>
         </entry>
-        <entry key="ThawEvent">
-          //thaw event filter
-        </entry>-->
+        <entry key="SpecimenThawEvent">
+          <bean id="thawEventFilter" class="com.krishagni.catissueplus.core.biospecimen.services.impl.SpecimenThawEventFilter">
+            <property name="daoFactory" ref="biospecimenDaoFactory"/>
+          </bean>
+        </entry>
       </map>
     </property>
   </bean>

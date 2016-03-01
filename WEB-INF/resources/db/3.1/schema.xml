@@ -9,4 +9,16 @@
       <column name="FREEZE_THAW_CYCLES" type="${mediumint.type}"/>
     </addColumn>
   </changeSet>
+
+  <changeSet author="ckhilosiya" id="When frozen event is created is freeze/thaw cycle of specimen incremented">
+    <addColumn tableName="CATISSUE_FROZEN_EVENT_PARAM">
+      <column name="INCREMENT_FREEZE_THAW" type="${boolean.type}" defaultValueBoolean="false"></column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="When thaw event is created is freeze/thaw cycle of specimen incremented">
+    <addColumn tableName="CATISSUE_THAW_EVENT_PARAMETERS">
+      <column name="INCREMENT_FREEZE_THAW" type="${boolean.type}" defaultValueBoolean="false"></column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

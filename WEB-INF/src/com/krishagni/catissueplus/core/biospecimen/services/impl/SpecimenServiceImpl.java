@@ -286,7 +286,8 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 				return ResponseEvent.userError(SpecimenErrorCode.INVALID_QTY_OR_CNT);
 			}
 
-			//write to set the freezethawcycles count of parent
+			incrementFreezeThaw(spec.getIncrParentFreezeThaw(), parentSpecimen);
+
 			List<SpecimenDetail> aliquots = new ArrayList<SpecimenDetail>();
 			for (int i = 0; i < count; ++i) {
 				SpecimenDetail aliquot = new SpecimenDetail();
@@ -296,6 +297,7 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 				aliquot.setParentLabel(parentSpecimen.getLabel());
 				aliquot.setParentId(parentSpecimen.getId());
 				aliquot.setCreatedOn(spec.getCreatedOn());
+				aliquot.setFreezeThawCycles(spec.getFreezeThawCycles());
 				aliquot.setExtensionDetail(spec.getExtensionDetail());
 				
 				StorageLocationSummary location = new StorageLocationSummary();
@@ -326,17 +328,28 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 	@Override
 	@PlusTransactional
 	public ResponseEvent<SpecimenDetail> createDerivative(RequestEvent<SpecimenDetail> derivedReq) {
-		SpecimenDetail spmnDetail = derivedReq.getPayload();
-		spmnDetail.setLineage(Specimen.DERIVED);
-		spmnDetail.setStatus(Specimen.COLLECTED);
+		try {
+			SpecimenDetail spmnDetail = derivedReq.getPayload();
+			spmnDetail.setLineage(Specimen.DERIVED);
+			spmnDetail.setStatus(Specimen.COLLECTED);
 
-		ResponseEvent<SpecimenDetail> resp = createSpecimen(new RequestEvent<SpecimenDetail>(spmnDetail));
-		if (resp.isSuccessful() && spmnDetail.closeParent()) {
-			Specimen parent = getSpecimen(spmnDetail.getParentId(), spmnDetail.getParentLabel(), null);
-			parent.close(AuthUtil.getCurrentUser(), new Date(), "");
+			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
+			Specimen parent = getSpecimen(spmnDetail.getParentId(), spmnDetail.getParentLabel(), ose);
+			ose.checkAndThrow();
+
+			incrementFreezeThaw(spmnDetail.getIncrementFreezeThaw(), parent);
+
+			ResponseEvent<SpecimenDetail> resp = createSpecimen(new RequestEvent<SpecimenDetail>(spmnDetail));
+			if (resp.isSuccessful() && spmnDetail.closeParent()) {
+				parent.close(AuthUtil.getCurrentUser(), new Date(), "");
+			}
+
+			return resp;
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
 		}
-
-		return resp;
 	}
 
 	@Override
@@ -576,9 +589,7 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 			specimen = saveOrUpdate(detail, existing, parent);
 		}
 
-		if (detail.isIncrementFreezeThaw() && specimen.getFreezeThawCycles() != null) {
-			specimen.setFreezeThawCycles(specimen.getFreezeThawCycles() + 1);
-		}
+		incrementFreezeThaw(detail.getIncrementFreezeThaw(), specimen);
 
 		if (CollectionUtils.isNotEmpty(detail.getChildren())) {
 			for (SpecimenDetail childDetail : detail.getChildren()) {
@@ -595,8 +606,8 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 	
 	private Specimen saveOrUpdate(SpecimenDetail detail, Specimen existing, Specimen parent) {
 		ensureEditAllowed(detail, existing);
-		
-		Specimen specimen = null;		
+
+		Specimen specimen = null;
 		if (existing != null) {
 			specimen = specimenFactory.createSpecimen(existing, detail, parent);
 		} else {
@@ -723,5 +734,11 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectStateParamsRe
 		}
 		
 		return specimen;
+	}
+
+	private void incrementFreezeThaw(Integer incrFreezeThaw, Specimen spec) {
+		if (incrFreezeThaw != null && incrFreezeThaw > 0 && spec.getFreezeThawCycles() != null) {
+			spec.setFreezeThawCycles(spec.getFreezeThawCycles() + incrFreezeThaw);
+		}
 	}
 }

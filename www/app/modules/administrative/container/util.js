@@ -1,6 +1,9 @@
 
 angular.module('os.administrative.container.util', ['os.common.box'])
-  .factory('ContainerUtil', function(BoxLayoutUtil, NumberConverterUtil) {
+  .factory('ContainerUtil', function($q, CollectionProtocol, Container,
+    BoxLayoutUtil, NumberConverterUtil, PvManager, Util) {
+
+    var allSpecimenTypes = undefined;
 
     function createSpmnPos(container, label, x, y, oldOccupant) {
       return {
@@ -47,6 +50,86 @@ angular.module('os.administrative.container.util', ['os.common.box'])
       };
     }
 
+    function loadAllCpsAndSpecimenTypes(scope, entity) {
+      loadAllCps(scope, entity);
+      loadAllSpecimenTypes(scope);
+    };
+
+    function loadAllCps(scope, entity) {
+      CollectionProtocol.query({repositoryName: entity.siteName}).then(
+        function(cps) {
+          scope.cps = cps.map(function(cp) { return cp.shortTitle; });
+
+          // fix - pre-selected cps were getting cleared
+          entity.allowedCollectionProtocols = scope.allowedCps;
+        }
+      );
+    };
+
+    function loadAllSpecimenTypes(scope) {
+      if (allSpecimenTypes) {
+        var d = $q.defer();
+        d.resolve(allSpecimenTypes);
+        return d.promise;
+      }
+
+      return PvManager.loadPvsByParent('specimen-class', undefined, true).then(
+        function(specimenTypes) {
+          allSpecimenTypes = specimenTypes;
+          Util.assign(scope.specimenTypes, specimenTypes);
+          return allSpecimenTypes;
+        }
+      );
+    };
+
+    function restrictCpsAndSpecimenTypes(scope, entity) {
+      var parentName = entity.storageLocation ? entity.storageLocation.name : entity.parentContainer;
+      Container.getByName(parentName).then(
+        function(parentContainer) {
+          restrictCps(scope, entity, parentContainer);
+          restrictSpecimenTypes(scope, parentContainer);
+        }
+      );
+    };
+
+    function restrictCps(scope, entity, parentContainer) {
+      var parentCps = parentContainer.calcAllowedCollectionProtocols;
+      if (parentCps.length > 0) {
+        scope.cps = parentCps;
+      } else {
+        loadAllCps(scope, entity);
+      }
+
+      entity.allowedCollectionProtocols = scope.allowedCps;
+    };
+
+    function restrictSpecimenTypes(scope, parentContainer) {
+      if (allSpecimenTypes) {
+        filterSpecimenTypes(scope, parentContainer);
+      } else {
+        loadAllSpecimenTypes(scope).then(
+          function() {
+            filterSpecimenTypes(scope, parentContainer);
+          }
+        );
+      }
+    };
+
+    function filterSpecimenTypes(scope, parentContainer) {
+      var allowedClasses = parentContainer.calcAllowedSpecimenClasses;
+      var allowedTypes = parentContainer.calcAllowedSpecimenTypes;
+      scope.specimenTypeSelectorOpts.allowAll = allowedClasses;
+
+
+      var filtered = allSpecimenTypes.filter(
+        function(specimenType) {
+          return allowedClasses.indexOf(specimenType.parent) >= 0 ||
+                   allowedTypes.indexOf(specimenType.value) >= 0;
+        }
+      );
+      Util.assign(scope.specimenTypes, filtered);
+    };
+
     return {
       fromOrdinal: NumberConverterUtil.fromNumber,
 
@@ -58,6 +141,12 @@ angular.module('os.administrative.container.util', ['os.common.box'])
 
         var result = BoxLayoutUtil.assignCells(opts, inputLabels, vacateOccupants);
         return {map: result.occupants, noFreeLocs: result.noFreeLocs};
-      }
+      },
+
+      loadAllCpsAndSpecimenTypes: loadAllCpsAndSpecimenTypes,
+
+      loadAllCps: loadAllCps,
+
+      restrictCpsAndSpecimenTypes: restrictCpsAndSpecimenTypes
     };
   });

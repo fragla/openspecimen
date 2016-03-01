@@ -8,7 +8,7 @@ public class ContainerHierarchyDetail {
 
     private String containerTypeName;
 
-    private String parentSite;
+    private String siteName;
 
     private String parentContainer;
 
@@ -36,12 +36,12 @@ public class ContainerHierarchyDetail {
         this.containerTypeName = containerTypeName;
     }
 
-    public String getParentSite() {
-        return parentSite;
+    public String getSiteName() {
+        return siteName;
     }
 
-    public void setParentSite(String parentSite) {
-        this.parentSite = parentSite;
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
     }
 
     public String getParentContainer() {

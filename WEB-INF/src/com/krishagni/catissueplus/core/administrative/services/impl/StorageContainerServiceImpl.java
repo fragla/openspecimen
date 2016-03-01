@@ -621,7 +621,7 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		}
 			
 		StorageContainerListCriteria crit = new StorageContainerListCriteria()
-				.siteName(hierarchyDetail.getParentSite())
+				.siteName(hierarchyDetail.getSiteName())
 				.exactMatch(true)
 				.topLevelContainers(true)
 				.maxResults(1000);

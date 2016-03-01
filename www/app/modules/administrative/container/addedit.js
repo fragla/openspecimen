@@ -1,10 +1,7 @@
 angular.module('os.administrative.container.addedit', ['os.administrative.models'])
   .controller('ContainerAddEditCtrl', function(
     $scope, $state, $stateParams, $q, container, 
-    Site, Container, CollectionProtocol, PvManager, Util) {
-
-    var allSpecimenTypes = undefined;
-    var allowedCps = undefined;
+    Site, PvManager, ContainerUtil) {
 
     function init() {
       container.storageLocation = container.storageLocation || {};
@@ -15,7 +12,7 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
        * when cp list is being loaded or not yet loaded...
        * Therefore we copy pre-selected cps and then use it when all CPs are loaded
        */
-      allowedCps = angular.copy(container.allowedCollectionProtocols);
+      $scope.allowedCps = angular.copy(container.allowedCollectionProtocols);
 
       $scope.cps = [];
       $scope.specimenTypes = [];
@@ -55,9 +52,9 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
         }
 
         if (!newVal) {
-          loadAllCpsAndSpecimenTypes();
+          ContainerUtil.loadAllCpsAndSpecimenTypes($scope, $scope.container);
         } else {
-          restrictCpsAndSpecimenTypes();
+          ContainerUtil.restrictCpsAndSpecimenTypes($scope, $scope.container);
         } 
       });
     };
@@ -72,96 +69,16 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       });
 
       if ($scope.container.storageLocation.name) {
-        restrictCpsAndSpecimenTypes();
+        ContainerUtil.restrictCpsAndSpecimenTypes($scope, $scope.container);
       } else {
-        loadAllCpsAndSpecimenTypes();
+        ContainerUtil.loadAllCpsAndSpecimenTypes($scope, $scope.container);
       }
 
     };
 
-    function restrictCpsAndSpecimenTypes() {
-      var parentName = $scope.container.storageLocation.name;
-      Container.getByName(parentName).then(
-        function(parentContainer) {
-          restrictCps(parentContainer);
-          restrictSpecimenTypes(parentContainer);
-        }
-      );
-    };
-
-    function loadAllCpsAndSpecimenTypes() {
-      loadAllCps();
-      loadAllSpecimenTypes();
-    };
-     
-    function restrictCps(parentContainer) {
-      var parentCps = parentContainer.calcAllowedCollectionProtocols;
-      if (parentCps.length > 0) {
-        $scope.cps = parentCps;
-      } else {
-        loadAllCps(parentContainer.siteName);
-      } 
-
-      $scope.container.allowedCollectionProtocols = allowedCps; 
-    };
-
-    function loadAllCps(siteName) {
-      siteName = !siteName ? $scope.container.siteName : siteName;
-
-      CollectionProtocol.query({repositoryName: siteName}).then(
-        function(cps) {
-          $scope.cps = cps.map(function(cp) { return cp.shortTitle; });
-
-          // fix - pre-selected cps were getting cleared
-          $scope.container.allowedCollectionProtocols = allowedCps; 
-        }
-      );
-    };
-
-    function restrictSpecimenTypes(parentContainer) {
-      if (allSpecimenTypes) {
-        filterSpecimenTypes(parentContainer);
-      } else {
-        loadAllSpecimenTypes().then(
-          function() { 
-            filterSpecimenTypes(parentContainer); 
-          }
-        );
-      }
-    };
-
-    function filterSpecimenTypes(parentContainer) {
-      var allowedClasses = parentContainer.calcAllowedSpecimenClasses;
-      var allowedTypes = parentContainer.calcAllowedSpecimenTypes;
-      $scope.specimenTypeSelectorOpts.allowAll = allowedClasses;
-
-
-      var filtered = allSpecimenTypes.filter(
-        function(specimenType) {
-          return allowedClasses.indexOf(specimenType.parent) >= 0 ||
-                   allowedTypes.indexOf(specimenType.value) >= 0;
-        }
-      );
-      Util.assign($scope.specimenTypes, filtered);
-    };
-
-    function loadAllSpecimenTypes() {
-      if (allSpecimenTypes) {
-        var d = $q.defer();
-        d.resolve(allSpecimenTypes);
-        return d.promise;
-      }
-
-      return PvManager.loadPvsByParent('specimen-class', undefined, true).then(
-        function(specimenTypes) {
-          allSpecimenTypes = specimenTypes;
-          Util.assign($scope.specimenTypes, specimenTypes);
-          return allSpecimenTypes;
-        }
-      );
-    };
-
-    $scope.loadAllCps = loadAllCps;
+    $scope.loadAllCps = function() {
+      ContainerUtil.loadAllCps($scope, $scope.container);
+    }
           
     $scope.save = function() {
       var container = angular.copy($scope.container);

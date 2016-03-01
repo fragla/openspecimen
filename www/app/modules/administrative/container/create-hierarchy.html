@@ -14,8 +14,8 @@
           <span translate="container.container_type">Container Type</span>
         </label>
         <div class="col-xs-6">
-          <os-select ng-model="hierarchySpec.containerTypeName" list="containerTypes"
-            display-prop="name" select-prop="name" name="containerType"
+          <os-select name="containerType" ng-model="hierarchySpec.containerTypeName"
+            list="containerTypes" display-prop="name" select-prop="name"
             placeholder="{{'container_type.container_type' | translate}}" required>
           </os-select>
           <div os-field-error field="chform.containerType"></div>
@@ -27,8 +27,8 @@
           <span translate="container.parent_site">Parent Site</span>
         </label>
         <div class="col-xs-6">
-          <os-select ng-model="hierarchySpec.parentSite" list="sites" placeholder="{{'container.site' | translate}}"
-            name="parentSite" on-change="onSiteSelect" required>
+          <os-select name="parentSite" ng-model="hierarchySpec.siteName" list="sites"
+             placeholder="{{'container.site' | translate}}" on-change="onSiteSelect" required>
           </os-select>
           <div os-field-error field="chform.parentSite"></div>
         </div>
@@ -39,8 +39,9 @@
           <span translate="container.parent_container">Parent Container</span>
         </label>
         <div class="col-xs-6">
-          <os-select ng-model="hierarchySpec.parentContainer" list="containers" placeholder="{{'container.container' | translate}}"
-            display-prop="name" select-prop="name" refresh="searchContainers">
+          <os-select ng-model="hierarchySpec.parentContainer" list="containers"
+            display-prop="name" select-prop="name" refresh="searchContainers"
+            placeholder="{{'container.container' | translate}}">
           </os-select>
         </div>
       </div>

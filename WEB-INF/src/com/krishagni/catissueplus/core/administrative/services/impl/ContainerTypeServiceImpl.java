@@ -36,7 +36,6 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 	@PlusTransactional
 	public ResponseEvent<List<ContainerTypeSummary>> getContainerTypes(RequestEvent<ContainerTypeListCriteria> req) {
 		try {
-			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
 			List<ContainerType> containerTypes = daoFactory.getContainerTypeDao().getContainerTypes(req.getPayload());
 			return ResponseEvent.response(ContainerTypeSummary.from(containerTypes));
 		} catch (OpenSpecimenException ose) {
@@ -50,8 +49,6 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 	@PlusTransactional
 	public ResponseEvent<ContainerTypeDetail> getContainerType(RequestEvent<EntityQueryCriteria> req) {
 		try {
-			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
-
 			EntityQueryCriteria crit = req.getPayload();
 			ContainerType containerType = getContainerType(crit.getId(), crit.getName());
 			return ResponseEvent.response(ContainerTypeDetail.from(containerType));

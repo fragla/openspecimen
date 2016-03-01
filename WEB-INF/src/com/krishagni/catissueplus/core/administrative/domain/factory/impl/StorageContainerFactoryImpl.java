@@ -109,14 +109,18 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		
 		ContainerType containerType = getContainerType(hierarchyDetail.getContainerTypeId(), hierarchyDetail.getContainerTypeName());
 		copy(containerType, container);
+		
+		setPosition((StorageLocationSummary) null, container, ose);
+		setCreatedBy((UserSummary) null, container, ose);
+		setActivityStatus((String) null, container, ose);
+		
 		setSiteAndParentContainer(hierarchyDetail, container, ose);
 		setAllowedSpecimenClasses(hierarchyDetail.getAllowedSpecimenClasses(), container, ose);
 		setAllowedSpecimenTypes(hierarchyDetail.getAllowedSpecimenTypes(), container, ose);
 		setAllowedCps(hierarchyDetail.getAllowedCollectionProtocols(), container, ose);
 		setComputedRestrictions(container);
-		setPosition((StorageLocationSummary) null, container, ose);
-		setCreatedBy((UserSummary) null, container, ose);
-		setActivityStatus((String) null, container, ose);
+		
+		
 		
 		ose.checkAndThrow();
 		return container;
@@ -126,7 +130,9 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer) {
 		StorageContainer container = new StorageContainer();
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
+		
 		copy(containerType, container);
+		
 		setSiteAndParentContainer(parentContainer, container, ose);
 		setPosition((StorageLocationSummary) null, container, ose);
 		setCreatedBy((UserSummary) null, container, ose);
@@ -265,18 +271,9 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		Site site = setSite(detail, container, ose);
 		StorageContainer parentContainer = setParentContainer(detail, container, ose);
 		
-		if (site == null && parentContainer == null) {
-			ose.addError(StorageContainerErrorCode.REQUIRED_SITE_OR_PARENT_CONT);
-			return;
-		}
-		
-		if (site == null) {
-			container.setSite(parentContainer.getSite());
-		} else if (parentContainer != null && !parentContainer.getSite().equals(site)) {
-			ose.addError(StorageContainerErrorCode.INVALID_SITE_AND_PARENT_CONT);
-		}
+		setSite(container, site, parentContainer, ose);
 	}
-	
+
 	private void setSiteAndParentContainer(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
 		if (detail.isAttrModified("siteName") || detail.isAttrModified("storageLocation")) {
 			setSiteAndParentContainer(detail, container, ose);
@@ -297,9 +294,14 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	private void setSiteAndParentContainer(ContainerHierarchyDetail hierarchyDetail, StorageContainer container, OpenSpecimenException ose) {
-		Site site = setSite(hierarchyDetail.getParentSite(), container, ose);
+		Site site = setSite(hierarchyDetail.getSiteName(), container, ose);
 		StorageContainer parentContainer = setParentContainer(hierarchyDetail.getParentContainer(), container, ose);
 		
+		setSite(container, site, parentContainer, ose);
+	}
+	
+	private void setSite(StorageContainer container, Site site, StorageContainer parentContainer,
+			OpenSpecimenException ose) {
 		if (site == null && parentContainer == null) {
 			ose.addError(StorageContainerErrorCode.REQUIRED_SITE_OR_PARENT_CONT);
 			return;

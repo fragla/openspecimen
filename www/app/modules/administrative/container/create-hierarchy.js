@@ -1,8 +1,7 @@
 angular.module('os.administrative.container.createhierarchy', ['os.administrative.models'])
   .controller('ContainerCreateHierarchyCtrl', function(
     $scope, $state, $stateParams,
-    ContainerType, Container, Site, CollectionProtocol, PvManager, Util) {
-    var allSpecimenTypes = undefined;
+    ContainerType, Container, Site, CollectionProtocol, PvManager, ContainerUtil, Util) {
     var siteContainersMap = {};
 
     function init() {
@@ -42,7 +41,7 @@ angular.module('os.administrative.container.createhierarchy', ['os.administrativ
         $scope.sites = sites;
       });
 
-      loadAllCpsAndSpecimenTypes();
+      ContainerUtil.loadAllCpsAndSpecimenTypes($scope, $scope.hierarchySpec);
     }
 
     function watchParentContainer() {
@@ -52,106 +51,23 @@ angular.module('os.administrative.container.createhierarchy', ['os.administrativ
         }
 
         if (!newVal) {
-          loadAllCpsAndSpecimenTypes();
+          ContainerUtil.loadAllCpsAndSpecimenTypes($scope, $scope.hierarchySpec);
         } else {
-          restrictCpsAndSpecimenTypes();
+          ContainerUtil.restrictCpsAndSpecimenTypes($scope, $scope.hierarchySpec);
         }
       });
     };
 
-    function loadAllCpsAndSpecimenTypes() {
-      loadAllCps();
-      loadAllSpecimenTypes();
-    };
-
-    function restrictCpsAndSpecimenTypes() {
-      var parentName = $scope.hierarchySpec.parentContainer;
-      Container.getByName(parentName).then(
-        function(parentContainer) {
-          restrictCps(parentContainer);
-          restrictSpecimenTypes(parentContainer);
-        }
-      );
-    };
-
-    function restrictCps(parentContainer) {
-      var parentCps = parentContainer.calcAllowedCollectionProtocols;
-      if (parentCps.length > 0) {
-        $scope.cps = parentCps;
-      } else {
-        loadAllCps(parentContainer.siteName);
-      }
-
-      $scope.hierarchySpec.allowedCollectionProtocols = [];
-    };
-
-    function loadAllCps() {
-      var siteName = $scope.hierarchySpec.parentSite;
-      if (!siteName) {
-        return;
-      }
-
-      CollectionProtocol.query({repositoryName: siteName}).then(
-        function(cps) {
-          $scope.cps = cps.map(function(cp) { return cp.shortTitle; });
-        }
-      );
-    };
-
-    function loadAllSpecimenTypes() {
-      if (allSpecimenTypes) {
-        var d = $q.defer();
-        d.resolve(allSpecimenTypes);
-        return d.promise;
-      }
-
-      return PvManager.loadPvsByParent('specimen-class', undefined, true).then(
-        function(specimenTypes) {
-          allSpecimenTypes = specimenTypes;
-          Util.assign($scope.specimenTypes, specimenTypes);
-          return allSpecimenTypes;
-        }
-      );
-    };
-
-    function restrictSpecimenTypes(parentContainer) {
-      if (allSpecimenTypes) {
-        filterSpecimenTypes(parentContainer);
-      } else {
-        loadAllSpecimenTypes().then(
-          function() {
-            filterSpecimenTypes(parentContainer);
-          }
-        );
-      }
-    };
-
-    function filterSpecimenTypes(parentContainer) {
-      var allowedClasses = parentContainer.calcAllowedSpecimenClasses;
-      var allowedTypes = parentContainer.calcAllowedSpecimenTypes;
-      $scope.specimenTypeSelectorOpts.allowAll = allowedClasses;
-
-
-      var filtered = allSpecimenTypes.filter(
-        function(specimenType) {
-          return allowedClasses.indexOf(specimenType.parent) >= 0 ||
-                   allowedTypes.indexOf(specimenType.value) >= 0;
-        }
-      );
-      Util.assign($scope.specimenTypes, filtered);
-    };
-
-
     function setSiteContainers(hierarchySpec) {
-      if (!hierarchySpec.parentSite) {
+      if (!hierarchySpec.siteName) {
         return;
       }
 
-      if (!siteContainersMap[hierarchySpec.parentSite]) {
-        siteContainersMap[hierarchySpec.parentSite] = Container.listForSite(hierarchySpec.parentSite, true, true);
+      if (!siteContainersMap[hierarchySpec.siteName]) {
+        siteContainersMap[hierarchySpec.siteName] = Container.listForSite(hierarchySpec.siteName, true, true);
       }
 
-      siteContainersMap[hierarchySpec.parentSite].then(
+      siteContainersMap[hierarchySpec.siteName].then(
         function(containers) {
           $scope.containers = containers;
         }
@@ -161,14 +77,14 @@ angular.module('os.administrative.container.createhierarchy', ['os.administrativ
     $scope.onSiteSelect = function() {
       $scope.hierarchySpec.parentContainer = undefined;
       setSiteContainers($scope.hierarchySpec);
-      loadAllCps();
+      ContainerUtil.loadAllCps($scope, $scope.hierarchySpec);
     }
 
     $scope.searchContainers = function(name) {
       if (!name) {
         setSiteContainers($scope.hierarchySpec);
       } else {
-        Container.listForSite($scope.hierarchySpec.parentSite, true, true, name).then(
+        Container.listForSite($scope.hierarchySpec.siteName, true, true, name).then(
           function(containers) {
             $scope.containers = containers;
           }

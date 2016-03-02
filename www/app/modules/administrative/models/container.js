@@ -1,6 +1,6 @@
 
 angular.module('os.administrative.models.container', ['os.common.models'])
-  .factory('Container', function(osModel, $q, $http, ApiUtil) {
+  .factory('Container', function(osModel, $q, $http) {
     var Container = new osModel('storage-containers');
 
     Container.prototype.getType = function() {

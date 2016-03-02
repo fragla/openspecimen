@@ -542,6 +542,23 @@ public class AccessCtrlMgr {
 
 		return siteCpPairs;
 	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////
+	//                                                                                  //
+	//         Container type object access control helper methods                      //
+	//                                                                                  //
+	//////////////////////////////////////////////////////////////////////////////////////
+	public void ensureReadContainerTypeRights() {
+		if (AuthUtil.isAdmin()) {
+			return;
+		}
+		
+		User user = AuthUtil.getCurrentUser();
+		Operation[] ops = {Operation.CREATE, Operation.UPDATE};
+		if (!canUserPerformOp(user.getId(), Resource.STORAGE_CONTAINER, ops)) {
+			throw OpenSpecimenException.userError(RbacErrorCode.ACCESS_DENIED);
+		} 
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	//                                                                                  //
@@ -604,7 +621,7 @@ public class AccessCtrlMgr {
 			throw OpenSpecimenException.userError(RbacErrorCode.ACCESS_DENIED);
 		}
 	}
-
+	
 	//////////////////////////////////////////////////////////////////////////////////////
 	//                                                                                  //
 	//          Distribution order access control helper methods                        //

@@ -25,7 +25,7 @@
     "roles_desc": "Create, update user access controls",
     "sites_desc": "Add and update sites",
     "containers_desc": "Manage containers and their restrictions",
-    "container_types_desc": "Manage container types",
+    "container_types_desc": "Create, update and manage container types",
     "queries_desc": "Create, share and schedule queries",
     "specimen_lists_desc": "Create, share and manage specimen carts",
     "forms_desc": "Create and manage custom forms",

@@ -1,13 +1,25 @@
 package com.krishagni.catissueplus.core.administrative.domain;
 
+import java.util.List;
+
 import org.hibernate.envers.Audited;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeErrorCode;
+import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerErrorCode;
+import com.krishagni.catissueplus.core.administrative.repository.ContainerTypeListCriteria;
 import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
+import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
+import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
+import com.krishagni.catissueplus.core.common.util.Status;
 
+@Configurable
 @Audited
 public class ContainerType extends BaseEntity {
+	private static final String ENTITY_NAME = "container_type";
+	
 	private String name;
 	
 	private int noOfColumns;
@@ -27,6 +39,13 @@ public class ContainerType extends BaseEntity {
 	private ContainerType canHold;
 	
 	private String activityStatus;
+	
+	@Autowired 
+	private DaoFactory daoFactory;
+	
+	public static String getEntityName() {
+		return ENTITY_NAME;
+	}
 	
 	public String getName() {
 		return name;
@@ -120,6 +139,23 @@ public class ContainerType extends BaseEntity {
 		setActivityStatus(containerType.getActivityStatus());
 		
 		updateCanHold(containerType.getCanHold());
+	}
+	
+	public List<DependentEntityDetail> getDependentEntities() {
+		ContainerTypeListCriteria crit = new ContainerTypeListCriteria();
+		crit.setCanHold(getId());
+		List<ContainerType> listContainerType = daoFactory.getContainerTypeDao().getContainerTypes(crit);
+		return DependentEntityDetail.singletonList(ContainerType.getEntityName(), listContainerType.size());
+	}
+	
+	public void delete() {
+		List<DependentEntityDetail> ded = getDependentEntities();
+		if (ded.size() > 0) {
+			throw OpenSpecimenException.userError(StorageContainerErrorCode.REF_ENTITY_FOUND);
+		} else {
+			String activityStatus = Status.ACTIVITY_STATUS_DISABLED.getStatus();
+			setActivityStatus(activityStatus);
+		}
 	}
 
 	private void updateCanHold(ContainerType canHold) {

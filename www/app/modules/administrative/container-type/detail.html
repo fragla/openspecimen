@@ -22,6 +22,11 @@
             <a ui-sref="container-create-hierarchy({containerType: containerType.name})">
               <span class="fa fa-sitemap"></span>
               <span translate="container_type.create_hierarchy">Create Hierarchy</span>
+          </li>
+          <li show-if-admin>
+            <a ng-click="deleteContainerType()">
+              <span class="fa fa-trash"></span>
+              <span translate="common.buttons.delete">Delete</span>
             </a>
           </li>
         </ul>

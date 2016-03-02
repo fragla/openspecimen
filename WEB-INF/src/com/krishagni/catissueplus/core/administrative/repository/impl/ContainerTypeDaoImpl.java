@@ -27,7 +27,7 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 		Criteria query = sessionFactory.getCurrentSession().createCriteria(ContainerType.class)
 			.setFirstResult(crit.startAt())
 			.setMaxResults(crit.maxResults())
-			.addOrder(Order.asc("name"));;
+			.addOrder(Order.asc("name"));
 		
 		addSearchConditions(query, crit);
 		
@@ -46,12 +46,18 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 	}
 	
 	private void addSearchConditions(Criteria query, ContainerTypeListCriteria crit) {
-		if (StringUtils.isBlank(crit.query())) {
+		if (crit.getCanHold() != null) {
+			searchCanHold(query, crit);
+			return;
+		} else if (StringUtils.isBlank(crit.query())) {
 			return;
 		}
-		
 		MatchMode matchMode = crit.exactMatch() ? MatchMode.EXACT : MatchMode.ANYWHERE;
 		query.add(Restrictions.ilike("name", crit.query(), matchMode));
+	}
+	
+	private void searchCanHold(Criteria query, ContainerTypeListCriteria crit) {
+		query.add(Restrictions.eq("canHold.id", crit.getCanHold()));
 	}
 	
 	private static final String CONTAINER_TYPE_FQN = ContainerType.class.getName();

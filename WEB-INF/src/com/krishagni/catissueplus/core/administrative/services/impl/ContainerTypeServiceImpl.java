@@ -15,6 +15,7 @@ import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
+import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
 import com.krishagni.catissueplus.core.common.events.EntityQueryCriteria;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
@@ -99,6 +100,42 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 		}
 	}
 	
+	@Override
+	@PlusTransactional
+	public ResponseEvent<List<DependentEntityDetail>> getDependentEntities(RequestEvent<Long> req) {
+		try {
+			ContainerType existing = daoFactory.getContainerTypeDao().getById(req.getPayload());
+			if (existing == null) {
+				return ResponseEvent.userError(ContainerTypeErrorCode.NOT_FOUND);
+			}
+			
+			return ResponseEvent.response(existing.getDependentEntities());
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+	
+	@Override
+	@PlusTransactional
+	public ResponseEvent<ContainerTypeDetail> deleteContainerType(RequestEvent<Long> req) {
+		try {
+			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
+			
+			Long id = req.getPayload();
+			ContainerType existing = daoFactory.getContainerTypeDao().getById(id);
+			if (existing == null) {
+				return ResponseEvent.userError(ContainerTypeErrorCode.NOT_FOUND, id);
+			}
+			
+			existing.delete();
+			return ResponseEvent.response(ContainerTypeDetail.from(existing));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+	
 	private ContainerType getContainerType(Long id, String name) {
 		ContainerType containerType = null;
 		Object key = null;
@@ -127,4 +164,5 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 			throw OpenSpecimenException.userError(ContainerTypeErrorCode.DUP_NAME, newContainerType.getName());
 		}
 	}
+	
 }

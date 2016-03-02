@@ -18,7 +18,9 @@ public enum ContainerTypeErrorCode implements ErrorCode {
 	
 	INVALID_LABELING_SCHEME, 
 	
-	HIERARCHY_CONTAINS_CYCLE;
+	HIERARCHY_CONTAINS_CYCLE,
+	
+	REF_ENTITY_FOUND;
 	
 	@Override
 	public String code() {

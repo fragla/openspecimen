@@ -1342,7 +1342,8 @@
     "specimen_list": "Specimen Cart",
     "consent_response": "Consent Response",
     "consent": "Consent",
-    "container": "Container"
+    "container": "Container",
+    "container_type": "Container Type"
   },
 
   "bulk_imports": {

@@ -18,6 +18,7 @@ import com.krishagni.catissueplus.core.administrative.events.ContainerTypeDetail
 import com.krishagni.catissueplus.core.administrative.events.ContainerTypeSummary;
 import com.krishagni.catissueplus.core.administrative.repository.ContainerTypeListCriteria;
 import com.krishagni.catissueplus.core.administrative.services.ContainerTypeService;
+import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
 import com.krishagni.catissueplus.core.common.events.EntityQueryCriteria;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
@@ -95,6 +96,28 @@ public class ContainerTypesController {
 		RequestEvent<ContainerTypeDetail> req = new RequestEvent<ContainerTypeDetail>(detail);
 		ResponseEvent<ContainerTypeDetail> resp = containerTypeSvc.updateContainerType(req);
 		resp.throwErrorIfUnsuccessful();
+		return resp.getPayload();
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value= "/{id}/dependent-entities")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public List<DependentEntityDetail> getDependentEntities(@PathVariable Long id) {
+		RequestEvent<Long> req = new RequestEvent<Long>(id);
+		ResponseEvent<List<DependentEntityDetail>> resp = containerTypeSvc.getDependentEntities(req);
+		resp.throwErrorIfUnsuccessful();
+		
+		return resp.getPayload();
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	public ContainerTypeDetail deleteContainerType(@PathVariable Long id) {
+		RequestEvent<Long> req = new RequestEvent<Long>(id);
+		ResponseEvent<ContainerTypeDetail> resp = containerTypeSvc.deleteContainerType(req);
+		resp.throwErrorIfUnsuccessful();
+		
 		return resp.getPayload();
 	}
 	

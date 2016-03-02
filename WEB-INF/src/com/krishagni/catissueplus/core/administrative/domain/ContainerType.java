@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.krishagni.catissueplus.core.administrative.domain.factory.ContainerTypeErrorCode;
-import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerErrorCode;
 import com.krishagni.catissueplus.core.administrative.repository.ContainerTypeListCriteria;
 import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
@@ -151,7 +150,7 @@ public class ContainerType extends BaseEntity {
 	public void delete() {
 		List<DependentEntityDetail> ded = getDependentEntities();
 		if (ded.size() > 0) {
-			throw OpenSpecimenException.userError(StorageContainerErrorCode.REF_ENTITY_FOUND);
+			throw OpenSpecimenException.userError(ContainerTypeErrorCode.REF_ENTITY_FOUND);
 		} else {
 			String activityStatus = Status.ACTIVITY_STATUS_DISABLED.getStatus();
 			setActivityStatus(activityStatus);

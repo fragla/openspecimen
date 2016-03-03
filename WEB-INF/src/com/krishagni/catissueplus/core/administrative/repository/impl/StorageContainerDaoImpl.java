@@ -15,6 +15,7 @@ import com.krishagni.catissueplus.core.administrative.domain.StorageContainer;
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainerPosition;
 import com.krishagni.catissueplus.core.administrative.repository.StorageContainerDao;
 import com.krishagni.catissueplus.core.administrative.repository.StorageContainerListCriteria;
+import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol;
 import com.krishagni.catissueplus.core.common.repository.AbstractDao;
 import com.krishagni.catissueplus.core.common.util.Status;
 
@@ -52,6 +53,14 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 				.list();
 
 		return result.isEmpty() ? null : result.iterator().next();		
+	}
+
+	@Override
+	public int getSiteContainersCount(String siteName) {
+		return ((Number)sessionFactory.getCurrentSession()
+				.getNamedQuery(GET_SITE_CONTAINERS_COUNT)
+				.setString("siteName", siteName)
+				.uniqueResult()).intValue();
 	}
 	
 	@Override
@@ -251,6 +260,9 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 			
 			params.put("storeSpecimenEnabled", crit.storeSpecimensEnabled());
 		}
-	}	
+	}
 	
+	private static final String FQN = StorageContainer.class.getName();
+	
+	private static final String GET_SITE_CONTAINERS_COUNT = FQN + ".getSiteContainersCount";
 }

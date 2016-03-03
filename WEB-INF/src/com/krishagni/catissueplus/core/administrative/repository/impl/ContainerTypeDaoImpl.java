@@ -30,7 +30,6 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 			.addOrder(Order.asc("name"));;
 		
 		addSearchConditions(query, crit);
-		
 		return query.list();
 	}
 	
@@ -57,5 +56,4 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 	private static final String CONTAINER_TYPE_FQN = ContainerType.class.getName();
 	
 	private static final String CONTAINER_TYPE_BY_NAME = CONTAINER_TYPE_FQN + ".getByName";
-
 }

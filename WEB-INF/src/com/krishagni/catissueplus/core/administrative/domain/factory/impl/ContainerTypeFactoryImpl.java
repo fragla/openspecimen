@@ -147,7 +147,7 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 		} else if (Status.isValidActivityStatus(status)) {
 			containerType.setActivityStatus(status);
 		} else {
-			ose.addError(ActivityStatusErrorCode.INVALID, status);
+			ose.addError(ActivityStatusErrorCode.INVALID);
 		}
 	}
 }

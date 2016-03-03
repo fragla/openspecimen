@@ -105,11 +105,11 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 		ContainerType containerType = null;
 		Object key = null;
 		if (id != null) {
-			key = id;
 			containerType = daoFactory.getContainerTypeDao().getById(id);
+			key = id;
 		} else if (StringUtils.isNotBlank(name)) {
-			key = name;
 			containerType = daoFactory.getContainerTypeDao().getByName(name);
+			key = name;
 		}
 		
 		if (containerType == null) {

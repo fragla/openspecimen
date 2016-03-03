@@ -4,18 +4,20 @@ import com.krishagni.catissueplus.core.common.events.AbstractListCriteria;
 
 public class ContainerTypeListCriteria extends AbstractListCriteria<ContainerTypeListCriteria> {
 
-	Long canHold;
-	
-	public Long getCanHold() {
-		return canHold;
-	}
-
-	public void setCanHold(Long canHold) {
-		this.canHold = canHold;
-	}
+	private Long canHold;
 
 	@Override
 	public ContainerTypeListCriteria self() {
 		return this;
 	}
+
+	public Long canHold() {
+		return canHold;
+	}
+
+	public ContainerTypeListCriteria canHold(Long canHold) {
+		this.canHold = canHold;
+		return self();
+	}
+	
 }

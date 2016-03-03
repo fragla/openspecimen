@@ -60,8 +60,8 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		} else {
 			container.setStoreSpecimenEnabled(existing.isStoreSpecimenEnabled());
 		}
-		setName(detail, existing, container, ose);
 		
+		setName(detail, existing, container, ose);
 		setBarcode(detail, existing, container, ose);
 		setTemperature(detail, existing, container, ose);
 		setCapacity(detail, existing, container, ose);
@@ -512,11 +512,11 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 
 	private StorageContainerDetail populateContainerDetail(ContainerType containerType) {
 		StorageContainerDetail detail = new StorageContainerDetail();
+		detail.setTemperature(containerType.getTemperature());
 		detail.setNoOfColumns(containerType.getNoOfColumns());
 		detail.setNoOfRows(containerType.getNoOfRows());
 		detail.setColumnLabelingScheme(containerType.getColumnLabelingScheme());
 		detail.setRowLabelingScheme(containerType.getRowLabelingScheme());
-		detail.setTemperature(containerType.getTemperature());
 		detail.setStoreSpecimensEnabled(containerType.isStoreSpecimenEnabled());
 		return detail;
 	}

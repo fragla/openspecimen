@@ -1,7 +1,7 @@
 angular.module('os.administrative.container.addedit', ['os.administrative.models'])
   .controller('ContainerAddEditCtrl', function(
     $scope, $state, $stateParams, $q, container, 
-    Site, PvManager, ContainerUtil) {
+    Site, PvManager, ContainerUtil, ContainerType) {
 
     function init() {
       container.storageLocation = container.storageLocation || {};
@@ -41,6 +41,7 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
         };
         restrictCpsAndSpecimenTypes();
       }
+      loadContainerTypes();
 
       watchParentContainer();
     };
@@ -79,7 +80,25 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
     $scope.loadAllCps = function() {
       ContainerUtil.loadAllCps($scope, $scope.container);
     }
-          
+
+    function loadContainerTypes() {
+      $scope.containerTypes = [];
+      ContainerType.query().then(function(containerTypes) {
+        $scope.containerTypes = containerTypes;
+      });
+    }
+
+    $scope.onSelectContainerType = function() {
+      $scope.container.noOfColumns = $scope.containerTypes.type ? $scope.containerTypes.type.noOfColumns : "";
+      $scope.container.noOfRows = $scope.containerTypes.type ? $scope.containerTypes.type.noOfRows : "";
+      $scope.container.columnLabelingScheme = $scope.containerTypes.type ? 
+        $scope.containerTypes.type.columnLabelingScheme : "";
+      $scope.container.rowLabelingScheme = $scope.containerTypes.type ? $scope.containerTypes.type.rowLabelingScheme : "";
+      $scope.container.temperature = $scope.containerTypes.type ? $scope.containerTypes.type.temperature : "";
+      $scope.container.storeSpecimensEnabled = $scope.containerTypes.type ?
+        $scope.containerTypes.type.storeSpecimenEnabled : "";
+    }
+    
     $scope.save = function() {
       var container = angular.copy($scope.container);
       container.$saveOrUpdate().then(

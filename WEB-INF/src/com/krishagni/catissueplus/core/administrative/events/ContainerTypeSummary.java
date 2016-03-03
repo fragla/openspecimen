@@ -1,10 +1,7 @@
 package com.krishagni.catissueplus.core.administrative.events;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
 
 import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
 
@@ -16,11 +13,17 @@ public class ContainerTypeSummary {
 	private int noOfColumns;
 	
 	private int noOfRows;
-	
-	private String abbreviation;
-	
+
+	private String columnLabelingScheme;
+
+	private String rowLabelingScheme;
+
 	private Double temperature;
-	
+
+	private boolean storeSpecimenEnabled;
+
+	private String abbreviation;
+
 	private String activityStatus;
 
 	public Long getId() {
@@ -55,12 +58,20 @@ public class ContainerTypeSummary {
 		this.noOfRows = noOfRows;
 	}
 
-	public String getAbbreviation() {
-		return abbreviation;
+	public String getColumnLabelingScheme() {
+		return columnLabelingScheme;
 	}
 
-	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
+	public void setColumnLabelingScheme(String columnLabelingScheme) {
+		this.columnLabelingScheme = columnLabelingScheme;
+	}
+
+	public String getRowLabelingScheme() {
+		return rowLabelingScheme;
+	}
+
+	public void setRowLabelingScheme(String rowLabelingScheme) {
+		this.rowLabelingScheme = rowLabelingScheme;
 	}
 
 	public Double getTemperature() {
@@ -70,7 +81,23 @@ public class ContainerTypeSummary {
 	public void setTemperature(Double temperature) {
 		this.temperature = temperature;
 	}
-	
+
+	public boolean isStoreSpecimenEnabled() {
+		return storeSpecimenEnabled;
+	}
+
+	public void setStoreSpecimenEnabled(boolean storeSpecimenEnabled) {
+		this.storeSpecimenEnabled = storeSpecimenEnabled;
+	}
+
+	public String getAbbreviation() {
+		return abbreviation;
+	}
+
+	public void setAbbreviation(String abbreviation) {
+		this.abbreviation = abbreviation;
+	}
+
 	public String getActivityStatus() {
 		return activityStatus;
 	}
@@ -82,10 +109,13 @@ public class ContainerTypeSummary {
 	public static <T extends ContainerTypeSummary> void copy(ContainerType containerType, T detail) {
 		detail.setId(containerType.getId());
 		detail.setName(containerType.getName());
-		detail.setAbbreviation(containerType.getAbbreviation());
 		detail.setNoOfColumns(containerType.getNoOfColumns());
 		detail.setNoOfRows(containerType.getNoOfRows());
+		detail.setColumnLabelingScheme(containerType.getColumnLabelingScheme());
+		detail.setRowLabelingScheme(containerType.getRowLabelingScheme());
 		detail.setTemperature(containerType.getTemperature());
+		detail.setStoreSpecimenEnabled(containerType.isStoreSpecimenEnabled());
+		detail.setAbbreviation(containerType.getAbbreviation());
 		detail.setActivityStatus(containerType.getActivityStatus());
 	}
 	
@@ -100,8 +130,6 @@ public class ContainerTypeSummary {
 	}
 	
 	public static List<ContainerTypeSummary> from(List<ContainerType> containerTypes) {
-		return containerTypes.stream()
-			.map(ContainerTypeSummary::from)
-			.collect(Collectors.toList());
+		return containerTypes.stream().map(ContainerTypeSummary::from).collect(Collectors.toList());
 	}
 }

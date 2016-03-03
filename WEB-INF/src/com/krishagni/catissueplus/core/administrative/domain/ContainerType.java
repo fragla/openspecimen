@@ -159,23 +159,19 @@ public class ContainerType extends BaseEntity {
 
 	private void updateCanHold(ContainerType canHold) {
 		if (cycleExistsInHierarchy(canHold)) {
-			throw OpenSpecimenException.userError(ContainerTypeErrorCode.HIERARCHY_CONTAINS_CYCLE, canHold.getName());
+			throw OpenSpecimenException.userError(ContainerTypeErrorCode.CYCLES_NOT_ALLOWED, getName(), canHold.getName());
 		}
 		
 		setCanHold(canHold);
 	}
 
 	private boolean cycleExistsInHierarchy(ContainerType canHold) {
-		if (canHold == null) {
-			return false;
-		}
-		
 		ContainerType other = canHold;
 		while (other != null) {
-			if (other.getId() == this.getId()) {
+			if (this.equals(other)) {
 				return true;
 			}
-			
+
 			other = other.getCanHold();
 		}
 		

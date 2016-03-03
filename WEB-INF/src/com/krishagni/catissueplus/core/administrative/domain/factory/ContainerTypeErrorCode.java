@@ -20,7 +20,9 @@ public enum ContainerTypeErrorCode implements ErrorCode {
 	
 	HIERARCHY_CONTAINS_CYCLE,
 	
-	REF_ENTITY_FOUND;
+	REF_ENTITY_FOUND,
+
+	CYCLES_NOT_ALLOWED;
 	
 	@Override
 	public String code() {

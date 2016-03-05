@@ -18,8 +18,6 @@ public enum ContainerTypeErrorCode implements ErrorCode {
 	
 	INVALID_LABELING_SCHEME, 
 	
-	HIERARCHY_CONTAINS_CYCLE,
-	
 	REF_ENTITY_FOUND,
 
 	CYCLES_NOT_ALLOWED;

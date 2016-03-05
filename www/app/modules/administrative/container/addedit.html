@@ -9,7 +9,7 @@
       <span ng-if="!!container.id">{{container.name}}</span>
     </h3>
   </div>
-
+  
   <div class="container">
     <form name="cform" class="form-horizontal" os-form-validator="cform" validator="cformValidator" novalidate>
       <div class="form-group">
@@ -17,8 +17,9 @@
           <span translate="container.container_type">Container Type</span>
         </label>
         <div class="col-xs-6">
-          <os-select ng-model="containerTypes.type" list="containerTypes" name="containerType" display-prop="name"
-            placeholder="{{'container_type.container_type' | translate}}" on-change="onSelectContainerType">
+          <os-select ng-model="container.containerTypeName" list="containerTypes" name="containerType" display-prop="name"
+            select-prop="name" placeholder="{{'container_type.container_type' | translate}}" 
+            on-select="onSelectContainerType($item)">
           </os-select>
         </div>
       </div>

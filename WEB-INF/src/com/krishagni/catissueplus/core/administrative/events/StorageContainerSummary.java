@@ -37,6 +37,8 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 	
 	private List<StorageContainerSummary> childContainers;
 	
+	private String containerTypeName;
+	
 	public Long getId() {
 		return id;
 	}
@@ -133,6 +135,14 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 		this.childContainers = childContainers;
 	}
 
+	public String getContainerTypeName() {
+		return containerTypeName;
+	}
+
+	public void setContainerTypeName(String containerTypeName) {
+		this.containerTypeName = containerTypeName;
+	}
+
 	protected static void transform(StorageContainer container, StorageContainerSummary result) {
 		result.setId(container.getId());
 		result.setName(container.getName());
@@ -147,6 +157,9 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 		result.setNoOfRows(container.getNoOfRows());
 		result.setFreePositions(container.freePositionsCount());
 		result.setStoreSpecimensEnabled(container.isStoreSpecimenEnabled());
+		if (container.getContainerType() != null) {
+			result.setContainerTypeName(container.getContainerType().getName());
+		}
 	}
 	
 	public static StorageContainerSummary from(StorageContainer container) {

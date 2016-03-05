@@ -413,7 +413,6 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 				container = containerFactory.createStorageContainer(input); 
 			}
 			
-			
 			ensureUniqueConstraints(existing, container);			
 			existing.update(container);			
 			daoFactory.getStorageContainerDao().saveOrUpdate(existing, true);

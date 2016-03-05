@@ -113,6 +113,11 @@
       column="IDENTIFIER"
       class="com.krishagni.catissueplus.core.administrative.domain.StorageContainerStats"
       update="false" insert="false"/>
+      
+    <many-to-one
+      name="containerType"
+      class="com.krishagni.catissueplus.core.administrative.domain.ContainerType"
+      column="CONTAINER_TYPE_ID"/>
 
     <filter name="activeEntity"/>
   </class>

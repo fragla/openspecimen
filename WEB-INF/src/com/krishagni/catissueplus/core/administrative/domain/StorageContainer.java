@@ -98,6 +98,7 @@ public class StorageContainer extends BaseEntity {
 
 	private transient StorageContainerPosition lastAssignedPos;
 
+	private ContainerType containerType;
 
 	public StorageContainer() {
 		ancestorContainers.add(this);
@@ -350,6 +351,14 @@ public class StorageContainer extends BaseEntity {
 		this.compAllowedCps = compAllowedCps;
 	}
 
+	public ContainerType getContainerType() {
+		return containerType;
+	}
+
+	public void setContainerType(ContainerType containerType) {
+		this.containerType = containerType;
+	}
+
 	public void update(StorageContainer other) {
 		boolean hasParentChanged = false;
 		if (getParentContainer() == null && other.getParentContainer() != null) {
@@ -369,6 +378,7 @@ public class StorageContainer extends BaseEntity {
 		updateAllowedSpecimenClassAndTypes(other.getAllowedSpecimenClasses(), other.getAllowedSpecimenTypes(), hasParentChanged);
 		updateAllowedCps(other.getAllowedCps(), hasParentChanged);
 		updateStoreSpecimenEnabled(other.storeSpecimenEnabled);
+		setContainerType(other.containerType);
 		
 		validateRestrictions();
 	}

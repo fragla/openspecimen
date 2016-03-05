@@ -67,7 +67,9 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       $scope.sites = [];
       Site.listForContainers(op).then(function(sites) {
         $scope.sites = sites;
+        console.log($scope.sites);
       });
+      console.log($scope.sites);
 
       if ($scope.container.storageLocation.name) {
         ContainerUtil.restrictCpsAndSpecimenTypes($scope, $scope.container);
@@ -88,15 +90,13 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       });
     }
 
-    $scope.onSelectContainerType = function() {
-      $scope.container.noOfColumns = $scope.containerTypes.type ? $scope.containerTypes.type.noOfColumns : "";
-      $scope.container.noOfRows = $scope.containerTypes.type ? $scope.containerTypes.type.noOfRows : "";
-      $scope.container.columnLabelingScheme = $scope.containerTypes.type ? 
-        $scope.containerTypes.type.columnLabelingScheme : "";
-      $scope.container.rowLabelingScheme = $scope.containerTypes.type ? $scope.containerTypes.type.rowLabelingScheme : "";
-      $scope.container.temperature = $scope.containerTypes.type ? $scope.containerTypes.type.temperature : "";
-      $scope.container.storeSpecimensEnabled = $scope.containerTypes.type ?
-        $scope.containerTypes.type.storeSpecimenEnabled : "";
+    $scope.onSelectContainerType = function(containerType) {
+      $scope.container.noOfColumns = containerType ? containerType.noOfColumns : "";
+      $scope.container.noOfRows = containerType ? containerType.noOfRows : "";
+      $scope.container.columnLabelingScheme = containerType ? containerType.columnLabelingScheme : "";
+      $scope.container.rowLabelingScheme = containerType ? containerType.rowLabelingScheme : "";
+      $scope.container.temperature = containerType ? containerType.temperature : "";
+      $scope.container.storeSpecimensEnabled = containerType ? containerType.storeSpecimenEnabled : "";
     }
     
     $scope.save = function() {

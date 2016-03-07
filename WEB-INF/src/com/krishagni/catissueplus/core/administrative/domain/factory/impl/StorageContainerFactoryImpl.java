@@ -87,6 +87,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		
 		setName(detail, existing, container, ose);
 		setBarcode(detail, existing, container, ose);
+		setContainerType(detail, existing, container, ose);
 		setTemperature(detail, existing, container, ose);
 		setCapacity(detail, existing, container, ose);
 		setLabelingSchemes(detail, existing, container, ose);
@@ -98,7 +99,6 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		setAllowedSpecimenClasses(detail, existing, container, ose);
 		setAllowedSpecimenTypes(detail, existing, container, ose);
 		setAllowedCps(detail, existing, container, ose);
-		setContainerType(detail, existing, container, ose);
 		setComputedRestrictions(container);
 		
 		ose.checkAndThrow();

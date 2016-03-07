@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <changeSet author="mdnasim" id="Add container type id column to storage container table">
+    <addColumn tableName="OS_STORAGE_CONTAINERS">
+      <column name="CONTAINER_TYPE_ID" type="${int.type}" defaultValue="null">
+      </column>
+    </addColumn>
+  </changeSet>
+  
+  <changeSet author="mdnasim" id="Add FK to container's container type">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_ST_CONT_CONT_TYPE_ID"
+      baseTableName="OS_STORAGE_CONTAINERS"
+      baseColumnNames="CONTAINER_TYPE_ID"
+      referencedTableName="OS_CONTAINER_TYPES"
+      referencedColumnNames="IDENTIFIER" />
+  </changeSet>
+</databaseChangeLog>

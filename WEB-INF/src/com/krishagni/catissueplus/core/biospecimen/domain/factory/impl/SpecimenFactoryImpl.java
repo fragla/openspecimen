@@ -662,32 +662,26 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 		}
 	}
 
-	private void setFreezeThawCycles(SpecimenDetail detail, Specimen existing, Specimen specimen, OpenSpecimenException ose) {
+	private void setFreezeThawCycles(SpecimenDetail detail, Specimen specimen, OpenSpecimenException ose) {
+		int freezeThaw = detail.getFreezeThawCycles() == null ? 0 : detail.getFreezeThawCycles();
 		Specimen parent = specimen.getParentSpecimen();
-		if ((existing == null || existing.getFreezeThawCycles() == null) && parent == null && detail.getFreezeThawCycles() == null) {
-			specimen.setFreezeThawCycles(0);
-			//
-			//for new parent specimen, default value is zero.
-			//
-			return;
-		}
-
-		if (existing != null && !detail.isAttrModified("freezeThawCycles")) {
-			specimen.setFreezeThawCycles(existing.getFreezeThawCycles());
-			return;
-		}
-
-		if (existing == null && parent != null && ObjectUtils.compare(parent.getFreezeThawCycles(), detail.getFreezeThawCycles()) > 0) {
+		if (specimen.getId() == null && parent != null &&
+			ObjectUtils.compare(parent.getFreezeThawCycles(), freezeThaw) == 1) {
 			ose.addError(SpecimenErrorCode.FREEZE_THAW_CYCLE_LT_PARENT);
-			//
-			// At point of child creation, ensuring its freeze thaw is >= parent's
-			//
 			return;
 		}
 
-		specimen.setFreezeThawCycles(detail.getFreezeThawCycles());
+		specimen.setFreezeThawCycles(freezeThaw);
 	}
-	
+
+	private void setFreezeThawCycles(SpecimenDetail detail, Specimen existing, Specimen specimen, OpenSpecimenException ose) {
+		if (existing == null || detail.isAttrModified("freezeThawCycles")) {
+			setFreezeThawCycles(detail, specimen, ose);
+		} else {
+			specimen.setFreezeThawCycles(existing.getFreezeThawCycles());
+		}
+	}
+
 	private void setComments(SpecimenDetail detail, Specimen existing, Specimen specimen, OpenSpecimenException ose) {
 		if (existing == null || detail.isAttrModified("comments")) {
 			specimen.setComment(detail.getComments());

@@ -116,20 +116,23 @@
       </div>
 
       <div class="form-group clearfix">
-        <div class="col-xs-offset-2 col-xs-3 os-text-checkbox">
-          <div class="checkbox">
-            <os-checkbox ng-model="aliquotSpec.closeParent"></os-checkbox>
-          </div>
-          <div class="message os-ctrl-padding-top">
-            <span translate="specimens.close_parent_q">Do you want to close parent specimen?</span>
-          </div>
-        </div>
-        <div class="col-xs-offset-2 col-xs-3 os-text-checkbox" ng-if="parentSpecimen.freezeThawCycles != null">
+        <div class="col-xs-offset-3 col-xs-6 os-text-checkbox" ng-if="parentSpecimen.freezeThawCycles != null">
           <div class="checkbox">
             <os-checkbox ng-model="aliquotSpec.incrementParentFreezeThaw" ng-change="setFreezeThaw()"></os-checkbox>
           </div>
           <div class="message os-ctrl-padding-top">
             <span translate="specimens.increment_parent_freeze_thaw">Increment parent's Freeze/Thaw?</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group clearfix">
+        <div class="col-xs-offset-3 col-xs-6 os-text-checkbox">
+          <div class="checkbox">
+            <os-checkbox ng-model="aliquotSpec.closeParent"></os-checkbox>
+          </div>
+          <div class="message os-ctrl-padding-top">
+            <span translate="specimens.close_parent_q">Do you want to close parent specimen?</span>
           </div>
         </div>
       </div>

@@ -23,11 +23,8 @@ angular.module('os.biospecimen.specimen.addderivative', [])
     }
 
     function setFreezeThaw() {
-      if ($scope.derivative.incrementParentFreezeThaw) {
-        $scope.derivative.freezeThawCycles = $scope.parentSpecimen.freezeThawCycles + 1;
-      } else {
-        $scope.derivative.freezeThawCycles = $scope.parentSpecimen.freezeThawCycles;
-      }
+      var increment = $scope.derivative.incrementParentFreezeThaw ? 1 : 0;
+      $scope.derivative.freezeThawCycles = $scope.parentSpecimen.freezeThawCycles + increment;
     }
 
     $scope.setFreezeThaw = setFreezeThaw;

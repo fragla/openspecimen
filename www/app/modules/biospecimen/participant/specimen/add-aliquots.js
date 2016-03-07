@@ -33,11 +33,8 @@ angular.module('os.biospecimen.specimen.addaliquots', [])
     }
 
     function setFreezeThaw() {
-      if ($scope.aliquotSpec.incrementParentFreezeThaw) {
-        $scope.aliquotSpec.freezeThawCycles = $scope.parentSpecimen.freezeThawCycles + 1;
-      } else {
-        $scope.aliquotSpec.freezeThawCycles = $scope.parentSpecimen.freezeThawCycles;
-      }
+      var increment = $scope.aliquotSpec.incrementParentFreezeThaw ? 1 : 0;
+      $scope.aliquotSpec.freezeThawCycles = $scope.parentSpecimen.freezeThawCycles + increment;
     }
 
     $scope.setFreezeThaw = setFreezeThaw;

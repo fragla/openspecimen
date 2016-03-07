@@ -6,7 +6,7 @@
 
   <changeSet author="ckhilosiya" id="Freeze/thaw cycles field for specimen">
     <addColumn tableName="CATISSUE_SPECIMEN">
-      <column name="FREEZE_THAW_CYCLES" type="${mediumint.type}"/>
+      <column name="FREEZE_THAW_CYCLES" type="${mediumint.type}" defaultValue="0"/>
     </addColumn>
   </changeSet>
 

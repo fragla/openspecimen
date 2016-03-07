@@ -18,29 +18,28 @@ public class SpecimenThawEventFilter implements FormDataFilter {
 
 	@Override
 	public FormData execute(UserContext userCtx, FormData input) {
-		if (input.getAppData() == null) {
-			return input;
-		}
-
-		Long specimenId = Utility.numberToLong(input.getAppData().get("objectId"));
-		if (specimenId == null) {
-			return input;
-		}
-
-		ControlValue incrFreezeThaw = input.getFieldValue("incrementFreezeThaw");
-
 		try {
+			if (input.getAppData() == null) {
+				return input;
+			}
+
+			Long specimenId = Utility.numberToLong(input.getAppData().get("objectId"));
+			if (specimenId == null) {
+				return input;
+			}
+
 			Specimen specimen = daoFactory.getSpecimenDao().getById(specimenId);
+			ControlValue incrFreezeThaw = input.getFieldValue("incrementFreezeThaw");
 			Integer increment = Integer.parseInt((String) incrFreezeThaw.getValue());
 			if (specimen.getFreezeThawCycles() != null) {
 				specimen.setFreezeThawCycles(specimen.getFreezeThawCycles() + increment);
 			}
+
+			return input;
 		} catch (IllegalArgumentException iae) {
 			throw iae;
 		} catch (Exception e) {
 			throw new RuntimeException("Error executing frozen event post filter", e);
 		}
-
-		return input;
 	}
 }

@@ -30,13 +30,9 @@ angular.module('os.biospecimen.specimen')
       parent.depth = 0;
       parent.closeAfterChildrenCreation = spec.closeParent;
 
-      if (parent.freezeThawCycles != null) {
-        parent.incrementFreezeThaw = spec.incrementParentFreezeThaw ? 1 : 0;
-        if (spec.incrementParentFreezeThaw && parent.freezeThawCycles >= spec.freezeThawCycles ||
-          !spec.incrementParentFreezeThaw && parent.freezeThawCycles > spec.freezeThawCycles) {
-          Alerts.error('specimens.freeze_thaw_cycle_lt_parent');
-          return;
-        }
+      var success = setParentFreezeThaw(spec, parent);
+      if (!success) {
+        return;
       }
 
       var aliquot = new Specimen({
@@ -87,21 +83,13 @@ angular.module('os.biospecimen.specimen')
         return;
       }
 
-      var parent = scope.parentSpecimen;
-      var incrementParentFreezeThaw = scope.derivative.incrementParentFreezeThaw;
-      if (parent.freezeThawCycles != null) {
-        parent.incrementFreezeThaw = incrementParentFreezeThaw ? 1 : 0;
-        if (incrementParentFreezeThaw && parent.freezeThawCycles >= scope.derivative.freezeThawCycles ||
-          !incrementParentFreezeThaw && parent.freezeThawCycles > scope.derivative.freezeThawCycles) {
-          Alerts.error('specimens.freeze_thaw_cycle_lt_parent');
-          return;
-        }
-
-        delete scope.derivative.incrementParentFreezeThaw;
+      var success = setParentFreezeThaw(scope.derivative, scope.parentSpecimen);
+      if (!success) {
+        return;
       }
 
       var specimensToSave = undefined;
-      if (closeParent || incrementParentFreezeThaw) {
+      if (closeParent || scope.parentSpecimen.incrementFreezeThaw) {
         specimensToSave = [new Specimen({
           id: scope.parentSpecimen.id,
           lineage: scope.parentSpecimen.lineage,
@@ -176,6 +164,21 @@ angular.module('os.biospecimen.specimen')
       }
 
       return formCtrl.getFormData();
+    }
+
+    function setParentFreezeThaw(specimen, parent) {
+      if (parent.freezeThawCycles != null) {
+        parent.incrementFreezeThaw = specimen.incrementParentFreezeThaw ? 1 : 0;
+        var parentFreezeThawCycles = parent.freezeThawCycles + parent.incrementFreezeThaw;
+        if (parentFreezeThawCycles > specimen.freezeThawCycles) {
+          Alerts.error('specimens.freeze_thaw_cycle_lt_parent');
+          return false;
+        } else {
+          delete specimen.incrementParentFreezeThaw;
+        }
+      }
+
+      return true;
     }
 
     return {

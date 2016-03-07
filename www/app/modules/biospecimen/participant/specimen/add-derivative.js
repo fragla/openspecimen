@@ -1,7 +1,8 @@
 
 angular.module('os.biospecimen.specimen.addderivative', [])
   .controller('AddDerivativeCtrl', function(
-    $scope, $state, $stateParams, specimen, cpr, visit, extensionCtxt, SpecimenUtil, Util) {
+    $scope, $state, $stateParams, specimen, cpr, visit, extensionCtxt, 
+    SpecimenUtil, ExtensionsUtil) {
 
     function init() {
       $scope.parentSpecimen = specimen;
@@ -18,7 +19,7 @@ angular.module('os.biospecimen.specimen.addderivative', [])
 
 
       $scope.deFormCtrl = {};
-      $scope.extnOpts = Util.getExtnOpts($scope.derivative, extensionCtxt);
+      $scope.extnOpts = ExtensionsUtil.getExtnOpts($scope.derivative, extensionCtxt);
     }
 
     function setFreezeThaw() {

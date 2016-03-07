@@ -18,6 +18,8 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 	private String name;
 
 	private String barcode;
+	
+	private String containerTypeName;
 
 	private String activityStatus;
 
@@ -36,8 +38,6 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 	private boolean storeSpecimensEnabled;
 	
 	private List<StorageContainerSummary> childContainers;
-	
-	private String containerTypeName;
 	
 	public Long getId() {
 		return id;
@@ -61,6 +61,14 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 
 	public void setBarcode(String barcode) {
 		this.barcode = barcode;
+	}
+
+	public String getContainerTypeName() {
+		return containerTypeName;
+	}
+
+	public void setContainerTypeName(String containerTypeName) {
+		this.containerTypeName = containerTypeName;
 	}
 
 	public String getActivityStatus() {
@@ -135,18 +143,13 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 		this.childContainers = childContainers;
 	}
 
-	public String getContainerTypeName() {
-		return containerTypeName;
-	}
-
-	public void setContainerTypeName(String containerTypeName) {
-		this.containerTypeName = containerTypeName;
-	}
-
 	protected static void transform(StorageContainer container, StorageContainerSummary result) {
 		result.setId(container.getId());
 		result.setName(container.getName());
 		result.setBarcode(container.getBarcode());		
+		if (container.getContainerType() != null) {
+			result.setContainerTypeName(container.getContainerType().getName());
+		}
 		result.setActivityStatus(container.getActivityStatus());
 		result.setCreatedBy(UserSummary.from(container.getCreatedBy()));
 		
@@ -157,9 +160,6 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 		result.setNoOfRows(container.getNoOfRows());
 		result.setFreePositions(container.freePositionsCount());
 		result.setStoreSpecimensEnabled(container.isStoreSpecimenEnabled());
-		if (container.getContainerType() != null) {
-			result.setContainerTypeName(container.getContainerType().getName());
-		}
 	}
 	
 	public static StorageContainerSummary from(StorageContainer container) {

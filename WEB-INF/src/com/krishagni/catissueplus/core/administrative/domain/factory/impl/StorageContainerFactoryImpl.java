@@ -55,6 +55,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		
 		setName(detail, container, ose);
 		setBarcode(detail, container, ose);
+		setContainerType(detail, container, ose);
 		setTemperature(detail, container, ose);
 		setCapacity(detail, container, ose);
 		setLabelingSchemes(detail, container, ose);
@@ -66,7 +67,6 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		setAllowedSpecimenClasses(detail, container, ose);
 		setAllowedSpecimenTypes(detail, container, ose);
 		setAllowedCps(detail, container, ose);
-		setContainerType(detail, container, ose);
 		setComputedRestrictions(container);
 		
 		ose.checkAndThrow();
@@ -171,6 +171,31 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 			container.setBarcode(existing.getBarcode());
 		}
 	}
+	
+	private void setContainerType(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
+		setContainerType(detail.getContainerTypeName(), container, ose);
+	}
+
+	private void setContainerType(String containerTypeName, StorageContainer container, OpenSpecimenException ose) {
+		if (StringUtils.isBlank(containerTypeName)) {
+			return;
+		}
+		
+		ContainerType containerType = daoFactory.getContainerTypeDao().getByName(containerTypeName);
+		if (containerType == null) {
+			ose.addError(ContainerTypeErrorCode.NOT_FOUND);
+		}
+		
+		container.setContainerType(containerType);
+	}
+	
+	private void setContainerType(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
+		if (detail.isAttrModified("containerTypeName")) {
+			setContainerType(detail, container, ose);
+		} else {
+			container.setContainerType(existing.getContainerType());
+		}
+	}	
 	
 	private void setTemperature(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
 		container.setTemperature(detail.getTemperature());
@@ -533,31 +558,6 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 			container.setAllowedCps(existing.getAllowedCps());
 		}		
 	}
-	
-	private void setContainerType(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
-		setContainerType(detail.getContainerTypeName(), container, ose);
-	}
-
-	private void setContainerType(String containerTypeName, StorageContainer container, OpenSpecimenException ose) {
-		if (StringUtils.isBlank(containerTypeName)) {
-			return;
-		}
-		
-		ContainerType containerType = daoFactory.getContainerTypeDao().getByName(containerTypeName);
-		if (containerType == null) {
-			ose.addError(ContainerTypeErrorCode.NOT_FOUND);
-		}
-			
-		container.setContainerType(containerType);
-	}
-	
-	private void setContainerType(StorageContainerDetail detail, StorageContainer existing, StorageContainer container, OpenSpecimenException ose) {
-		if (detail.isAttrModified("containerTypeName")) {
-			setContainerType(detail, container, ose);
-		} else {
-			container.setContainerType(existing.getContainerType());
-		}
-	}	
 	
 	private void setComputedRestrictions(StorageContainer container) {
 		container.setCompAllowedSpecimenClasses(container.computeAllowedSpecimenClasses());

@@ -1,8 +1,11 @@
 package com.krishagni.catissueplus.core.administrative.domain;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -38,6 +41,8 @@ public class ContainerType extends BaseEntity {
 	private ContainerType canHold;
 	
 	private String activityStatus;
+	
+	private Set<StorageContainer> storageContainers = new HashSet<StorageContainer>();
 	
 	@Autowired 
 	private DaoFactory daoFactory;
@@ -124,6 +129,15 @@ public class ContainerType extends BaseEntity {
 
 	public void setActivityStatus(String activityStatus) {
 		this.activityStatus = activityStatus;
+	}
+
+	@NotAudited
+	public Set<StorageContainer> getStorageContainers() {
+		return storageContainers;
+	}
+
+	public void setStorageContainers(Set<StorageContainer> storageContainers) {
+		this.storageContainers = storageContainers;
 	}
 
 	public void update(ContainerType containerType) {

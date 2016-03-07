@@ -33,6 +33,12 @@
     
     <property name="activityStatus" column="ACTIVITY_STATUS"/>
     
+    <set name="storageContainers" table="OS_STORAGE_CONTAINERS">
+      <key column="CONTAINER_TYPE_ID"/>
+      <one-to-many class="com.krishagni.catissueplus.core.administrative.domain.StorageContainer"/>
+      <filter name="activeEntity"/>
+    </set>
+    
     <filter name="activeEntity"/>
      
     <query name="getByName">

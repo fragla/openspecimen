@@ -44,6 +44,8 @@ public class StorageContainer extends BaseEntity {
 
 	private String barcode;
 
+	private ContainerType containerType;
+	
 	private Double temperature;
 	
 	private int noOfColumns;
@@ -98,8 +100,6 @@ public class StorageContainer extends BaseEntity {
 
 	private transient StorageContainerPosition lastAssignedPos;
 
-	private ContainerType containerType;
-
 	public StorageContainer() {
 		ancestorContainers.add(this);
 	}
@@ -122,6 +122,14 @@ public class StorageContainer extends BaseEntity {
 
 	public void setBarcode(String barcode) {
 		this.barcode = barcode;
+	}
+
+	public ContainerType getContainerType() {
+		return containerType;
+	}
+
+	public void setContainerType(ContainerType containerType) {
+		this.containerType = containerType;
 	}
 
 	public Double getTemperature() {
@@ -351,14 +359,6 @@ public class StorageContainer extends BaseEntity {
 		this.compAllowedCps = compAllowedCps;
 	}
 
-	public ContainerType getContainerType() {
-		return containerType;
-	}
-
-	public void setContainerType(ContainerType containerType) {
-		this.containerType = containerType;
-	}
-
 	public void update(StorageContainer other) {
 		boolean hasParentChanged = false;
 		if (getParentContainer() == null && other.getParentContainer() != null) {
@@ -369,6 +369,7 @@ public class StorageContainer extends BaseEntity {
 		
 		setName(other.name);
 		setBarcode(other.barcode);
+		setContainerType(other.containerType);
 		setTemperature(other.temperature);
 		updateCapacity(other.noOfColumns, other.noOfRows);
 		updateLabelingScheme(other.columnLabelingScheme, other.rowLabelingScheme);
@@ -378,7 +379,6 @@ public class StorageContainer extends BaseEntity {
 		updateAllowedSpecimenClassAndTypes(other.getAllowedSpecimenClasses(), other.getAllowedSpecimenTypes(), hasParentChanged);
 		updateAllowedCps(other.getAllowedCps(), hasParentChanged);
 		updateStoreSpecimenEnabled(other.storeSpecimenEnabled);
-		setContainerType(other.containerType);
 		
 		validateRestrictions();
 	}

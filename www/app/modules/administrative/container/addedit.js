@@ -67,9 +67,7 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       $scope.sites = [];
       Site.listForContainers(op).then(function(sites) {
         $scope.sites = sites;
-        console.log($scope.sites);
       });
-      console.log($scope.sites);
 
       if ($scope.container.storageLocation.name) {
         ContainerUtil.restrictCpsAndSpecimenTypes($scope, $scope.container);

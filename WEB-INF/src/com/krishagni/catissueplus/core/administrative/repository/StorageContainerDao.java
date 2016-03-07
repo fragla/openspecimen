@@ -19,6 +19,6 @@ public interface StorageContainerDao extends Dao<StorageContainer> {
 
 	public Map<String, Object> getContainerIds(String key, Object value);
 
-	public int getSiteContainersCount(String siteName);
+	public int getStorageContainersCount(StorageContainerListCriteria listCrit);
 }
 	

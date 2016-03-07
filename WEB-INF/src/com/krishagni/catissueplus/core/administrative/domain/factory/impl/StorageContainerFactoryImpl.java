@@ -46,7 +46,29 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	
 	@Override
 	public StorageContainer createStorageContainer(StorageContainerDetail detail) {
-		return createStorageContainer(detail, true);
+		StorageContainer container = new StorageContainer();
+		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
+		
+		container.setId(detail.getId());
+		container.setStoreSpecimenEnabled(detail.isStoreSpecimensEnabled());
+		
+		setName(detail, container, ose);
+		setBarcode(detail, container, ose);
+		setTemperature(detail, container, ose);
+		setCapacity(detail, container, ose);
+		setLabelingSchemes(detail, container, ose);
+		setSiteAndParentContainer(detail, container, ose);
+		setPosition(detail, container, ose);
+		setCreatedBy(detail, container, ose);
+		setActivityStatus(detail, container, ose);
+		setComments(detail, container, ose);
+		setAllowedSpecimenClasses(detail, container, ose);
+		setAllowedSpecimenTypes(detail, container, ose);
+		setAllowedCps(detail, container, ose);
+		setComputedRestrictions(container);
+		
+		ose.checkAndThrow();
+		return container;
 	}
 
 	@Override
@@ -81,54 +103,36 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	@Override
-	public StorageContainer createStorageContainer(ContainerHierarchyDetail hierarchyDetail) {
+	public StorageContainer createStorageContainer(ContainerHierarchyDetail hierarchyDetail, String name) {
 		ContainerType containerType = getContainerType(hierarchyDetail.getContainerTypeId(), 
 				hierarchyDetail.getContainerTypeName());
 		StorageContainerDetail detail = populateContainerDetail(containerType);
+		detail.setName(name);
 		detail.setSiteName(hierarchyDetail.getSiteName());
-		detail.setStorageLocation(populateStorageLocationSummary(hierarchyDetail.getParentContainer()));
+		detail.setStorageLocation(hierarchyDetail.getStorageLocation());
+		detail.setNoOfColumns(hierarchyDetail.getNoOfColumns());
+		detail.setNoOfRows(hierarchyDetail.getNoOfRows());
+		detail.setColumnLabelingScheme(hierarchyDetail.getColumnLabelingScheme());
+		detail.setRowLabelingScheme(hierarchyDetail.getRowLabelingScheme());
+		detail.setTemperature(hierarchyDetail.getTemperature());
+		detail.setStoreSpecimensEnabled(hierarchyDetail.isStoreSpecimensEnabled());
 		detail.setAllowedSpecimenClasses(hierarchyDetail.getAllowedSpecimenClasses());
 		detail.setAllowedSpecimenTypes(hierarchyDetail.getAllowedSpecimenTypes());
 		detail.setAllowedCollectionProtocols(hierarchyDetail.getAllowedCollectionProtocols());
 		
-		return createStorageContainer(detail, false);
+		return createStorageContainer(detail);
 	}
 	
 	@Override
-	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer) {
+	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer, String name) {
+		StorageLocationSummary storageLocation = new StorageLocationSummary();
+		storageLocation.setName(parentContainer.getName());
+		
 		StorageContainerDetail detail = populateContainerDetail(containerType);
-		detail.setStorageLocation(populateStorageLocationSummary(parentContainer.getName()));
+		detail.setName(name);
+		detail.setStorageLocation(storageLocation);
 		
-		return createStorageContainer(detail, false);
-	}
-	
-	private StorageContainer createStorageContainer(StorageContainerDetail detail, boolean isSetName) {
-		StorageContainer container = new StorageContainer();
-		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
-		
-		container.setId(detail.getId());
-		container.setStoreSpecimenEnabled(detail.isStoreSpecimensEnabled());
-		
-		if (isSetName) {
-			setName(detail, container, ose);
-		}
-		
-		setBarcode(detail, container, ose);
-		setTemperature(detail, container, ose);
-		setCapacity(detail, container, ose);
-		setLabelingSchemes(detail, container, ose);
-		setSiteAndParentContainer(detail, container, ose);
-		setPosition(detail, container, ose);
-		setCreatedBy(detail, container, ose);
-		setActivityStatus(detail, container, ose);
-		setComments(detail, container, ose);
-		setAllowedSpecimenClasses(detail, container, ose);
-		setAllowedSpecimenTypes(detail, container, ose);
-		setAllowedCps(detail, container, ose);
-		setComputedRestrictions(container);
-		
-		ose.checkAndThrow();
-		return container;
+		return createStorageContainer(detail);
 	}
 	
 	private void setName(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {

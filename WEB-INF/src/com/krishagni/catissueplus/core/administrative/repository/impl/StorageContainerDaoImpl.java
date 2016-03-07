@@ -15,7 +15,6 @@ import com.krishagni.catissueplus.core.administrative.domain.StorageContainer;
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainerPosition;
 import com.krishagni.catissueplus.core.administrative.repository.StorageContainerDao;
 import com.krishagni.catissueplus.core.administrative.repository.StorageContainerListCriteria;
-import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol;
 import com.krishagni.catissueplus.core.common.repository.AbstractDao;
 import com.krishagni.catissueplus.core.common.util.Status;
 
@@ -30,6 +29,11 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 	@Override
 	public List<StorageContainer> getStorageContainers(StorageContainerListCriteria listCrit) {
 		return new ListQueryBuilder(listCrit).query().list();
+	}
+	
+	@Override
+	public int getStorageContainersCount(StorageContainerListCriteria listCrit) {
+		return ((Number)new ListQueryBuilder(listCrit).query().uniqueResult()).intValue();
 	}
 	
 	@Override
@@ -56,14 +60,6 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 	}
 
 	@Override
-	public int getSiteContainersCount(String siteName) {
-		return ((Number)sessionFactory.getCurrentSession()
-				.getNamedQuery(GET_SITE_CONTAINERS_COUNT)
-				.setString("siteName", siteName)
-				.uniqueResult()).intValue();
-	}
-	
-	@Override
 	public void delete(StorageContainerPosition position) {
 		sessionFactory.getCurrentSession().delete(position);		
 	}
@@ -76,6 +72,8 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 	private class ListQueryBuilder {
 		private StorageContainerListCriteria crit;
 		
+		private StringBuilder select = new StringBuilder();
+		
 		private StringBuilder from = new StringBuilder();
 		
 		private StringBuilder where = new StringBuilder();
@@ -85,17 +83,24 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 		public ListQueryBuilder(StorageContainerListCriteria crit) {
 			this.crit = crit;
 				
-			
 			if (crit.hierarchical()) {
-				from = new StringBuilder("select distinct c from ").append(getType().getName()).append(" c")
+				select = crit.countReq() ? new StringBuilder("select count (distinct c.id)") :
+						new StringBuilder("select distinct c");
+				from = new StringBuilder("from ").append(getType().getName()).append(" c")
 						.append(" join c.descendentContainers dc");
 				where = new StringBuilder("where dc.activityStatus = :activityStatus");
 			} else {
-				from = new StringBuilder("select c from ").append(getType().getName()).append(" c");
+				select = crit.countReq() ? new StringBuilder("select count(c.id)") : 
+						new StringBuilder("select c");
+				from = new StringBuilder("from ").append(getType().getName()).append(" c");
 				where = new StringBuilder("where c.activityStatus = :activityStatus");						
 			}
-
-			from.append(" left join fetch c.position pos ");
+			
+			if (crit.countReq()) {
+				from.append(" left join c.position pos ");
+			} else {
+				from.append(" left join fetch c.position pos ");
+			}
 			params.put("activityStatus", Status.ACTIVITY_STATUS_ACTIVE.getStatus());
 		}
 		
@@ -110,7 +115,7 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 			
 			addParentRestriction();
 			
-			String hql = new StringBuilder(from).append(" ").append(where)
+			String hql = select.append(" ").append(from).append(" ").append(where)
 					.append(" order by c.id asc")
 					.toString();
 			
@@ -261,8 +266,4 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 			params.put("storeSpecimenEnabled", crit.storeSpecimensEnabled());
 		}
 	}
-	
-	private static final String FQN = StorageContainer.class.getName();
-	
-	private static final String GET_SITE_CONTAINERS_COUNT = FQN + ".getSiteContainersCount";
 }

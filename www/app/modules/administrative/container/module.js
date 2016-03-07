@@ -44,7 +44,10 @@ angular.module('os.administrative.container',
             }
 
             return new Container({allowedCollectionProtocols: [], allowedSpecimenClasses: [], allowedSpecimenTypes: []});
-          } 
+          },
+          createHierarchy: function() {
+            return false;
+          }
         },
         controller: 'ContainerAddEditCtrl',
         parent: 'container-root'
@@ -92,9 +95,17 @@ angular.module('os.administrative.container',
         parent: 'container-root'
       })
       .state('container-create-hierarchy',  {
-        url: '/container-create-hierarchy?containerType',
-        templateUrl: 'modules/administrative/container/create-hierarchy.html',
-        controller: 'ContainerCreateHierarchyCtrl',
+        url: '/container-create-hierarchy?containerTypeId',
+        templateUrl: 'modules/administrative/container/addedit.html',
+        controller: 'ContainerAddEditCtrl',
+        resolve: {
+          container: function(Container) {
+            return new Container({allowedCollectionProtocols: [], allowedSpecimenClasses: [], allowedSpecimenTypes: []});
+          },
+          createHierarchy: function() {
+            return true;
+          }
+        },
         parent: 'container-root'
       })
       .state('container-detail', {

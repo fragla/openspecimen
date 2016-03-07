@@ -310,15 +310,34 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 			ContainerType containerType = getContainerType(hierarchyDetail.getContainerTypeId(),
 					hierarchyDetail.getContainerTypeName());
 			
-			int containerCnt = getConatinersCount(hierarchyDetail);
-			String parentContainerName = StringUtils.isNotBlank(hierarchyDetail.getParentContainer()) ? 
-					hierarchyDetail.getParentContainer() : "";
+			StorageContainer parentContainer = null;
+			StorageLocationSummary storageLocation = hierarchyDetail.getStorageLocation();
+			if (storageLocation != null && 
+					(storageLocation.getId() != null || StringUtils.isNotBlank(storageLocation.getName()))) {
+				parentContainer = getContainer(storageLocation.getId(), storageLocation.getName());
+			}
 			
-			for (int i = 1; i <= hierarchyDetail.getNumOfContainers(); i++) {
-				StorageContainer container = containerFactory.createStorageContainer(hierarchyDetail);
-				container.setName(parentContainerName + containerType.getAbbreviation() + ++containerCnt);
-				container = saveStorageContainer(container, false);
-				createContainerHierarchy(containerType.getCanHold(), container);
+			int containerCnt = getContainersCount(hierarchyDetail, parentContainer);
+			
+			String parentContainerName = parentContainer != null ? parentContainer.getName() : StringUtils.EMPTY; 
+			String prefix = parentContainerName + containerType.getAbbreviation();// + ++containerCnt;
+			
+			// Create first container 
+			StorageContainer firstContainer = containerFactory.createStorageContainer(hierarchyDetail, prefix + ++containerCnt);
+			firstContainer = createContainer(firstContainer, containerType);
+			containers.add(firstContainer);
+			
+			// Create remaining containers by cloning first container
+			for (int i = 1; i < hierarchyDetail.getNumOfContainers(); i++) {
+				StorageContainer container = getContainerCopy(firstContainer, true); //containerFactory.createStorageContainer(hierarchyDetail, prefix + ++containerCnt);
+				container.setName(prefix + ++containerCnt);
+				if (container.getParentContainer() != null) {
+					StorageContainerPosition position = container.getParentContainer().nextAvailablePosition();
+					position.setOccupyingContainer(container);
+					container.setPosition(position);
+				}
+				
+				container = createContainer(container, containerType);
 				containers.add(container);
 			}
 			
@@ -329,7 +348,7 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 			return ResponseEvent.serverError(e);
 		}
 	}
-	
+
 	@Override
 	public String getObjectName() {
 		return "container";
@@ -566,7 +585,7 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		storageLocation.setPositionY(dest.getPosTwo());
 		detail.setStorageLocation(storageLocation);
 		
-		StorageContainer replica = containerFactory.createStorageContainer(getContainerCopy(srcContainer), detail);
+		StorageContainer replica = containerFactory.createStorageContainer(getContainerCopy(srcContainer, false), detail);
 		AccessCtrlMgr.getInstance().ensureCreateContainerRights(replica);
 		
 		ensureUniqueConstraints(null, replica);
@@ -578,32 +597,57 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		}
 	}
 	
+	private StorageContainer createContainer(StorageContainer container, ContainerType containerType) {
+		container = saveStorageContainer(container, false);
+		if (container.getParentContainer() != null) {
+			container.getParentContainer().addPosition(container.getPosition());
+		}
+		
+		createContainerHierarchy(containerType.getCanHold(), container);
+		return container;
+	}
+	
 	private void createContainerHierarchy(ContainerType containerType, StorageContainer parentContainer) {
 		if (containerType == null) {
 			return;
 		}
 		
-		int totalChildContainers = 0; 
-		for (int row = 1 ; row <= parentContainer.getNoOfRows(); row++) {
-			for (int col = 1; col <= parentContainer.getNoOfColumns(); col++) {
-				StorageContainer container = containerFactory.createStorageContainer(containerType, parentContainer);
-				container.setName(parentContainer.getName() + containerType.getAbbreviation() + ++totalChildContainers);
-				container = saveStorageContainer(container, false);
-				parentContainer.addPosition(container.getPosition());
-				
-				createContainerHierarchy(containerType.getCanHold(), container);
-			}
+		int totalChildContainers = 0;
+		String parentContainerName = parentContainer.getName();
+		String namePrefix = parentContainerName + containerType.getAbbreviation();
+		
+		//Create first container of hierarchical level
+		StorageContainer firstContainer = containerFactory.createStorageContainer(containerType, parentContainer, namePrefix + ++totalChildContainers);
+		saveStorageContainer(firstContainer, false);
+		parentContainer.addPosition(firstContainer.getPosition());
+		createContainerHierarchy(containerType.getCanHold(), firstContainer);
+		
+		// Create remaining containers of level
+		int containersToCreate = parentContainer.getNoOfRows() * parentContainer.getNoOfColumns() -1; 
+		for (int i = 1; i <= containersToCreate; i++) {
+			StorageContainer container = getContainerCopy(firstContainer, true);
+			container.setName(namePrefix + ++totalChildContainers);
+			StorageContainerPosition position = parentContainer.nextAvailablePosition();
+			position.setOccupyingContainer(container);
+			container.setPosition(position);
+			saveStorageContainer(container, false);
+			parentContainer.addPosition(container.getPosition());
+			createContainerHierarchy(containerType.getCanHold(), container);
 		}
+		
 	}
 	
-	private int getConatinersCount(ContainerHierarchyDetail hierarchyDetail) {
-		String parentContainerName = hierarchyDetail.getParentContainer();
-		if (StringUtils.isNotBlank(parentContainerName)) {
-			StorageContainer container = getContainer(null, parentContainerName);
-			return container.getOccupiedPositions().size();
+	private int getContainersCount(ContainerHierarchyDetail hierarchyDetail, StorageContainer parentContainer) {
+		if (parentContainer != null) {
+			return parentContainer.getOccupiedPositions().size();
 		}
+		
+		StorageContainerListCriteria crit = new StorageContainerListCriteria()
+				.siteName(hierarchyDetail.getSiteName())
+				.topLevelContainers(true)
+				.countReq(true);
 			
-		return daoFactory.getStorageContainerDao().getSiteContainersCount(hierarchyDetail.getSiteName());
+		return daoFactory.getStorageContainerDao().getStorageContainersCount(crit);
 	}
 	
 	private ContainerType getContainerType(Long id, String name) {
@@ -624,8 +668,13 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		return containerType;
 	}
 	
-	private StorageContainer getContainerCopy(StorageContainer source) {
+	private StorageContainer getContainerCopy(StorageContainer source, boolean setSiteAndParentContainer) {
 		StorageContainer copy = new StorageContainer();
+		if (setSiteAndParentContainer) {
+			copy.setSite(source.getSite());
+			copy.setParentContainer(source.getParentContainer());
+		}
+		
 		copy.setTemperature(source.getTemperature());
 		copy.setNoOfColumns(source.getNoOfColumns());
 		copy.setNoOfRows(source.getNoOfRows());

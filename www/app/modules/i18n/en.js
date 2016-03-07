@@ -965,6 +965,7 @@
 
     "create_hierarchy": "Create Hierarchy",
     "container_type": "Container Type",
+    "num_of_containers": "Number of Containers",
 
     "tooltip": {
       "view_details": "Click to view Storage Container details",

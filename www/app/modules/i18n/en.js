@@ -450,7 +450,7 @@
     "close_parent_q": "Do you want to close parent specimen?",
     "concentration": "Concentration",
     "freeze_thaw_cycles": "Freeze/Thaw Cycles",
-    "increment_parent_freeze_thaw": "Increment parent's Freeze/Thaw?",
+    "increment_parent_freeze_thaw": "Increment parent specimen's Freeze/Thaw cycles?",
     "comments": "Comments",
     "qty": "Quantity",
     "aliquot": "Aliquot",

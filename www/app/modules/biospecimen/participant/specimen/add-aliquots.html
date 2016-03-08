@@ -103,8 +103,8 @@
           <label class="col-xs-2 control-label" translate="specimens.freeze_thaw_cycles">Freeze/Thaw Cycles</label>
           <div class="col-xs-2">
             <input name="freezeThawCycles" ng-model="aliquotSpec.freezeThawCycles"
-                   class="form-control" type="text" placeholder="{{'specimens.freeze_thaw_cycles' | translate}}"
-                   ng-pattern="/^[0-9]*$/">
+              class="form-control" type="text" placeholder="{{'specimens.freeze_thaw_cycles' | translate}}"
+              ng-pattern="/^[0-9]*$/">
             <div os-field-error field="aliquotForm.freezeThawCycles"></div>
           </div>
         </div>
@@ -121,7 +121,7 @@
             <os-checkbox ng-model="aliquotSpec.incrementParentFreezeThaw" ng-change="setFreezeThaw()"></os-checkbox>
           </div>
           <div class="message os-ctrl-padding-top">
-            <span translate="specimens.increment_parent_freeze_thaw">Increment parent's Freeze/Thaw?</span>
+            <span translate="specimens.increment_parent_freeze_thaw">Increment parent specimen's Freeze/Thaw cycles?</span>
           </div>
         </div>
       </div>

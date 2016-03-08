@@ -11,5 +11,4 @@
       <column name="freezeThawCycles_MOD" type="${bit.type}"/>
     </addColumn>
   </changeSet>
-
 </databaseChangeLog>

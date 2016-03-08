@@ -22,6 +22,7 @@ import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
+import com.krishagni.catissueplus.core.common.util.AuthUtil;
 import com.krishagni.catissueplus.core.common.util.SchemeOrdinalConverterUtil;
 import com.krishagni.catissueplus.core.common.util.Status;
 import com.krishagni.catissueplus.core.common.util.Utility;
@@ -694,6 +695,32 @@ public class StorageContainer extends BaseEntity {
 				}
 			}
 		}
+	}
+	
+	public StorageContainer copy() {
+		StorageContainer copy = new StorageContainer();
+		copy.setSite(getSite());
+		copy.setParentContainer(getParentContainer());
+		copy.setNoOfColumns(getNoOfColumns());
+		copy.setNoOfRows(getNoOfRows());
+		copy.setColumnLabelingScheme(getColumnLabelingScheme());
+		copy.setRowLabelingScheme(getRowLabelingScheme());
+		copy.setTemperature(getTemperature());
+		copy.setStoreSpecimenEnabled(isStoreSpecimenEnabled());
+		copy.setComments(getComments());
+		copy.setCreatedBy(AuthUtil.getCurrentUser());
+		return copy;
+	}
+	
+	public StorageContainer deepCopy() {
+		StorageContainer copy = copy();
+		copy.setAllowedSpecimenClasses(new HashSet<String>(getAllowedSpecimenClasses()));		
+		copy.setAllowedSpecimenTypes(new HashSet<String>(getAllowedSpecimenTypes()));
+		copy.setAllowedCps(new HashSet<CollectionProtocol>(getAllowedCps()));
+		copy.setCompAllowedSpecimenClasses(new HashSet<String>(computeAllowedSpecimenClasses()));
+		copy.setCompAllowedSpecimenTypes(new HashSet<String>(computeAllowedSpecimenTypes()));
+		copy.setCompAllowedCps(new HashSet<CollectionProtocol>(computeAllowedCps()));
+		return copy;
 	}
 	
 	private void deleteWithoutCheck() {

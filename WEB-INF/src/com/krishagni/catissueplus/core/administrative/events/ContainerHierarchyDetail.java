@@ -4,19 +4,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ContainerHierarchyDetail {
-    private int numOfContainers;
-    
-    private Long containerTypeId;
-
-    private String containerTypeName;
-
-    private String siteName;
-    
-    private StorageLocationSummary storageLocation;
-
-	private int noOfColumns;
+	private int numOfContainers;
 	
-	private int noOfRows;
+	private Long containerTypeId;
+
+	private String containerTypeName;
+
+	private String siteName;
+	
+	private StorageLocationSummary storageLocation;
+
+	private Integer noOfColumns;
+	
+	private Integer noOfRows;
 	
 	private String columnLabelingScheme;
 	
@@ -24,47 +24,47 @@ public class ContainerHierarchyDetail {
 	
 	private Double temperature;
 	
-	private boolean storeSpecimensEnabled;
-    
-    private Set<String> allowedSpecimenClasses = new HashSet<String>();
-    
-    private Set<String> allowedSpecimenTypes = new HashSet<String>();
-    
-    private Set<String> allowedCollectionProtocols = new HashSet<String>();
-    
-    public int getNumOfContainers() {
-	return numOfContainers;
-    }
+	private Boolean storeSpecimensEnabled;
+	
+	private Set<String> allowedSpecimenClasses = new HashSet<String>();
+	
+	private Set<String> allowedSpecimenTypes = new HashSet<String>();
+	
+	private Set<String> allowedCollectionProtocols = new HashSet<String>();
+	
+	public int getNumOfContainers() {
+		return numOfContainers;
+	}
 
-    public void setNumOfContainers(int numOfContainers) {
-	this.numOfContainers = numOfContainers;
-    }
+	public void setNumOfContainers(int numOfContainers) {
+		this.numOfContainers = numOfContainers;
+	}
 
-    public Long getContainerTypeId() {
-        return containerTypeId;
-    }
+	public Long getContainerTypeId() {
+		return containerTypeId;
+	}
 
-    public void setContainerTypeId(Long containerTypeId) {
-        this.containerTypeId = containerTypeId;
-    }
+	public void setContainerTypeId(Long containerTypeId) {
+		this.containerTypeId = containerTypeId;
+	}
 
-    public String getContainerTypeName() {
-        return containerTypeName;
-    }
+	public String getContainerTypeName() {
+		return containerTypeName;
+	}
 
-    public void setContainerTypeName(String containerTypeName) {
-        this.containerTypeName = containerTypeName;
-    }
+	public void setContainerTypeName(String containerTypeName) {
+		this.containerTypeName = containerTypeName;
+	}
 
-    public String getSiteName() {
-        return siteName;
-    }
+	public String getSiteName() {
+		return siteName;
+	}
 
-    public void setSiteName(String siteName) {
-        this.siteName = siteName;
-    }
+	public void setSiteName(String siteName) {
+		this.siteName = siteName;
+	}
 
-    public StorageLocationSummary getStorageLocation() {
+	public StorageLocationSummary getStorageLocation() {
 		return storageLocation;
 	}
 
@@ -72,19 +72,19 @@ public class ContainerHierarchyDetail {
 		this.storageLocation = storageLocation;
 	}
 
-	public int getNoOfColumns() {
+	public Integer getNoOfColumns() {
 		return noOfColumns;
 	}
 
-	public void setNoOfColumns(int noOfColumns) {
+	public void setNoOfColumns(Integer noOfColumns) {
 		this.noOfColumns = noOfColumns;
 	}
 
-	public int getNoOfRows() {
+	public Integer getNoOfRows() {
 		return noOfRows;
 	}
 
-	public void setNoOfRows(int noOfRows) {
+	public void setNoOfRows(Integer noOfRows) {
 		this.noOfRows = noOfRows;
 	}
 
@@ -112,35 +112,35 @@ public class ContainerHierarchyDetail {
 		this.temperature = temperature;
 	}
 
-	public boolean isStoreSpecimensEnabled() {
+	public Boolean getStoreSpecimensEnabled() {
 		return storeSpecimensEnabled;
 	}
 
-	public void setStoreSpecimensEnabled(boolean storeSpecimensEnabled) {
+	public void setStoreSpecimensEnabled(Boolean storeSpecimensEnabled) {
 		this.storeSpecimensEnabled = storeSpecimensEnabled;
 	}
 
 	public Set<String> getAllowedSpecimenClasses() {
-    	return allowedSpecimenClasses;
-    }
+		return allowedSpecimenClasses;
+	}
 	
-    public void setAllowedSpecimenClasses(Set<String> allowedSpecimenClasses) {
-    	this.allowedSpecimenClasses = allowedSpecimenClasses;
-    }
+	public void setAllowedSpecimenClasses(Set<String> allowedSpecimenClasses) {
+		this.allowedSpecimenClasses = allowedSpecimenClasses;
+	}
 	
-    public Set<String> getAllowedSpecimenTypes() {
-    	return allowedSpecimenTypes;
-    }
+	public Set<String> getAllowedSpecimenTypes() {
+		return allowedSpecimenTypes;
+	}
 	
-    public void setAllowedSpecimenTypes(Set<String> allowedSpecimenTypes) {
-    	this.allowedSpecimenTypes = allowedSpecimenTypes;
-    }
+	public void setAllowedSpecimenTypes(Set<String> allowedSpecimenTypes) {
+		this.allowedSpecimenTypes = allowedSpecimenTypes;
+	}
 	
-    public Set<String> getAllowedCollectionProtocols() {
-    	return allowedCollectionProtocols;
-    }
+	public Set<String> getAllowedCollectionProtocols() {
+		return allowedCollectionProtocols;
+	}
 	
-    public void setAllowedCollectionProtocols(Set<String> allowedCollectionProtocols) {
-	this.allowedCollectionProtocols = allowedCollectionProtocols;
-    }
+	public void setAllowedCollectionProtocols(Set<String> allowedCollectionProtocols) {
+		this.allowedCollectionProtocols = allowedCollectionProtocols;
+	}
 }

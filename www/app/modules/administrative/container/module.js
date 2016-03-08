@@ -9,8 +9,7 @@ angular.module('os.administrative.container',
     'os.administrative.container.locations',
     'os.administrative.container.replicate',
     'os.administrative.container.util',
-    'os.administrative.container.map',
-    'os.administrative.container.createhierarchy'
+    'os.administrative.container.map'
   ])
 
   .config(function($stateProvider) {
@@ -35,7 +34,7 @@ angular.module('os.administrative.container',
         parent: 'container-root'
       })
       .state('container-addedit', {
-        url: '/container-addedit/:containerId?posOne&posTwo&parentContainerId&parentContainerName',
+        url: '/container-addedit/:containerId?posOne&posTwo&parentContainerId&parentContainerName&mode&containerTypeId',
         templateUrl: 'modules/administrative/container/addedit.html',
         resolve: {
           container: function($stateParams, Container) {
@@ -45,8 +44,10 @@ angular.module('os.administrative.container',
 
             return new Container({allowedCollectionProtocols: [], allowedSpecimenClasses: [], allowedSpecimenTypes: []});
           },
-          createHierarchy: function() {
-            return false;
+          containerType: function($stateParams, ContainerType) {
+            if ($stateParams.containerTypeId) {
+              return ContainerType.getById($stateParams.containerTypeId);
+            }
           }
         },
         controller: 'ContainerAddEditCtrl',
@@ -90,20 +91,6 @@ angular.module('os.administrative.container',
         resolve: {
           container: function($stateParams, Container) {
             return Container.getById($stateParams.containerId);
-          }
-        },
-        parent: 'container-root'
-      })
-      .state('container-create-hierarchy',  {
-        url: '/container-create-hierarchy?containerTypeId',
-        templateUrl: 'modules/administrative/container/addedit.html',
-        controller: 'ContainerAddEditCtrl',
-        resolve: {
-          container: function(Container) {
-            return new Container({allowedCollectionProtocols: [], allowedSpecimenClasses: [], allowedSpecimenTypes: []});
-          },
-          createHierarchy: function() {
-            return true;
           }
         },
         parent: 'container-root'

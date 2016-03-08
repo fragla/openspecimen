@@ -1,6 +1,6 @@
 angular.module('os.administrative.container.addedit', ['os.administrative.models'])
   .controller('ContainerAddEditCtrl', function(
-    $scope, $state, $stateParams, $q, container, createHierarchy,
+    $scope, $state, $stateParams, $q, container, containerType,
     Site, Container, ContainerType, CollectionProtocol, PvManager, Util) {
 
     var allSpecimenTypes = undefined;
@@ -9,7 +9,6 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
     function init() {
       container.storageLocation = container.storageLocation || {};
       $scope.container = container;
-      $scope.showCreateHierarchy = createHierarchy;
 
       /**
        * Some how the ui-select's multiple option is removing pre-selected items
@@ -46,11 +45,10 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
         restrictCpsAndSpecimenTypes();
       }
 
-      if ($stateParams.containerTypeId) {
-        ContainerType.getById($stateParams.containerTypeId).then(function(containerType) {
-          $scope.container.containerTypeName = containerType.name;
-          setContainerTypeProps(containerType);
-        });
+      $scope.mode = $stateParams.mode;
+      if (containerType) {
+        $scope.container.containerTypeName = containerType.name;
+        setContainerTypeProps(containerType);
       }
 
       watchParentContainer();
@@ -177,9 +175,7 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       );
     };
 
-    $scope.loadAllCps = loadAllCps;
-          
-    $scope.save = function() {
+    function saveContainer() {
       var container = angular.copy($scope.container);
       container.$saveOrUpdate().then(
         function(result) {
@@ -192,18 +188,7 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       );
     };
 
-    function setContainerTypeProps(containerType) {
-      $scope.container.noOfColumns = containerType ? containerType.noOfColumns : "";
-      $scope.container.noOfRows = containerType ? containerType.noOfRows : "";
-      $scope.container.columnLabelingScheme = containerType ? containerType.columnLabelingScheme : "";
-      $scope.container.rowLabelingScheme = containerType ? containerType.rowLabelingScheme : "";
-      $scope.container.temperature = containerType ? containerType.temperature : "";
-      $scope.container.storeSpecimensEnabled = containerType ? containerType.storeSpecimenEnabled : "";
-    };
-
-    $scope.onSelectContainerType = setContainerTypeProps;
-
-    $scope.createHierarchy = function() {
+    function createHierarchy() {
       Container.createHierarchy($scope.container).then(
         function(resp) {
           if (resp[0].storageLocation) {
@@ -214,6 +199,31 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
         }
       )
     };
+
+    function setContainerTypeProps(containerType) {
+      if (!containerType) {
+        return;
+      }
+
+      $scope.container.noOfColumns = containerType.noOfColumns;
+      $scope.container.noOfRows = containerType.noOfRows;
+      $scope.container.columnLabelingScheme = containerType.columnLabelingScheme;
+      $scope.container.rowLabelingScheme = containerType.rowLabelingScheme;
+      $scope.container.temperature = containerType.temperature;
+      $scope.container.storeSpecimensEnabled = containerType.storeSpecimenEnabled;
+    };
+
+    $scope.loadAllCps = loadAllCps;
+
+    $scope.onSelectContainerType = setContainerTypeProps;
+
+    $scope.save = function() {
+      if ($scope.mode == 'createHierarchy') {
+        createHierarchy();
+      } else {
+        saveContainer();
+      }
+    }
 
     init();
   });

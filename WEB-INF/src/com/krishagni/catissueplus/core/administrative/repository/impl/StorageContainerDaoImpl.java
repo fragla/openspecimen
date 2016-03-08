@@ -84,23 +84,18 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 			this.crit = crit;
 				
 			if (crit.hierarchical()) {
-				select = crit.countReq() ? new StringBuilder("select count (distinct c.id)") :
-						new StringBuilder("select distinct c");
+				select = new  StringBuilder(crit.countReq() ? "select count (distinct c.id)" : "select distinct c");
 				from = new StringBuilder("from ").append(getType().getName()).append(" c")
 						.append(" join c.descendentContainers dc");
 				where = new StringBuilder("where dc.activityStatus = :activityStatus");
 			} else {
-				select = crit.countReq() ? new StringBuilder("select count(c.id)") : 
-						new StringBuilder("select c");
+				select = new StringBuilder(crit.countReq() ? "select count(c.id)" : "select c");
 				from = new StringBuilder("from ").append(getType().getName()).append(" c");
 				where = new StringBuilder("where c.activityStatus = :activityStatus");						
 			}
 			
-			if (crit.countReq()) {
-				from.append(" left join c.position pos ");
-			} else {
-				from.append(" left join fetch c.position pos ");
-			}
+			String joinPosition = crit.countReq() ? " left join c.position pos " : " left join fetch c.position pos ";  
+			from.append(joinPosition);
 			params.put("activityStatus", Status.ACTIVITY_STATUS_ACTIVE.getStatus());
 		}
 		
@@ -115,7 +110,9 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 			
 			addParentRestriction();
 			
-			String hql = select.append(" ").append(from).append(" ").append(where)
+			String hql = new StringBuilder(select)
+					.append(" ").append(from)
+					.append(" ").append(where)
 					.append(" order by c.id asc")
 					.toString();
 			

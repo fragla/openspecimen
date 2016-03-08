@@ -965,6 +965,7 @@
     "bulk_import_jobs": "Import Storage Containers Jobs List",
 
     "create_hierarchy": "Create Hierarchy",
+    "create_container_hierarchy": "Create Container Hierarchy",
     "container_type": "Container Type",
     "num_of_containers": "Number of Containers",
 
@@ -1002,9 +1003,6 @@
     "stores_specimens": "Stores Specimens",
     "abbreviation": "Abbreviation",
     "can_hold": "Can Hold",
-    "create_hierarchy": "Create Container Hierarchy",
-    "no_of_containers": "Number of Containers",
-    "container_type": "Container Type",
     "horizontal_dimension": "Columns",
     "vertical_dimension": "Rows",
     "labeling_scheme": "Labeling Scheme",

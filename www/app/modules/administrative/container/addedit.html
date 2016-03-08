@@ -4,11 +4,11 @@
     <ul os-breadcrumbs>
       <li><a ui-sref="container-list" translate="container.list">Storage Containers</a></li>
     </ul>
-    <h3>
-      <span ng-if="showCreateHierarchy">
-        <span translate="container.create_hierarchy">Create Container Hierarchy</span>
+    <h3 ng-switch on="mode">
+      <span ng-switch-when="createHierarchy">
+        <span translate="container.create_container_hierarchy">Create Container Hierarchy</span>
       </span>
-      <span ng-if="!showCreateHierarchy">
+      <span ng-switch-default>
         <span ng-if="!container.id" translate="container.create_container">Create Container</span>
         <span ng-if="!!container.id">{{container.name}}</span>
       </span>
@@ -17,27 +17,28 @@
 
   <div class="container">
     <form name="cform" class="form-horizontal" os-form-validator="cform" validator="cformValidator" novalidate>
-      <div class="form-group" ng-if="showCreateHierarchy">
+      <div class="form-group" ng-if="mode == 'createHierarchy'">
         <label class="col-xs-3 control-label" translate="container.num_of_containers">Number of Containers</label>
         <div class="col-xs-6">
-          <input type="text" name="name" ng-model="container.numOfContainers" class="form-control"
+          <input type="text" name="numOfContainers" ng-model="container.numOfContainers" class="form-control"
             placeholder="{{'container.num_of_containers' | translate}}" ng-pattern="/^[0-9]*$/" required>
-          <div os-field-error field="cform.name"></div>
+          <div os-field-error field="cform.numOfContainers"></div>
         </div>
       </div>
-      <div class="form-group" ng-if="showCreateHierarchy">
+
+      <div class="form-group" ng-if="mode == 'createHierarchy'">
         <label class="col-xs-3 control-label">
           <span translate="container.container_type">Container Type</span>
         </label>
         <div class="col-xs-6">
           <os-select ng-model="container.containerTypeName" list="containerTypes" name="containerType" display-prop="name"
-            select-prop="name" placeholder="{{'container_type.container_type' | translate}}"
+            select-prop="name" placeholder="{{'container.container_type' | translate}}"
             on-select="onSelectContainerType($item)">
           </os-select>
         </div>
       </div>
 
-      <div class="form-group" ng-if="!showCreateHierarchy">
+      <div class="form-group" ng-if="mode != 'createHierarchy'">
         <label class="col-xs-3 control-label" translate="container.name">Name</label>
         <div class="col-xs-6">
           <input type="text" name="name" ng-model="container.name" class="form-control"
@@ -46,7 +47,7 @@
         </div>
       </div>
 
-      <div class="form-group" ng-if="!showCreateHierarchy">
+      <div class="form-group" ng-if="mode != 'createHierarchy'">
         <label class="col-xs-3 control-label" translate="container.barcode">Barcode</label>
         <div class="col-xs-6">
           <input type="text" name="barcode" ng-model="container.barcode" class="form-control"
@@ -152,12 +153,9 @@
 
       <div class="form-group">
         <div class="col-xs-offset-3 col-xs-6">
-          <button class="btn btn-primary" os-form-submit="save()" ng-if="!showCreateHierarchy">
+          <button class="btn btn-primary" os-form-submit="save()">
             <span ng-if="!container.id"  translate="common.buttons.create"> Create </span>
             <span ng-if="!!container.id" translate="common.buttons.update"> Update </span>
-          </button>
-          <button class="btn btn-primary" os-form-submit="createHierarchy()" ng-if="showCreateHierarchy">
-            <span translate="common.buttons.create"> Create </span>
           </button>
           <button class="btn os-btn-text" ng-click="back()" translate="common.buttons.discard">Discard</button>
         </div>

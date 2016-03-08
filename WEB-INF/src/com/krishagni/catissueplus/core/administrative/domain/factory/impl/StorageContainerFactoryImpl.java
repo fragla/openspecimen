@@ -110,26 +110,43 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		detail.setName(name);
 		detail.setSiteName(hierarchyDetail.getSiteName());
 		detail.setStorageLocation(hierarchyDetail.getStorageLocation());
-		detail.setNoOfColumns(hierarchyDetail.getNoOfColumns());
-		detail.setNoOfRows(hierarchyDetail.getNoOfRows());
-		detail.setColumnLabelingScheme(hierarchyDetail.getColumnLabelingScheme());
-		detail.setRowLabelingScheme(hierarchyDetail.getRowLabelingScheme());
-		detail.setTemperature(hierarchyDetail.getTemperature());
-		detail.setStoreSpecimensEnabled(hierarchyDetail.isStoreSpecimensEnabled());
 		detail.setAllowedSpecimenClasses(hierarchyDetail.getAllowedSpecimenClasses());
 		detail.setAllowedSpecimenTypes(hierarchyDetail.getAllowedSpecimenTypes());
 		detail.setAllowedCollectionProtocols(hierarchyDetail.getAllowedCollectionProtocols());
+		
+		if (hierarchyDetail.getNoOfColumns() != null) {
+			detail.setNoOfColumns(hierarchyDetail.getNoOfColumns());
+		}
+		
+		if (hierarchyDetail.getNoOfRows() != null) {
+			detail.setNoOfRows(hierarchyDetail.getNoOfRows());
+		}
+		
+		if (StringUtils.isNotBlank(hierarchyDetail.getColumnLabelingScheme())) {
+			detail.setColumnLabelingScheme(hierarchyDetail.getColumnLabelingScheme());
+		}
+		
+		if (StringUtils.isNotBlank(hierarchyDetail.getRowLabelingScheme())) {
+			detail.setRowLabelingScheme(hierarchyDetail.getRowLabelingScheme());
+		}
+		
+		if (hierarchyDetail.getTemperature() != null) {
+			detail.setTemperature(hierarchyDetail.getTemperature());
+		}
+		
+		if (hierarchyDetail.getStoreSpecimensEnabled() != null) {
+			detail.setStoreSpecimensEnabled(hierarchyDetail.getStoreSpecimensEnabled());
+		}
 		
 		return createStorageContainer(detail);
 	}
 	
 	@Override
 	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer, String name) {
-		StorageLocationSummary storageLocation = new StorageLocationSummary();
-		storageLocation.setName(parentContainer.getName());
-		
 		StorageContainerDetail detail = populateContainerDetail(containerType);
 		detail.setName(name);
+		StorageLocationSummary storageLocation = new StorageLocationSummary();
+		storageLocation.setName(parentContainer.getName());
 		detail.setStorageLocation(storageLocation);
 		
 		return createStorageContainer(detail);
@@ -516,23 +533,12 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 
 	private StorageContainerDetail populateContainerDetail(ContainerType containerType) {
 		StorageContainerDetail detail = new StorageContainerDetail();
-		detail.setTemperature(containerType.getTemperature());
 		detail.setNoOfColumns(containerType.getNoOfColumns());
 		detail.setNoOfRows(containerType.getNoOfRows());
 		detail.setColumnLabelingScheme(containerType.getColumnLabelingScheme());
 		detail.setRowLabelingScheme(containerType.getRowLabelingScheme());
+		detail.setTemperature(containerType.getTemperature());
 		detail.setStoreSpecimensEnabled(containerType.isStoreSpecimenEnabled());
 		return detail;
 	}
-
-	private StorageLocationSummary populateStorageLocationSummary(String parentContainerName) {
-		if (StringUtils.isBlank(parentContainerName)) {
-			return null;
-		}
-		
-		StorageLocationSummary storageLocation = new StorageLocationSummary();
-		storageLocation.setName(parentContainerName);
-		return storageLocation;
-	}
-
 }

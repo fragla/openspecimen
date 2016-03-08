@@ -116,17 +116,5 @@
 
     <filter name="activeEntity"/>
     
-    <query name="getSiteContainersCount">
-      select
-        count(c.id)
-      from
-        com.krishagni.catissueplus.core.administrative.domain.StorageContainer c
-        join c.site s
-        left join c.parentContainer pc
-     where
-        s.name = :siteName and 
-        pc is null and
-        c.activityStatus != 'Disabled'
-    </query>
   </class>
 </hibernate-mapping>

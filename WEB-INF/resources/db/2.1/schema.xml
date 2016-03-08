@@ -78,28 +78,112 @@
       ordered="true" />
   </changeSet>
 
-  <changeSet author="ahegade" id="Modify initial quantity from double to big decimal in catissue_specimen table">
+  <changeSet author="ahegade" id="Modify initial quantity from double to big decimal in catissue_specimen table" dbms="mysql">
     <validCheckSum>7:ff0fa5028cf6472252cc5abdb49b9597</validCheckSum>
     <validCheckSum>7:5d9850a7d64a8b5253d7529bb5a1eb7e</validCheckSum>
     <modifyDataType tableName="CATISSUE_SPECIMEN" columnName="INITIAL_QUANTITY" newDataType="${decimal.type}(24,8)" />
   </changeSet>
-
-  <changeSet author="ahegade" id="Modify available quantity from double to big decimal in catissue_specimen table">
+  
+  <changeSet author="nmarwaha" id="Modify initial quantity from double to big decimal in catissue_specimen table" dbms="oracle">
+    <validCheckSum>7:kj0da5028cf6471432dd5abdb49b8756</validCheckSum>
+    <addColumn tableName="CATISSUE_SPECIMEN">
+      <column name="TMP_INITIAL_QUANTITY" type="${decimal.type}(24,8)"/>
+    </addColumn>  
+    
+    <sql>
+      update catissue_specimen set tmp_initial_quantity = initial_quantity
+    </sql>
+    
+    <dropColumn 
+      tableName="CATISSUE_SPECIMEN"
+      columnName="INITIAL_QUANTITY"/>
+    
+    <renameColumn 
+      tableName="CATISSUE_SPECIMEN"
+      oldColumnName="TMP_INITIAL_QUANTITY"
+      newColumnName="INITIAL_QUANTITY"
+      columnDataType="${decimal.type}(24,8)"/>
+  </changeSet>
+  
+  <changeSet author="ahegade" id="Modify available quantity from double to big decimal in catissue_specimen table" dbms="mysql">
     <validCheckSum>7:1f012a0c182e8ea1354684d3eda47ceb</validCheckSum>
     <validCheckSum>7:d47348a821355dfe3e9d2eb4ea486f73</validCheckSum>
     <modifyDataType tableName="CATISSUE_SPECIMEN" columnName="AVAILABLE_QUANTITY" newDataType="${decimal.type}(24,8)" />
   </changeSet>
-
-  <changeSet author="ahegade" id="Modify quantity from double to big decimal in os_order_items table">
+  
+  <changeSet author="nmarwaha" id="Modify available quantity from double to big decimal in catissue_specimen table" dbms="oracle">
+    <validCheckSum>7:ff0fa5028cf6472252cc7abdb49b3214</validCheckSum>
+    <addColumn tableName="CATISSUE_SPECIMEN">
+      <column name="TMP_AVAILABLE_QUANTITY" type="${decimal.type}(24,8)"/>
+    </addColumn>  
+    
+    <sql>
+      update catissue_specimen set tmp_available_quantity = available_quantity
+    </sql>
+    
+    <dropColumn 
+      tableName="CATISSUE_SPECIMEN"
+      columnName="AVAILABLE_QUANTITY"/>
+    
+    <renameColumn 
+      tableName="CATISSUE_SPECIMEN"
+      oldColumnName="TMP_AVAILABLE_QUANTITY"
+      newColumnName="AVAILABLE_QUANTITY"
+      columnDataType="${decimal.type}(24,8)"/>
+  </changeSet>
+  
+  <changeSet author="ahegade" id="Modify quantity from double to big decimal in os_order_items table" dbms="mysql">
     <validCheckSum>7:0f5b826dd54303a145a68941ba09f861</validCheckSum>
     <validCheckSum>7:c0838b43757fb8b2879f04cbd5495e3a</validCheckSum>
     <modifyDataType tableName="OS_ORDER_ITEMS" columnName="QUANTITY" newDataType="${decimal.type}(24,8)" />
   </changeSet>
-
-  <changeSet author="ahegade" id="Modify quantity from double to big decimal in catissue_cp_req_specimen table">
+  
+  <changeSet author="nmarwaha" id="Modify quantity from double to big decimal in os_order_items table" dbms="oracle">
+    <validCheckSum>7:kj4na2365cf6470243cc5abdb49j3502</validCheckSum>
+    <addColumn tableName="OS_ORDER_ITEMS">
+      <column name="TMP_QUANTITY" type="${decimal.type}(24,8)"/>
+    </addColumn>  
+    
+    <sql>
+      update os_order_items set tmp_quantity = quantity
+    </sql>
+    
+    <dropColumn 
+      tableName="OS_ORDER_ITEMS"
+      columnName="QUANTITY"/>
+    
+    <renameColumn 
+      tableName="OS_ORDER_ITEMS"
+      oldColumnName="TMP_QUANTITY"
+      newColumnName="QUANTITY"
+      columnDataType="${decimal.type}(24,8)"/>
+  </changeSet>
+  
+  <changeSet author="ahegade" id="Modify quantity from double to big decimal in catissue_cp_req_specimen table" dbms="mysql">
     <validCheckSum>7:ecbb35ad1bc1dc02ee26f4883e5c6e10</validCheckSum>
     <validCheckSum>7:1d78eb7f01bab7688f06e5cd65db036f</validCheckSum>
     <modifyDataType tableName="CATISSUE_CP_REQ_SPECIMEN" columnName="INITIAL_QUANTITY" newDataType="${decimal.type}(24,8)" />
+  </changeSet>
+  
+  <changeSet author="nmarwaha" id="Modify quantity from double to big decimal in catissue_cp_req_specimen table" dbms="oracle">
+    <validCheckSum>7:aw3ra0923cf6412903cc5abdb49b0321</validCheckSum>
+    <addColumn tableName="CATISSUE_CP_REQ_SPECIMEN">
+      <column name="TMP_INITIAL_QUANTITY" type="${decimal.type}(24,8)"/>
+    </addColumn>  
+    
+    <sql>
+      update catissue_cp_req_specimen set tmp_initial_quantity = initial_quantity
+    </sql>
+    
+    <dropColumn 
+      tableName="CATISSUE_CP_REQ_SPECIMEN"
+      columnName="INITIAL_QUANTITY"/>
+    
+    <renameColumn 
+      tableName="CATISSUE_CP_REQ_SPECIMEN"
+      oldColumnName="TMP_INITIAL_QUANTITY"
+      newColumnName="INITIAL_QUANTITY"
+      columnDataType="${decimal.type}(24,8)"/>
   </changeSet>
 
   <changeSet author="vpawar" id="Add covering index to record entry table for use in views">

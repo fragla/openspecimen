@@ -33,8 +33,9 @@
         <div class="col-xs-6">
           <os-select ng-model="container.containerTypeName" list="containerTypes" name="containerType" display-prop="name"
             select-prop="name" placeholder="{{'container.container_type' | translate}}"
-            on-select="onSelectContainerType($item)">
+            on-select="onSelectContainerType($item)" required>
           </os-select>
+          <div os-field-error field="cform.containerType"></div>
         </div>
       </div>
 

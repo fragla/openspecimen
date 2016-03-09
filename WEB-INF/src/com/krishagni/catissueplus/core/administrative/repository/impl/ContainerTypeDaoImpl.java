@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
@@ -31,6 +32,15 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 		
 		addSearchConditions(query, crit);
 		return query.list();
+	}
+	
+	@Override
+	public int getContainerTypesCount(ContainerTypeListCriteria crit) {
+		Criteria query = sessionFactory.getCurrentSession().createCriteria(ContainerType.class)
+			.setProjection(Projections.rowCount());
+		
+		addSearchConditions(query, crit);
+		return ((Number)query.uniqueResult()).intValue();
 	}
 	
 	@Override
@@ -62,6 +72,7 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 		if (canHoldId == null) {
 			return;
 		}
+		
 		query.add(Restrictions.eq("canHold.id", canHoldId));
 	}
 	

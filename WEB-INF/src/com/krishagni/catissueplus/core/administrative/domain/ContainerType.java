@@ -156,8 +156,13 @@ public class ContainerType extends BaseEntity {
 	
 	public List<DependentEntityDetail> getDependentEntities() {
 		ContainerTypeListCriteria crit = new ContainerTypeListCriteria().canHold(getId());
-		List<ContainerType> listContainerType = daoFactory.getContainerTypeDao().getContainerTypes(crit);
-		return DependentEntityDetail.singletonList(ContainerType.getEntityName(), listContainerType.size());
+		int dependentContainerTypesCnt = daoFactory.getContainerTypeDao().getContainerTypesCount(crit);
+		
+		return DependentEntityDetail
+				.listBuilder()
+				.add(ContainerType.getEntityName(), dependentContainerTypesCnt)
+				.add(StorageContainer.getEntityName(), getContainers().size())
+				.build();
 	}
 	
 	public void delete() {
@@ -165,6 +170,7 @@ public class ContainerType extends BaseEntity {
 		if (!dependentEntities.isEmpty()) {
 			throw OpenSpecimenException.userError(ContainerTypeErrorCode.REF_ENTITY_FOUND);
 		}
+		
 		setActivityStatus(Status.ACTIVITY_STATUS_DISABLED.getStatus());
 	}
 

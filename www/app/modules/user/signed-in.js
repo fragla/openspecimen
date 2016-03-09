@@ -8,7 +8,6 @@ angular.module('openspecimen')
      $scope.userCreateUpdateOpts = {resource: 'User', operations: ['Create', 'Update']};
      $scope.cpReadOpts = {resource: 'CollectionProtocol', operations: ['Read']};
      $scope.containerReadOpts = {resource: 'StorageContainer', operations: ['Read']};
-     $scope.containerCreateUpdateOpts = {resource: 'StorageContainer',  operations: ['Create', 'Update']};
      $scope.orderReadOpts = {resource: 'Order', operations: ['Read']};
      $scope.shipmentReadOpts = {resource: 'ShippingAndTracking', operations: ['Read']};
      $scope.scheduledJobReadOpts = {resource: 'ScheduledJob', operations: ['Read']};

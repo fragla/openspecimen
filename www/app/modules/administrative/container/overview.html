@@ -3,7 +3,11 @@
     <ul class="os-key-values os-one-col" os-inline-editors on-save="editContainer">
       <li class="item">
         <strong class="key key-sm" translate="container.container_type">Container Type</strong>
-        <span class="value value-md">{{container.containerTypeName | osNoValue}}</span>
+        <a ng-if="container.containerTypeId"
+          ui-sref="container-type-detail.overview({containerTypeId: container.containerTypeId})">
+          <span class="value value-md">{{container.containerTypeName}}</span>
+        </a>
+        <span ng-if="!container.containerTypeId" class="value value-md" translate="common.not_specified">Not Specified</span>
       </li>
       <li class="item">
         <strong class="key key-sm" translate="container.barcode">Barcode</strong>

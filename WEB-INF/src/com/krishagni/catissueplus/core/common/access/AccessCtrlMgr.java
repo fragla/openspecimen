@@ -554,7 +554,7 @@ public class AccessCtrlMgr {
 		}
 		
 		User user = AuthUtil.getCurrentUser();
-		Operation[] ops = {Operation.CREATE, Operation.UPDATE};
+		Operation[] ops = {Operation.READ};
 		if (!canUserPerformOp(user.getId(), Resource.STORAGE_CONTAINER, ops)) {
 			throw OpenSpecimenException.userError(RbacErrorCode.ACCESS_DENIED);
 		} 

@@ -1,7 +1,10 @@
 angular.module('os.administrative.container.addedit', ['os.administrative.models'])
   .controller('ContainerAddEditCtrl', function(
-    $scope, $state, $stateParams, $q, container, 
-    Site, PvManager, ContainerUtil, ContainerType) {
+    $scope, $state, $stateParams, $q, container, containerType,
+    Site, Container, ContainerType, CollectionProtocol, PvManager, Util) {
+
+    var allSpecimenTypes = undefined;
+    var allowedCps = undefined;
 
     function init() {
       container.storageLocation = container.storageLocation || {};
@@ -12,7 +15,7 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
        * when cp list is being loaded or not yet loaded...
        * Therefore we copy pre-selected cps and then use it when all CPs are loaded
        */
-      $scope.allowedCps = angular.copy(container.allowedCollectionProtocols);
+      allowedCps = angular.copy(container.allowedCollectionProtocols);
 
       $scope.cps = [];
       $scope.specimenTypes = [];
@@ -43,6 +46,12 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       }
       loadContainerTypes();
 
+      $scope.mode = $stateParams.mode;
+      if (containerType) {
+        $scope.container.containerTypeName = containerType.name;
+        setContainerTypeProps(containerType);
+      }
+
       watchParentContainer();
     };
 
@@ -53,16 +62,17 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
         }
 
         if (!newVal) {
-          ContainerUtil.loadAllCpsAndSpecimenTypes($scope, $scope.container);
+          loadAllCpsAndSpecimenTypes();
         } else {
-          ContainerUtil.restrictCpsAndSpecimenTypes($scope, $scope.container);
+          restrictCpsAndSpecimenTypes();
         } 
       });
     };
 
     function loadPvs() {
       $scope.positionLabelingSchemes = PvManager.getPvs('container-position-labeling-schemes');
-      
+      loadContainerTypes();
+
       var op = !!$scope.container.id ? 'Update' : 'Create';
       $scope.sites = [];
       Site.listForContainers(op).then(function(sites) {
@@ -70,16 +80,12 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       });
 
       if ($scope.container.storageLocation.name) {
-        ContainerUtil.restrictCpsAndSpecimenTypes($scope, $scope.container);
+        restrictCpsAndSpecimenTypes();
       } else {
-        ContainerUtil.loadAllCpsAndSpecimenTypes($scope, $scope.container);
+        loadAllCpsAndSpecimenTypes();
       }
 
     };
-
-    $scope.loadAllCps = function() {
-      ContainerUtil.loadAllCps($scope, $scope.container);
-    }
 
     function loadContainerTypes() {
       $scope.containerTypes = [];
@@ -87,17 +93,90 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
         $scope.containerTypes = containerTypes;
       });
     }
-
-    $scope.onSelectContainerType = function(containerType) {
-      $scope.container.noOfColumns = containerType ? containerType.noOfColumns : "";
-      $scope.container.noOfRows = containerType ? containerType.noOfRows : "";
-      $scope.container.columnLabelingScheme = containerType ? containerType.columnLabelingScheme : "";
-      $scope.container.rowLabelingScheme = containerType ? containerType.rowLabelingScheme : "";
-      $scope.container.temperature = containerType ? containerType.temperature : "";
-      $scope.container.storeSpecimensEnabled = containerType ? containerType.storeSpecimenEnabled : "";
-    }
     
-    $scope.save = function() {
+    function restrictCpsAndSpecimenTypes() {
+      var parentName = $scope.container.storageLocation.name;
+      Container.getByName(parentName).then(
+        function(parentContainer) {
+          restrictCps(parentContainer);
+          restrictSpecimenTypes(parentContainer);
+        }
+      );
+    };
+
+    function loadAllCpsAndSpecimenTypes() {
+      loadAllCps();
+      loadAllSpecimenTypes();
+    };
+     
+    function restrictCps(parentContainer) {
+      var parentCps = parentContainer.calcAllowedCollectionProtocols;
+      if (parentCps.length > 0) {
+        $scope.cps = parentCps;
+      } else {
+        loadAllCps(parentContainer.siteName);
+      } 
+
+      $scope.container.allowedCollectionProtocols = allowedCps; 
+    };
+
+    function loadAllCps(siteName) {
+      siteName = !siteName ? $scope.container.siteName : siteName;
+
+      CollectionProtocol.query({repositoryName: siteName}).then(
+        function(cps) {
+          $scope.cps = cps.map(function(cp) { return cp.shortTitle; });
+
+          // fix - pre-selected cps were getting cleared
+          $scope.container.allowedCollectionProtocols = allowedCps; 
+        }
+      );
+    };
+
+    function restrictSpecimenTypes(parentContainer) {
+      if (allSpecimenTypes) {
+        filterSpecimenTypes(parentContainer);
+      } else {
+        loadAllSpecimenTypes().then(
+          function() { 
+            filterSpecimenTypes(parentContainer); 
+          }
+        );
+      }
+    };
+
+    function filterSpecimenTypes(parentContainer) {
+      var allowedClasses = parentContainer.calcAllowedSpecimenClasses;
+      var allowedTypes = parentContainer.calcAllowedSpecimenTypes;
+      $scope.specimenTypeSelectorOpts.allowAll = allowedClasses;
+
+
+      var filtered = allSpecimenTypes.filter(
+        function(specimenType) {
+          return allowedClasses.indexOf(specimenType.parent) >= 0 ||
+                   allowedTypes.indexOf(specimenType.value) >= 0;
+        }
+      );
+      Util.assign($scope.specimenTypes, filtered);
+    };
+
+    function loadAllSpecimenTypes() {
+      if (allSpecimenTypes) {
+        var d = $q.defer();
+        d.resolve(allSpecimenTypes);
+        return d.promise;
+      }
+
+      return PvManager.loadPvsByParent('specimen-class', undefined, true).then(
+        function(specimenTypes) {
+          allSpecimenTypes = specimenTypes;
+          Util.assign($scope.specimenTypes, specimenTypes);
+          return allSpecimenTypes;
+        }
+      );
+    };
+
+    function saveContainer() {
       var container = angular.copy($scope.container);
       container.$saveOrUpdate().then(
         function(result) {
@@ -109,6 +188,43 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
         }
       );
     };
+
+    function createHierarchy() {
+      Container.createHierarchy($scope.container).then(
+        function(resp) {
+          if (resp[0].storageLocation) {
+            $state.go('container-detail.overview', {containerId: resp[0].storageLocation.id});
+          } else {
+            $state.go('container-list');
+          }
+        }
+      )
+    };
+
+    function setContainerTypeProps(containerType) {
+      if (!containerType) {
+        return;
+      }
+
+      $scope.container.noOfColumns = containerType.noOfColumns;
+      $scope.container.noOfRows = containerType.noOfRows;
+      $scope.container.columnLabelingScheme = containerType.columnLabelingScheme;
+      $scope.container.rowLabelingScheme = containerType.rowLabelingScheme;
+      $scope.container.temperature = containerType.temperature;
+      $scope.container.storeSpecimensEnabled = containerType.storeSpecimenEnabled;
+    };
+
+    $scope.loadAllCps = loadAllCps;
+
+    $scope.onSelectContainerType = setContainerTypeProps;
+
+    $scope.save = function() {
+      if ($scope.mode == 'createHierarchy') {
+        createHierarchy();
+      } else {
+        saveContainer();
+      }
+    }
 
     init();
   });

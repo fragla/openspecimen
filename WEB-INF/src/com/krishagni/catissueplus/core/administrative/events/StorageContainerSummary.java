@@ -19,6 +19,8 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 
 	private String barcode;
 	
+	private Long containerTypeId;
+	
 	private String containerTypeName;
 
 	private String activityStatus;
@@ -61,6 +63,14 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 
 	public void setBarcode(String barcode) {
 		this.barcode = barcode;
+	}
+
+	public Long getContainerTypeId() {
+		return containerTypeId;
+	}
+
+	public void setContainerTypeId(Long containerTypeId) {
+		this.containerTypeId = containerTypeId;
 	}
 
 	public String getContainerTypeName() {
@@ -147,9 +157,6 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 		result.setId(container.getId());
 		result.setName(container.getName());
 		result.setBarcode(container.getBarcode());		
-		if (container.getContainerType() != null) {
-			result.setContainerTypeName(container.getContainerType().getName());
-		}
 		result.setActivityStatus(container.getActivityStatus());
 		result.setCreatedBy(UserSummary.from(container.getCreatedBy()));
 		
@@ -160,6 +167,11 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 		result.setNoOfRows(container.getNoOfRows());
 		result.setFreePositions(container.freePositionsCount());
 		result.setStoreSpecimensEnabled(container.isStoreSpecimenEnabled());
+		
+		if (container.getContainerType() != null) {
+			result.setContainerTypeId(container.getContainerType().getId());
+			result.setContainerTypeName(container.getContainerType().getName());
+		}
 	}
 	
 	public static StorageContainerSummary from(StorageContainer container) {

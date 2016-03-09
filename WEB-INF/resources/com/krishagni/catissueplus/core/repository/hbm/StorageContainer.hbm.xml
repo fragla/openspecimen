@@ -120,5 +120,6 @@
       column="CONTAINER_TYPE_ID"/>
 
     <filter name="activeEntity"/>
+    
   </class>
 </hibernate-mapping>

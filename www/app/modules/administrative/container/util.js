@@ -68,6 +68,7 @@ angular.module('os.administrative.container.util', ['os.common.box'])
 
     function loadAllSpecimenTypes(scope) {
       if (allSpecimenTypes) {
+    	Util.assign(scope.specimenTypes, allSpecimenTypes);  
         var d = $q.defer();
         d.resolve(allSpecimenTypes);
         return d.promise;

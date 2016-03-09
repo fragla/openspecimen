@@ -9,8 +9,7 @@ angular.module('os.administrative.container',
     'os.administrative.container.locations',
     'os.administrative.container.replicate',
     'os.administrative.container.util',
-    'os.administrative.container.map',
-    'os.administrative.container.createhierarchy'
+    'os.administrative.container.map'
   ])
 
   .config(function($stateProvider) {
@@ -35,7 +34,7 @@ angular.module('os.administrative.container',
         parent: 'container-root'
       })
       .state('container-addedit', {
-        url: '/container-addedit/:containerId?posOne&posTwo&parentContainerId&parentContainerName',
+        url: '/container-addedit/:containerId?posOne&posTwo&parentContainerId&parentContainerName&mode&containerTypeId',
         templateUrl: 'modules/administrative/container/addedit.html',
         resolve: {
           container: function($stateParams, Container) {
@@ -44,7 +43,12 @@ angular.module('os.administrative.container',
             }
 
             return new Container({allowedCollectionProtocols: [], allowedSpecimenClasses: [], allowedSpecimenTypes: []});
-          } 
+          },
+          containerType: function($stateParams, ContainerType) {
+            if ($stateParams.containerTypeId) {
+              return ContainerType.getById($stateParams.containerTypeId);
+            }
+          }
         },
         controller: 'ContainerAddEditCtrl',
         parent: 'container-root'
@@ -89,12 +93,6 @@ angular.module('os.administrative.container',
             return Container.getById($stateParams.containerId);
           }
         },
-        parent: 'container-root'
-      })
-      .state('container-create-hierarchy',  {
-        url: '/container-create-hierarchy?containerType',
-        templateUrl: 'modules/administrative/container/create-hierarchy.html',
-        controller: 'ContainerCreateHierarchyCtrl',
         parent: 'container-root'
       })
       .state('container-detail', {

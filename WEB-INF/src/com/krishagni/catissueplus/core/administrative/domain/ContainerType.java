@@ -42,7 +42,7 @@ public class ContainerType extends BaseEntity {
 	
 	private String activityStatus;
 	
-	private Set<StorageContainer> storageContainers = new HashSet<StorageContainer>();
+	private Set<StorageContainer> containers = new HashSet<StorageContainer>();
 	
 	@Autowired 
 	private DaoFactory daoFactory;
@@ -132,12 +132,12 @@ public class ContainerType extends BaseEntity {
 	}
 
 	@NotAudited
-	public Set<StorageContainer> getStorageContainers() {
-		return storageContainers;
+	public Set<StorageContainer> getContainers() {
+		return containers;
 	}
 
-	public void setStorageContainers(Set<StorageContainer> storageContainers) {
-		this.storageContainers = storageContainers;
+	public void setContainers(Set<StorageContainer> storageContainers) {
+		this.containers = storageContainers;
 	}
 
 	public void update(ContainerType containerType) {

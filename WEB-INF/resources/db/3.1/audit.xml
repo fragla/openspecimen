@@ -5,15 +5,15 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-  <changeSet author="mdnasim" id="Container type id column for os storage container audit table">
-    <addColumn tableName="os_storage_containers_aud">
+  <changeSet author="mdnasim" id="Column to specify container type">
+    <addColumn tableName="OS_STORAGE_CONTAINERS_AUD">
       <column name="CONTAINER_TYPE_ID" type="${int.type}"/>
     </addColumn>
   </changeSet>
 
-  <changeSet author="mdnasim" id="Container type id column for os storage container audit table modified">
-    <addColumn tableName="os_storage_containers_aud">
+  <changeSet author="mdnasim" id="Track changes of container type of container">
+    <addColumn tableName="OS_STORAGE_CONTAINERS_AUD">
       <column name="containerType_MOD" type="${bit.type}"/>
     </addColumn>
   </changeSet>
- </databaseChangeLog>
+</databaseChangeLog>

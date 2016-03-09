@@ -10,7 +10,7 @@ public interface StorageContainerFactory {
 	
 	public StorageContainer createStorageContainer(StorageContainer existing, StorageContainerDetail detail);
 	
-	public StorageContainer createStorageContainer(ContainerHierarchyDetail hierarchyDetail);
+	public StorageContainer createStorageContainer(ContainerHierarchyDetail hierarchyDetail, String name);
 	
-	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer);
+	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer, String name);
 }

@@ -626,8 +626,7 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		
 		StorageContainerListCriteria crit = new StorageContainerListCriteria()
 				.siteName(hierarchyDetail.getSiteName())
-				.topLevelContainers(true)
-				.countReq(true);
+				.topLevelContainers(true);
 			
 		return daoFactory.getStorageContainerDao().getStorageContainersCount(crit);
 	}

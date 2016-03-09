@@ -19,8 +19,6 @@ public abstract class AbstractListCriteria<T extends ListCriteria<T>> implements
 	
 	private boolean includeStat;
 	
-	private boolean countReq;
-	
 	private List<Long> ids = new ArrayList<Long>();
 	
 	@Override
@@ -90,17 +88,6 @@ public abstract class AbstractListCriteria<T extends ListCriteria<T>> implements
 	@Override
 	public T includeStat(boolean includeStat) {
 		this.includeStat = includeStat;
-		return self();
-	}
-	
-	@Override
-	public boolean countReq() {
-		return this.countReq;
-	}
-	
-	@Override
-	public T countReq(boolean countReq) {
-		this.countReq = countReq;
 		return self();
 	}
 	

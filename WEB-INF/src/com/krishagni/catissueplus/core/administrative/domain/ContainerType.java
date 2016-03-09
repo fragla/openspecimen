@@ -161,13 +161,11 @@ public class ContainerType extends BaseEntity {
 	}
 	
 	public void delete() {
-		List<DependentEntityDetail> ded = getDependentEntities();
-		if (ded.size() > 0) {
+		List<DependentEntityDetail> dependentEntities = getDependentEntities();
+		if (!dependentEntities.isEmpty()) {
 			throw OpenSpecimenException.userError(ContainerTypeErrorCode.REF_ENTITY_FOUND);
-		} else {
-			String activityStatus = Status.ACTIVITY_STATUS_DISABLED.getStatus();
-			setActivityStatus(activityStatus);
 		}
+		setActivityStatus(Status.ACTIVITY_STATUS_DISABLED.getStatus());
 	}
 
 	private void updateCanHold(ContainerType canHold) {

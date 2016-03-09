@@ -45,18 +45,24 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 	}
 	
 	private void addSearchConditions(Criteria query, ContainerTypeListCriteria crit) {
-		if (crit.canHold() != null) {
-			searchCanHold(query, crit);
-			return;
-		} else if (StringUtils.isBlank(crit.query())) {
-			return;
-		}
 		MatchMode matchMode = crit.exactMatch() ? MatchMode.EXACT : MatchMode.ANYWHERE;
-		query.add(Restrictions.ilike("name", crit.query(), matchMode));
+		addNameRestriction(query, crit.query(), matchMode);
+		addCanHoldRestriction(query, crit.canHold());
 	}
 	
-	private void searchCanHold(Criteria query, ContainerTypeListCriteria crit) {
-		query.add(Restrictions.eq("canHold.id", crit.canHold()));
+	private void addNameRestriction(Criteria query, String name, MatchMode matchMode) {
+		if (StringUtils.isBlank(name)) {
+			return;
+		}
+		
+		query.add(Restrictions.ilike("name", name, matchMode));
+	}
+	
+	private void addCanHoldRestriction(Criteria query, Long canHoldId) {
+		if (canHoldId == null) {
+			return;
+		}
+		query.add(Restrictions.eq("canHold.id", canHoldId));
 	}
 	
 	private static final String CONTAINER_TYPE_FQN = ContainerType.class.getName();

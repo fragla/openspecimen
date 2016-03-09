@@ -106,10 +106,8 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 	@PlusTransactional
 	public ResponseEvent<List<DependentEntityDetail>> getDependentEntities(RequestEvent<Long> req) {
 		try {
-			ContainerType existing = daoFactory.getContainerTypeDao().getById(req.getPayload());
-			if (existing == null) {
-				return ResponseEvent.userError(ContainerTypeErrorCode.NOT_FOUND);
-			}
+			Long id = req.getPayload();
+			ContainerType existing = getContainerType(id, null);
 			
 			return ResponseEvent.response(existing.getDependentEntities());
 		} catch (Exception e) {
@@ -124,12 +122,9 @@ public class ContainerTypeServiceImpl implements ContainerTypeService {
 			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
 			
 			Long id = req.getPayload();
-			ContainerType existing = daoFactory.getContainerTypeDao().getById(id);
-			if (existing == null) {
-				return ResponseEvent.userError(ContainerTypeErrorCode.NOT_FOUND, id);
-			}
-			
+			ContainerType existing = getContainerType(id, null);
 			existing.delete();
+			
 			return ResponseEvent.response(ContainerTypeDetail.from(existing));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);

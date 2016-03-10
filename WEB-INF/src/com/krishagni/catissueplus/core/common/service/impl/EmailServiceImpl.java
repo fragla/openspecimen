@@ -219,6 +219,7 @@ public class EmailServiceImpl implements EmailService, ConfigChangeListener, Ini
 		return cfgSvc.getStrSetting(MODULE, "account_id");
 	}
 	
+	// Update below method to decode password & return actual password.
 	private String getAccountPassword() {
 		return cfgSvc.getStrSetting(MODULE, "account_password");
 	}

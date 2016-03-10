@@ -107,4 +107,10 @@
       //
     </sql>
   </changeSet>
+  
+  <!-- changeSet author="slakhani" id="Adding column to specify whether property is secured or not">
+  </changeSet-->
+  
+  <!-- changeSet author="slakhani" id="setting secure flag to true for email password configuration">
+  </changeSet-->
  </databaseChangeLog>

@@ -1896,6 +1896,7 @@
     </sql>
   </changeSet>
 
+  <!-- Update below procedure to add secure property value with default value false and "runOnChange" to true -->
   <changeSet author="vpawar" id="Create procedure to add config property" dbms="mysql">
     <sql endDelimiter="//">
       create procedure add_cfg_prop(
@@ -1925,6 +1926,7 @@
     </sql>
   </changeSet>
 
+  <!-- Update below procedure to add secure property value with default value false and "runOnChange" to true -->
   <changeSet author="vpawar" id="Create procedure to add config property" dbms="oracle">
     <sql endDelimiter="//">
       create or replace procedure add_cfg_prop(

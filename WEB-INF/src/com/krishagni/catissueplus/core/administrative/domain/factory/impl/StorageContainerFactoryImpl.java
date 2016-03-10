@@ -110,6 +110,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 				hierarchyDetail.getContainerTypeName());
 		StorageContainerDetail detail = populateContainerDetail(containerType);
 		detail.setName(name);
+		detail.setContainerTypeId(containerType.getId());
 		detail.setSiteName(hierarchyDetail.getSiteName());
 		detail.setStorageLocation(hierarchyDetail.getStorageLocation());
 		detail.setAllowedSpecimenClasses(hierarchyDetail.getAllowedSpecimenClasses());
@@ -147,6 +148,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer, String name) {
 		StorageContainerDetail detail = populateContainerDetail(containerType);
 		detail.setName(name);
+		detail.setContainerTypeId(containerType.getId());
 		StorageLocationSummary storageLocation = new StorageLocationSummary();
 		storageLocation.setName(parentContainer.getName());
 		detail.setStorageLocation(storageLocation);

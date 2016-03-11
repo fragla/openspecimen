@@ -364,7 +364,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Initializ
 		}
 	}
 	
-	private ConfigSetting createSetting(ConfigSetting existing, ConfigSettingDetail detail) {
+	private ConfigSetting createSetting(ConfigSetting existing, ConfigSettingDetail detail) throws Exception {
 		ConfigSetting newSetting = new ConfigSetting();
 		newSetting.setProperty(existing.getProperty());
 		newSetting.setActivatedBy(AuthUtil.getCurrentUser());
@@ -372,14 +372,11 @@ public class ConfigurationServiceImpl implements ConfigurationService, Initializ
 		newSetting.setActivityStatus(Status.ACTIVITY_STATUS_ACTIVE.getStatus());
 		
 		String value = detail.getValue();
-		if (detail.isSecure()) {
-			// encode value using Base64.encode...
-			
+		if (detail.isSecured()) {
+			value = Utility.encrypt(value);
 		}
 		
-		newSetting.getProperty().setSecure(detail.isSecure());
 		newSetting.setValue(value);
-
 		return newSetting;
 	}
 

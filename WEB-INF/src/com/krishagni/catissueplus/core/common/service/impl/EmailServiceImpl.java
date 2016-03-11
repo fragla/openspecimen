@@ -26,6 +26,7 @@ import com.krishagni.catissueplus.core.common.service.ConfigurationService;
 import com.krishagni.catissueplus.core.common.service.EmailService;
 import com.krishagni.catissueplus.core.common.service.TemplateService;
 import com.krishagni.catissueplus.core.common.util.ConfigUtil;
+import com.krishagni.catissueplus.core.common.util.Utility;
 
 public class EmailServiceImpl implements EmailService, ConfigChangeListener, InitializingBean {
 	private static Log LOGGER = LogFactory.getLog(EmailServiceImpl.class);
@@ -219,9 +220,8 @@ public class EmailServiceImpl implements EmailService, ConfigChangeListener, Ini
 		return cfgSvc.getStrSetting(MODULE, "account_id");
 	}
 	
-	// Update below method to decode password & return actual password.
-	private String getAccountPassword() {
-		return cfgSvc.getStrSetting(MODULE, "account_password");
+	private String getAccountPassword() throws Exception {
+		return Utility.decrypt(cfgSvc.getStrSetting(MODULE, "account_password"));
 	}
 	
 	private String getMailServerHost() {

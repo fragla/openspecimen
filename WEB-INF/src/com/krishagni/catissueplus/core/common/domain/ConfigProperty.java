@@ -25,7 +25,7 @@ public class ConfigProperty extends BaseEntity {
 	
 	private DataType dataType;
 	
-	private boolean isSecure;
+	private boolean secured;
 
 	public Module getModule() {
 		return module;
@@ -75,11 +75,11 @@ public class ConfigProperty extends BaseEntity {
 		this.dataType = dataType;
 	}
 
-	public boolean isSecure() {
-		return isSecure;
+	public boolean isSecured() {
+		return secured;
 	}
 
-	public void setSecure(boolean isSecure) {
-		this.isSecure = isSecure;
-	} 
+	public void setSecured(boolean secured) {
+		this.secured = secured;
+	}
 }

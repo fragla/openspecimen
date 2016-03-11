@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -16,6 +17,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
@@ -30,6 +34,10 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.krishagni.catissueplus.core.common.PdfUtil;
 
 public class Utility {
+	private static String key = "0pEN@eSEncRyPtKy";
+	private static SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
+	private static Cipher cipher; 
+	
 	public static String getDisabledValue(String value, int maxLength) {
 		if (StringUtils.isBlank(value)) {
 			return value;
@@ -264,5 +272,22 @@ public class Utility {
 	
 	public static char getFieldSeparator() {
 		return ConfigUtil.getInstance().getCharSetting("common", "field_separator", CSVWriter.DEFAULT_SEPARATOR); 
+	}
+	
+	public static String encrypt(String value) throws Exception {
+		cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+		byte[] encryptedValue = cipher.doFinal(value.getBytes("UTF-8"));
+		Base64.Encoder encoder = Base64.getEncoder();
+		return encoder.encodeToString(encryptedValue);
+	}
+	
+	public static String decrypt(String value) throws Exception {
+		cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.DECRYPT_MODE, secretKey);
+		Base64.Decoder decoder = Base64.getDecoder();
+		byte[] decodedValue = decoder.decode(value.getBytes());
+		byte[] decryptedByte = cipher.doFinal(decodedValue);
+		return new String(decryptedByte);
 	}
 }

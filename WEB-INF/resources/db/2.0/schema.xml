@@ -1895,8 +1895,13 @@
       )
     </sql>
   </changeSet>
+  
+  <changeSet author="slakhani" id="drop add_cfg_prop procedure if exists" dbms="mysql">
+    <sql>
+      drop procedure if exists add_cfg_prop;
+    </sql>
+  </changeSet>
 
-  <!-- Update below procedure to add secure property value with default value false and "runOnChange" to true -->
   <changeSet author="vpawar" id="Create procedure to add config property" dbms="mysql">
     <sql endDelimiter="//">
       create procedure add_cfg_prop(
@@ -1905,15 +1910,16 @@
         in propCode text,
         in propDesc text,
         in propType text,
-        in defValue text
+        in defValue text,
+        in isSecure boolean
       )
       begin
         select identifier into @module_id from os_modules where name = moduleName;
 
         insert into os_cfg_props
-          (identifier, name, display_name_code, desc_code, data_type, module_id)
+          (identifier, name, display_name_code, desc_code, data_type, module_id, is_secure)
         values
-          (default, propName, propCode, propDesc, propType, @module_id);
+          (default, propName, propCode, propDesc, propType, @module_id, isSecure);
 
         select last_insert_id() into @prop_id;
 
@@ -1926,8 +1932,7 @@
     </sql>
   </changeSet>
 
-  <!-- Update below procedure to add secure property value with default value false and "runOnChange" to true -->
-  <changeSet author="vpawar" id="Create procedure to add config property" dbms="oracle">
+  <changeSet author="vpawar" id="Create procedure to add config property" dbms="oracle" runOnChange="true">
     <sql endDelimiter="//">
       create or replace procedure add_cfg_prop(
         moduleName in varchar2, 
@@ -1935,16 +1940,17 @@
         propCode   in varchar2,
         propDesc   in varchar2,
         propType   in varchar2,
-        defValue   in varchar2
+        defValue   in varchar2,
+        isSecure   in boolean
       ) is
         module_id number(20);
       begin
         select identifier into module_id from os_modules where name = moduleName;
 
         insert into os_cfg_props
-          (identifier, name, display_name_code, desc_code, data_type, module_id)
+          (identifier, name, display_name_code, desc_code, data_type, module_id, is_secure)
         values
-          (os_cfg_props_seq.nextval, propName, propCode, propDesc, propType, module_id);
+          (os_cfg_props_seq.nextval, propName, propCode, propDesc, propType, module_id, isSecure);
 
         insert into os_cfg_settings
           (identifier, property_id, value, activated_by, activation_date, activity_status)

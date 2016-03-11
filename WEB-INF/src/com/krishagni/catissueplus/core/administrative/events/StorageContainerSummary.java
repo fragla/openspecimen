@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainer;
 import com.krishagni.catissueplus.core.common.AttributeModifiedSupport;
@@ -33,7 +35,7 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 	
 	private int freePositions;
 	
-	private boolean storeSpecimensEnabled;
+	private Boolean storeSpecimensEnabled;
 	
 	private List<StorageContainerSummary> childContainers;
 	
@@ -117,11 +119,18 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 		this.freePositions = freePositions;
 	}
 
+	@JsonProperty
 	public boolean isStoreSpecimensEnabled() {
-		return storeSpecimensEnabled;
+		return storeSpecimensEnabled != null ? storeSpecimensEnabled : false;
+	}
+	
+	@JsonIgnore
+	public Boolean getStoreSpecimensEnabled() {
+		return this.storeSpecimensEnabled;
 	}
 
-	public void setStoreSpecimensEnabled(boolean storeSpecimensEnabled) {
+	@JsonProperty
+	public void setStoreSpecimensEnabled(Boolean storeSpecimensEnabled) {
 		this.storeSpecimensEnabled = storeSpecimensEnabled;
 	}
 

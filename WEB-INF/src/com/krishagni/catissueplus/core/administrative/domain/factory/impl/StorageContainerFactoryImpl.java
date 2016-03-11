@@ -114,11 +114,11 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		detail.setAllowedSpecimenTypes(hierarchyDetail.getAllowedSpecimenTypes());
 		detail.setAllowedCollectionProtocols(hierarchyDetail.getAllowedCollectionProtocols());
 		
-		if (hierarchyDetail.getNoOfColumns() != null) {
+		if (hierarchyDetail.getNoOfColumns() > 0) {
 			detail.setNoOfColumns(hierarchyDetail.getNoOfColumns());
 		}
 		
-		if (hierarchyDetail.getNoOfRows() != null) {
+		if (hierarchyDetail.getNoOfRows() > 0) {
 			detail.setNoOfRows(hierarchyDetail.getNoOfRows());
 		}
 		
@@ -145,11 +145,14 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer, String name) {
 		StorageContainerDetail detail = populateContainerDetail(containerType);
 		detail.setName(name);
-		StorageLocationSummary storageLocation = new StorageLocationSummary();
-		storageLocation.setName(parentContainer.getName());
-		detail.setStorageLocation(storageLocation);
+		detail.setSiteName(parentContainer.getSite().getName());
 		
-		return createStorageContainer(detail);
+		StorageContainer container = createStorageContainer(detail);
+		container.setParentContainer(parentContainer);
+		StorageContainerPosition position = parentContainer.nextAvailablePosition();
+		position.setOccupyingContainer(container);
+		container.setPosition(position);
+		return container;
 	}
 	
 	private void setName(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {

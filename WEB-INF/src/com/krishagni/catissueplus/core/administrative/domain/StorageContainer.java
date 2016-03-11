@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +23,6 @@ import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
-import com.krishagni.catissueplus.core.common.util.AuthUtil;
 import com.krishagni.catissueplus.core.common.util.SchemeOrdinalConverterUtil;
 import com.krishagni.catissueplus.core.common.util.Status;
 import com.krishagni.catissueplus.core.common.util.Utility;
@@ -65,7 +65,7 @@ public class StorageContainer extends BaseEntity {
 	
 	private String comments;
 	
-	private Set<StorageContainer> childContainers = new HashSet<StorageContainer>();
+	private Set<StorageContainer> childContainers = new LinkedHashSet<StorageContainer>();
 	
 	private Set<StorageContainer> ancestorContainers = new HashSet<StorageContainer>();
 	
@@ -238,7 +238,7 @@ public class StorageContainer extends BaseEntity {
 	public void setLastAssignedPos(StorageContainerPosition lastAssignedPos) {
 		this.lastAssignedPos = lastAssignedPos;
 	}
-
+	
 	@NotAudited
 	public Set<StorageContainer> getChildContainers() {
 		return childContainers;
@@ -246,6 +246,11 @@ public class StorageContainer extends BaseEntity {
 
 	public void setChildContainers(Set<StorageContainer> childContainers) {
 		this.childContainers = childContainers;
+	}
+	
+	public void addChildContainer(StorageContainer container) {
+		container.setParentContainer(this);
+		childContainers.add(container);
 	}
 
 	@NotAudited
@@ -708,12 +713,7 @@ public class StorageContainer extends BaseEntity {
 		copy.setTemperature(getTemperature());
 		copy.setStoreSpecimenEnabled(isStoreSpecimenEnabled());
 		copy.setComments(getComments());
-		copy.setCreatedBy(AuthUtil.getCurrentUser());
-		return copy;
-	}
-	
-	public StorageContainer deepCopy() {
-		StorageContainer copy = copy();
+		copy.setCreatedBy(getCreatedBy());
 		copy.setAllowedSpecimenClasses(new HashSet<String>(getAllowedSpecimenClasses()));		
 		copy.setAllowedSpecimenTypes(new HashSet<String>(getAllowedSpecimenTypes()));
 		copy.setAllowedCps(new HashSet<CollectionProtocol>(getAllowedCps()));

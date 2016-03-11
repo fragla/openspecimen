@@ -331,17 +331,15 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 					// Validate restriction only for first container 
 					cloned.validateRestrictions();
 				} else {
-					cloned = container.deepCopy();
-					setPosition(parentContainer, cloned);
+					cloned = container.copy();
+					setPosition(cloned);
 				}
 				
 				cloned.setName(namePrefix + ++containerCnt);
 
 				ensureUniqueConstraints(null, cloned);
-				daoFactory.getStorageContainerDao().saveOrUpdate(cloned);
-				
 				createContainerHierarchy(containerType.getCanHold(), cloned);
-				
+				daoFactory.getStorageContainerDao().saveOrUpdate(cloned);
 				containers.add(cloned);
 			}
 			
@@ -608,13 +606,13 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 			if (i == 1) {
 				cloned = container;
 			} else {
-				cloned = container.deepCopy();
-				setPosition(parentContainer, cloned);
+				cloned = container.copy();
+				setPosition(cloned);
 			}
 
 			cloned.setName(namePrefix + ++totalChildContainers);
-			ensureUniqueConstraints(null, cloned);
-			daoFactory.getStorageContainerDao().saveOrUpdate(cloned);
+			
+			parentContainer.addChildContainer(cloned);
 			createContainerHierarchy(containerType.getCanHold(), cloned);
 		}
 	}
@@ -631,7 +629,8 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		return daoFactory.getStorageContainerDao().getStorageContainersCount(crit);
 	}
 	
-	private void setPosition(StorageContainer parentContainer, StorageContainer container) {
+	private void setPosition(StorageContainer container) {
+		StorageContainer parentContainer = container.getParentContainer();
 		if (parentContainer == null) {
 			return;
 		}

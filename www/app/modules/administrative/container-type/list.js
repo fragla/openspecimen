@@ -8,7 +8,7 @@ angular.module('os.administrative.containertype.list', ['os.administrative.model
     }
 
     function loadContainerTypes(filterOpts) {
-      ContainerType.list(filterOpts).then(
+      ContainerType.query(filterOpts).then(
         function(containerTypes) {
           $scope.containerTypes = containerTypes;
         }

@@ -4,26 +4,26 @@
 
       <li class="item">
         <strong class="key key-sm" translate="container_type.abbreviation">Abbreviation</strong>
-        <span class="value value-md">{{containerType.abbreviation | osNoValue}}</span>
+        <span class="value value-md">{{containerType.abbreviation}}</span>
       </li>
 
       <li class="item">
-        <strong class="key key-sm" translate="container_type.temperature">Temperature (In Celsius)</strong>
+        <strong class="key key-sm" translate="container.temperature">Temperature (In Celsius)</strong>
         <span class="value value-md">{{containerType.temperature | osNoValue}}</span>
       </li>
 
       <li class="item">
-        <strong class="key key-sm" translate="container_type.dimension">Dimension</strong>
+        <strong class="key key-sm" translate="container.dimension">Dimension</strong>
         <span class="value value-md">{{containerType.noOfRows}} x {{containerType.noOfColumns}}</span>
       </li>
 
       <li class="item">
-        <strong class="key key-sm" translate="container_type.labeling_scheme">Dimension Labeling Scheme</strong>
+        <strong class="key key-sm" translate="container.labeling_scheme">Dimension Labeling Scheme</strong>
         <span class="value value-md">{{containerType.rowLabelingScheme}} x {{containerType.columnLabelingScheme}}</span>
       </li>
 
       <li class="item">
-        <strong class="key key-sm" translate="container_type.stores_specimens">Stores Specimens</strong>
+        <strong class="key key-sm" translate="container.stores_specimens">Stores Specimens</strong>
         <span class="value value-md" ng-switch on="containerType.storeSpecimenEnabled">
           <span ng-switch-when="true" translate="common.yes">Yes</span>
           <span ng-switch-default translate="common.no">No</span>

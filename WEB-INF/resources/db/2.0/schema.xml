@@ -1895,12 +1895,6 @@
       )
     </sql>
   </changeSet>
-  
-  <changeSet author="slakhani" id="drop add_cfg_prop procedure if exists" dbms="mysql">
-    <sql>
-      drop procedure if exists add_cfg_prop;
-    </sql>
-  </changeSet>
 
   <changeSet author="vpawar" id="Create procedure to add config property" dbms="mysql">
     <sql endDelimiter="//">
@@ -1910,16 +1904,15 @@
         in propCode text,
         in propDesc text,
         in propType text,
-        in defValue text,
-        in isSecure boolean
+        in defValue text
       )
       begin
         select identifier into @module_id from os_modules where name = moduleName;
 
         insert into os_cfg_props
-          (identifier, name, display_name_code, desc_code, data_type, module_id, is_secure)
+          (identifier, name, display_name_code, desc_code, data_type, module_id)
         values
-          (default, propName, propCode, propDesc, propType, @module_id, isSecure);
+          (default, propName, propCode, propDesc, propType, @module_id);
 
         select last_insert_id() into @prop_id;
 
@@ -1941,7 +1934,7 @@
         propDesc   in varchar2,
         propType   in varchar2,
         defValue   in varchar2,
-        isSecure   in boolean
+        isSecure   in number default 0
       ) is
         module_id number(20);
       begin

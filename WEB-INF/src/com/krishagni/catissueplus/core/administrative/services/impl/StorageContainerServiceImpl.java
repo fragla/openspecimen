@@ -336,8 +336,8 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 				}
 				
 				cloned.setName(namePrefix + ++containerCnt);
-
 				ensureUniqueConstraints(null, cloned);
+				
 				createContainerHierarchy(containerType.getCanHold(), cloned);
 				daoFactory.getStorageContainerDao().saveOrUpdate(cloned);
 				containers.add(cloned);
@@ -680,5 +680,4 @@ public class StorageContainerServiceImpl implements StorageContainerService, Obj
 		copy.setCreatedBy(AuthUtil.getCurrentUser());
 		return copy;
 	}
-	
 }

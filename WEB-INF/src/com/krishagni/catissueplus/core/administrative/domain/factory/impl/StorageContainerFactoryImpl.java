@@ -146,12 +146,14 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		StorageContainerDetail detail = populateContainerDetail(containerType);
 		detail.setName(name);
 		detail.setSiteName(parentContainer.getSite().getName());
-		
 		StorageContainer container = createStorageContainer(detail);
+
+		// Set parent container and compute restrictions
 		container.setParentContainer(parentContainer);
 		StorageContainerPosition position = parentContainer.nextAvailablePosition();
 		position.setOccupyingContainer(container);
 		container.setPosition(position);
+		setComputedRestrictions(container);
 		return container;
 	}
 	

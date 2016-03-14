@@ -90,7 +90,7 @@ public abstract class AbstractListCriteria<T extends ListCriteria<T>> implements
 		this.includeStat = includeStat;
 		return self();
 	}
-	
+		
 	@Override
 	public List<Long> ids() {
 		return ids;

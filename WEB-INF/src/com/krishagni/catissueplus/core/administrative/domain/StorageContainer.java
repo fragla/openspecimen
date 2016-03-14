@@ -717,9 +717,9 @@ public class StorageContainer extends BaseEntity {
 		copy.setAllowedSpecimenClasses(new HashSet<String>(getAllowedSpecimenClasses()));		
 		copy.setAllowedSpecimenTypes(new HashSet<String>(getAllowedSpecimenTypes()));
 		copy.setAllowedCps(new HashSet<CollectionProtocol>(getAllowedCps()));
-		copy.setCompAllowedSpecimenClasses(new HashSet<String>(computeAllowedSpecimenClasses()));
-		copy.setCompAllowedSpecimenTypes(new HashSet<String>(computeAllowedSpecimenTypes()));
-		copy.setCompAllowedCps(new HashSet<CollectionProtocol>(computeAllowedCps()));
+		copy.setCompAllowedSpecimenClasses(computeAllowedSpecimenClasses());
+		copy.setCompAllowedSpecimenTypes(computeAllowedSpecimenTypes());
+		copy.setCompAllowedCps(computeAllowedCps());
 		return copy;
 	}
 	

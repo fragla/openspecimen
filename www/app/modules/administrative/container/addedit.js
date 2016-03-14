@@ -49,9 +49,8 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       
       if ($scope.mode == 'createHierarchy') {
         loadContainerTypes();
+        setContainerTypeProps(containerType);
       }
-
-      setContainerTypeProps(containerType);
 
       watchParentContainer();
     };

@@ -11,7 +11,6 @@
     "roles": "Roles",
     "queries": "Queries",
     "containers": "Containers",
-    "container_types": "Container Types",
     "forms": "Forms",
     "specimen_lists": "Specimen Carts",
     "distribution_orders": "Distribution Orders",
@@ -25,7 +24,6 @@
     "roles_desc": "Create, update user access controls",
     "sites_desc": "Add and update sites",
     "containers_desc": "Manage containers and their restrictions",
-    "container_types_desc": "Create, update and manage container types",
     "queries_desc": "Create, share and schedule queries",
     "specimen_lists_desc": "Create, share and manage specimen carts",
     "forms_desc": "Create and manage custom forms",
@@ -50,6 +48,7 @@
     "recent_activity": "Recent Activity",
     "no_file_selected": "No File Selected",
     "view_jobs": "View Jobs",
+    "view_import_jobs": "View Import Jobs",
     "digits": "digits",
     "not_specified": "Not Specified",
     "enabled": "Enabled",
@@ -961,8 +960,8 @@
     "pos_selector": "Container Position Selector",
     "selected_pos": "Selected Position: ",
 
-    "bulk_import": "Import Storage Containers",
-    "bulk_import_jobs": "Import Storage Containers Jobs List",
+    "bulk_import": "Import Containers",
+    "bulk_import_jobs": "Import Containers Jobs List",
 
     "create_hierarchy": "Create Hierarchy",
     "create_container_hierarchy": "Create Container Hierarchy",
@@ -994,20 +993,10 @@
 
   "container_type": {
     "list": "Container Types",
-    "name": "Name",
     "create_container_type": "Create Container Type",
     "update_container_type": "Update Container Type",
-    "dimension": "Dimension",
-    "temperature": "Temperature (Celsius)",
-    "labeling_scheme": "Labeling Scheme",
-    "stores_specimens": "Stores Specimens",
     "abbreviation": "Abbreviation",
     "can_hold": "Can Hold",
-    "horizontal_dimension": "Columns",
-    "vertical_dimension": "Rows",
-    "labeling_scheme": "Labeling Scheme",
-    "horizontal_labeling_scheme": "Column Labeling Scheme",
-    "vertical_labeling_scheme": "Row Labeling Scheme",
 
     "tooltip": {
       "add": "Click to add new Container Type",

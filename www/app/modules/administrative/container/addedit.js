@@ -47,8 +47,9 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       loadContainerTypes();
 
       $scope.mode = $stateParams.mode;
-      if (containerType) {
-        $scope.container.containerTypeName = containerType.name;
+      
+      if ($scope.mode == 'createHierarchy') {
+        loadContainerTypes();
         setContainerTypeProps(containerType);
       }
 
@@ -71,7 +72,6 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
 
     function loadPvs() {
       $scope.positionLabelingSchemes = PvManager.getPvs('container-position-labeling-schemes');
-      loadContainerTypes();
 
       var op = !!$scope.container.id ? 'Update' : 'Create';
       $scope.sites = [];
@@ -206,6 +206,7 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
         return;
       }
 
+      $scope.container.containerTypeName = containerType.name;
       $scope.container.noOfColumns = containerType.noOfColumns;
       $scope.container.noOfRows = containerType.noOfRows;
       $scope.container.columnLabelingScheme = containerType.columnLabelingScheme;

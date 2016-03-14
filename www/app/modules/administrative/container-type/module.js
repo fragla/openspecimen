@@ -9,11 +9,21 @@ angular.module('os.administrative.containertype',
 
   .config(function($stateProvider) {
     $stateProvider
+      .state('container-type-root', {
+        abstract: true,
+        template: '<div ui-view></div>',
+        controller: function($scope) {
+          $scope.containerResource = {
+            createOpts: {resource: 'StorageContainer', operations: ['Create']}
+          }
+        },
+        parent: 'signed-in'
+      })
       .state('container-type-list', {
         url:'/container-types',
         templateUrl:'modules/administrative/container-type/list.html',
         controller: 'ContainerTypeListCtrl',
-        parent: 'signed-in'
+        parent: 'container-type-root'
       })
       .state('container-type-addedit', {
         url: '/container-type-addedit/:containerTypeId',
@@ -28,7 +38,7 @@ angular.module('os.administrative.containertype',
           }
         },
         controller: 'ContainerTypeAddEditCtrl',
-        parent: 'signed-in'
+        parent: 'container-type-root'
       })
       .state('container-type-detail', {
         url: '/container-types/:containerTypeId',
@@ -39,7 +49,7 @@ angular.module('os.administrative.containertype',
           }
         },
         controller: 'ContainerTypeDetailCtrl',
-        parent: 'signed-in'
+        parent: 'container-type-root'
       })
       .state('container-type-detail.overview', {
         url: '/overview',

@@ -48,6 +48,8 @@ angular.module('os.administrative.container',
             if ($stateParams.containerTypeId) {
               return ContainerType.getById($stateParams.containerTypeId);
             }
+            
+            return null;
           }
         },
         controller: 'ContainerAddEditCtrl',

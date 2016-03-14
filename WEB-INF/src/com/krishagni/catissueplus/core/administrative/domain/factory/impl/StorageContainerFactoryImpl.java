@@ -117,11 +117,11 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		detail.setAllowedSpecimenTypes(hierarchyDetail.getAllowedSpecimenTypes());
 		detail.setAllowedCollectionProtocols(hierarchyDetail.getAllowedCollectionProtocols());
 		
-		if (hierarchyDetail.getNoOfColumns() != null) {
+		if (hierarchyDetail.getNoOfColumns() > 0) {
 			detail.setNoOfColumns(hierarchyDetail.getNoOfColumns());
 		}
 		
-		if (hierarchyDetail.getNoOfRows() != null) {
+		if (hierarchyDetail.getNoOfRows() > 0) {
 			detail.setNoOfRows(hierarchyDetail.getNoOfRows());
 		}
 		
@@ -148,12 +148,16 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer, String name) {
 		StorageContainerDetail detail = populateContainerDetail(containerType);
 		detail.setName(name);
-		detail.setContainerTypeId(containerType.getId());
-		StorageLocationSummary storageLocation = new StorageLocationSummary();
-		storageLocation.setName(parentContainer.getName());
-		detail.setStorageLocation(storageLocation);
-		
-		return createStorageContainer(detail);
+		detail.setSiteName(parentContainer.getSite().getName());
+		StorageContainer container = createStorageContainer(detail);
+
+		// Set parent container and compute restrictions
+		container.setParentContainer(parentContainer);
+		StorageContainerPosition position = parentContainer.nextAvailablePosition();
+		position.setOccupyingContainer(container);
+		container.setPosition(position);
+		setComputedRestrictions(container);
+		return container;
 	}
 	
 	private void setName(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {

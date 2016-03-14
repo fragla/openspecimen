@@ -33,7 +33,7 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 	
 	@Override
 	public int getStorageContainersCount(StorageContainerListCriteria listCrit) {
-		return ((Number)new ListQueryBuilder(listCrit).query().uniqueResult()).intValue();
+		return ((Number) new ListQueryBuilder(listCrit, true).query().uniqueResult()).intValue();
 	}
 	
 	@Override
@@ -81,24 +81,13 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 		private Map<String, Object> params = new HashMap<String, Object>();
 		
 		public ListQueryBuilder(StorageContainerListCriteria crit) {
-			this.crit = crit;
-				
-			if (crit.hierarchical()) {
-				select = new  StringBuilder(crit.countReq() ? "select count (distinct c.id)" : "select distinct c");
-				from = new StringBuilder("from ").append(getType().getName()).append(" c")
-						.append(" join c.descendentContainers dc");
-				where = new StringBuilder("where dc.activityStatus = :activityStatus");
-			} else {
-				select = new StringBuilder(crit.countReq() ? "select count(c.id)" : "select c");
-				from = new StringBuilder("from ").append(getType().getName()).append(" c");
-				where = new StringBuilder("where c.activityStatus = :activityStatus");						
-			}
-			
-			String joinPosition = crit.countReq() ? " left join c.position pos " : " left join fetch c.position pos ";  
-			from.append(joinPosition);
-			params.put("activityStatus", Status.ACTIVITY_STATUS_ACTIVE.getStatus());
+			prepareQuery(crit, false);
 		}
 		
+		public ListQueryBuilder(StorageContainerListCriteria crit, boolean countReq) {
+			prepareQuery(crit, countReq);
+		}
+
 		public Query query() {						
 			addNameRestriction();		
 			addSiteRestriction();
@@ -129,6 +118,25 @@ public class StorageContainerDaoImpl extends AbstractDao<StorageContainer> imple
 			}
 			
 			return query;
+		}
+		
+		private void prepareQuery(StorageContainerListCriteria crit, boolean countReq) {
+			this.crit = crit;
+				
+			if (crit.hierarchical()) {
+				select = new  StringBuilder(countReq ? "select count (distinct c.id)" : "select distinct c");
+				from = new StringBuilder("from ").append(getType().getName()).append(" c")
+						.append(" join c.descendentContainers dc");
+				where = new StringBuilder("where dc.activityStatus = :activityStatus");
+			} else {
+				select = new StringBuilder(countReq ? "select count(c.id)" : "select c");
+				from = new StringBuilder("from ").append(getType().getName()).append(" c");
+				where = new StringBuilder("where c.activityStatus = :activityStatus");						
+			}
+			
+			String joinPosition = countReq ? " left join c.position pos " : " left join fetch c.position pos ";  
+			from.append(joinPosition);
+			params.put("activityStatus", Status.ACTIVITY_STATUS_ACTIVE.getStatus());
 		}
 		
 		private void addAnd() {

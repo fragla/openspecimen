@@ -1,37 +1,12 @@
 package com.krishagni.catissueplus.core.administrative.events;
 
-import java.util.HashSet;
-import java.util.Set;
-
-public class ContainerHierarchyDetail {
+public class ContainerHierarchyDetail extends StorageContainerDetail {
 	private int numOfContainers;
 	
 	private Long containerTypeId;
 
 	private String containerTypeName;
 
-	private String siteName;
-	
-	private StorageLocationSummary storageLocation;
-
-	private Integer noOfColumns;
-	
-	private Integer noOfRows;
-	
-	private String columnLabelingScheme;
-	
-	private String rowLabelingScheme;
-	
-	private Double temperature;
-	
-	private Boolean storeSpecimensEnabled;
-	
-	private Set<String> allowedSpecimenClasses = new HashSet<String>();
-	
-	private Set<String> allowedSpecimenTypes = new HashSet<String>();
-	
-	private Set<String> allowedCollectionProtocols = new HashSet<String>();
-	
 	public int getNumOfContainers() {
 		return numOfContainers;
 	}
@@ -54,93 +29,5 @@ public class ContainerHierarchyDetail {
 
 	public void setContainerTypeName(String containerTypeName) {
 		this.containerTypeName = containerTypeName;
-	}
-
-	public String getSiteName() {
-		return siteName;
-	}
-
-	public void setSiteName(String siteName) {
-		this.siteName = siteName;
-	}
-
-	public StorageLocationSummary getStorageLocation() {
-		return storageLocation;
-	}
-
-	public void setStorageLocation(StorageLocationSummary storageLocation) {
-		this.storageLocation = storageLocation;
-	}
-
-	public Integer getNoOfColumns() {
-		return noOfColumns;
-	}
-
-	public void setNoOfColumns(Integer noOfColumns) {
-		this.noOfColumns = noOfColumns;
-	}
-
-	public Integer getNoOfRows() {
-		return noOfRows;
-	}
-
-	public void setNoOfRows(Integer noOfRows) {
-		this.noOfRows = noOfRows;
-	}
-
-	public String getColumnLabelingScheme() {
-		return columnLabelingScheme;
-	}
-
-	public void setColumnLabelingScheme(String columnLabelingScheme) {
-		this.columnLabelingScheme = columnLabelingScheme;
-	}
-
-	public String getRowLabelingScheme() {
-		return rowLabelingScheme;
-	}
-
-	public void setRowLabelingScheme(String rowLabelingScheme) {
-		this.rowLabelingScheme = rowLabelingScheme;
-	}
-
-	public Double getTemperature() {
-		return temperature;
-	}
-
-	public void setTemperature(Double temperature) {
-		this.temperature = temperature;
-	}
-
-	public Boolean getStoreSpecimensEnabled() {
-		return storeSpecimensEnabled;
-	}
-
-	public void setStoreSpecimensEnabled(Boolean storeSpecimensEnabled) {
-		this.storeSpecimensEnabled = storeSpecimensEnabled;
-	}
-
-	public Set<String> getAllowedSpecimenClasses() {
-		return allowedSpecimenClasses;
-	}
-	
-	public void setAllowedSpecimenClasses(Set<String> allowedSpecimenClasses) {
-		this.allowedSpecimenClasses = allowedSpecimenClasses;
-	}
-	
-	public Set<String> getAllowedSpecimenTypes() {
-		return allowedSpecimenTypes;
-	}
-	
-	public void setAllowedSpecimenTypes(Set<String> allowedSpecimenTypes) {
-		this.allowedSpecimenTypes = allowedSpecimenTypes;
-	}
-	
-	public Set<String> getAllowedCollectionProtocols() {
-		return allowedCollectionProtocols;
-	}
-	
-	public void setAllowedCollectionProtocols(Set<String> allowedCollectionProtocols) {
-		this.allowedCollectionProtocols = allowedCollectionProtocols;
 	}
 }

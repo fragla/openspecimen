@@ -27,10 +27,6 @@ public interface ListCriteria<T extends ListCriteria<T>> {
 	
 	public T includeStat(boolean includeStat);
 	
-	public boolean countReq();
-	
-	public T countReq(boolean countReq);
-	
 	public List<Long> ids();
 	
 	public T ids(List<Long> ids);

@@ -10,10 +10,6 @@ angular.module('os.administrative.models.containertype', ['os.common.models'])
     ContainerType.prototype.getDisplayName = function() {
       return this.name;
     }
-
-    ContainerType.list = function(opts) {
-      return ContainerType.query(opts);
-    };
- 
+    
     return ContainerType;
   });

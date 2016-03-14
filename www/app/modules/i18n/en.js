@@ -48,6 +48,7 @@
     "recent_activity": "Recent Activity",
     "no_file_selected": "No File Selected",
     "view_jobs": "View Jobs",
+    "view_import_jobs": "View Import Jobs",
     "digits": "digits",
     "not_specified": "Not Specified",
     "enabled": "Enabled",
@@ -959,8 +960,8 @@
     "pos_selector": "Container Position Selector",
     "selected_pos": "Selected Position: ",
 
-    "bulk_import": "Import Storage Containers",
-    "bulk_import_jobs": "Import Storage Containers Jobs List",
+    "bulk_import": "Import Containers",
+    "bulk_import_jobs": "Import Containers Jobs List",
 
     "create_hierarchy": "Create Hierarchy",
     "create_container_hierarchy": "Create Container Hierarchy",

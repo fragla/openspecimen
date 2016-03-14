@@ -5,8 +5,7 @@
     </h3>
     <div class="os-btns right">
       <button show-if-allowed="containerResource.createOpts" class="primary" 
-        title="{{'container.tooltip.add' | translate}}" ui-sref="container-addedit({containerId: ''})"
-        ui-sref="container-addedit({containerId: ''})">
+        title="{{'container.tooltip.add' | translate}}" ui-sref="container-addedit({containerId: ''})">
         <span class="fa fa-plus"></span>
         <span translate="common.buttons.create">Create</span>
       </button>
@@ -28,24 +27,17 @@
               <span translate="container_type.list">Container Types</span>
             </a>
           </li>
-        </ul>
-      </div>
-      <div show-if-allowed="containerResource.createOpts" dropdown class="inline">
-        <button class="default dropdown-toggle">
-          <span translate="common.buttons.import">Import</span>
-          <span class="fa fa-caret-down"></span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-right">
-          <li>
+          <li class="divider"></li>
+          <li show-if-allowed="containerResource.createOpts">
             <a ui-sref="container-import">
               <i class="fa fa-dropbox"></i>
-              <span translate="container.list">Storage Containers</span>
+              <span translate="container.bulk_import">Import Containers</span>
             </a>
           </li>
-          <li>
+          <li show-if-allowed="containerResource.createOpts">
             <a ui-sref="container-import-jobs">
               <i class="fa fa-table"></i>
-              <span translate="common.view_jobs">View Jobs</span>
+              <span translate="common.view_import_jobs">View Import Jobs</span>
             </a>
           </li>
         </ul>

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.FileNameMap;
 import java.net.URLConnection;
@@ -29,9 +30,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
-import au.com.bytecode.opencsv.CSVWriter;
-
 import com.krishagni.catissueplus.core.common.PdfUtil;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class Utility {
 	private static String key = "0pEN@eSEncRyPtKy";
@@ -141,6 +142,25 @@ public class Utility {
 				}				
 			}
 		}		
+	}
+	
+	public static void writeKeyValuesToCsv(OutputStream out, Map<String, String> keyValues) {
+		StringWriter strWriter = new StringWriter();
+		CsvWriter csvWriter= null;
+
+		try {
+			csvWriter = CsvFileWriter.createCsvFileWriter(strWriter);
+			for (Map.Entry<String, String> keyValue : keyValues.entrySet()) {
+				csvWriter.writeNext(new String[] {keyValue.getKey(), keyValue.getValue()});
+			}
+			csvWriter.flush();
+			out.write(strWriter.toString().getBytes());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			IOUtils.closeQuietly(strWriter);
+			IOUtils.closeQuietly(csvWriter);
+		}
 	}
 	
 	public static long getTimezoneOffset() {

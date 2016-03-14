@@ -155,7 +155,7 @@ public class ContainerType extends BaseEntity {
 	}
 	
 	public List<DependentEntityDetail> getDependentEntities() {
-		ContainerTypeListCriteria crit = new ContainerTypeListCriteria().canHold(getId());
+		ContainerTypeListCriteria crit = new ContainerTypeListCriteria().canHold(getName());
 		int dependentContainerTypesCnt = daoFactory.getContainerTypeDao().getContainerTypesCount(crit);
 		
 		return DependentEntityDetail

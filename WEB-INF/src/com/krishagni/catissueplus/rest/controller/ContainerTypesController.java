@@ -36,6 +36,9 @@ public class ContainerTypesController {
 	public List<ContainerTypeSummary> getContainerTypes(
 		@RequestParam(value="name", required = false)
 		String name,
+		
+		@RequestParam(value="canHold", required = false)
+		String canHold,
 			
 		@RequestParam(value = "exactMatch", required= false, defaultValue = "false")
 		boolean exactMatch,
@@ -48,6 +51,7 @@ public class ContainerTypesController {
 
 		ContainerTypeListCriteria crit = new ContainerTypeListCriteria()
 				.query(name)
+				.canHold(canHold)
 				.exactMatch(exactMatch)
 				.startAt(startAt)
 				.maxResults(maxResults);

@@ -68,12 +68,14 @@ public class ContainerTypeDaoImpl extends AbstractDao<ContainerType> implements 
 		query.add(Restrictions.ilike("name", name, matchMode));
 	}
 	
-	private void addCanHoldRestriction(Criteria query, Long canHoldId) {
-		if (canHoldId == null) {
+	private void addCanHoldRestriction(Criteria query, String canHold) {
+		if (StringUtils.isBlank(canHold)) {
 			return;
 		}
 		
-		query.add(Restrictions.eq("canHold.id", canHoldId));
+		query.createAlias("canHold", "canHold")
+			.add(Restrictions.eq("canHold.name", canHold));
+		
 	}
 	
 	private static final String CONTAINER_TYPE_FQN = ContainerType.class.getName();

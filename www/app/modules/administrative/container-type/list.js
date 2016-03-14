@@ -11,6 +11,9 @@ angular.module('os.administrative.containertype.list', ['os.administrative.model
       ContainerType.query(filterOpts).then(
         function(containerTypes) {
           $scope.containerTypes = containerTypes;
+          if (Object.keys(filterOpts).length == 0) {
+            $scope.canHolds = angular.copy(containerTypes);
+          }
         }
       );
     };

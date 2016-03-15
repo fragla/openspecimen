@@ -377,13 +377,10 @@
     </addColumn>
   </changeSet>
   
-  <changeSet author="slakhani" id="drop add_cfg_prop procedure if exists" dbms="mysql">
+  <changeSet author="slakhani" id="Create procedure to add config property with secure field" dbms="mysql">
     <sql>
       drop procedure if exists add_cfg_prop;
     </sql>
-  </changeSet>
-  
-  <changeSet author="slakhani" id="Create procedure to add config property with secure field" dbms="mysql">
     <sql endDelimiter="//">
       create procedure add_cfg_prop(
         in moduleName text, 

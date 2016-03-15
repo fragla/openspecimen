@@ -1,6 +1,7 @@
 package com.krishagni.catissueplus.core.init;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,11 +16,11 @@ import liquibase.exception.SetupException;
 import liquibase.exception.ValidationErrors;
 import liquibase.resource.ResourceAccessor;
 
-public class PasswordUpdater implements CustomTaskChange {
+public class ConfigEmailPasswordUpdator implements CustomTaskChange {
 
 	@Override
 	public String getConfirmationMessage() {
-		return "Update email account password successfully";
+		return "Email account password updated successfully.";
 	}
 
 	@Override
@@ -38,18 +39,15 @@ public class PasswordUpdater implements CustomTaskChange {
 	@Override
 	public void execute(Database database) throws CustomChangeException {
 		JdbcConnection dbConnection = (JdbcConnection) database.getConnection();
-		Statement statement;
-		ResultSet rs;
+		Statement statement = null;
+		ResultSet rs = null;
 		try {
 			String sql = null;
 			String password = null;
 			Long id = null;
 			
 			statement = dbConnection.createStatement();
-			sql = "select identifier, value from os_cfg_settings where property_id = "
-					+ "(select identifier from os_cfg_props where name = 'account_password') and activity_status = 'Active'";
-			
-			rs = statement.executeQuery(sql);
+			rs = statement.executeQuery(GET_EMAIL_PASSWORD_SQL);
 			
 			while(rs.next()) {
 				id = rs.getLong("identifier");
@@ -58,16 +56,31 @@ public class PasswordUpdater implements CustomTaskChange {
 			
 			if (StringUtils.isNotBlank(password)) {
 				password = Utility.encrypt(password);
-				sql = "update os_cfg_settings set value = '" + password + "' where identifier = " + id;
+				sql = String.format(UPDATE_PASSWORD_SQL, password, id);
 				statement.executeUpdate(sql);
-				
-				sql = "select identifier, value from os_cfg_settings where property_id = "
-						+ "(select identifier from os_cfg_props where name = 'account_password') and activity_status = 'Active'";
-				rs = statement.executeQuery(sql);
 			}
-			
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
+	
+	public static final String GET_EMAIL_PASSWORD_SQL = "select "
+						+ "s.identifier, s.value "
+						+ "from "
+						+ "os_cfg_settings s "
+						+ "left join os_cfg_props p on s.property_id = p.identifier "
+						+ "left join os_modules m on p.module_id = m.identifier "
+						+ "where "
+						+ "p.name = 'account_password' and "
+						+ "m.name = 'email' and "
+						+ "s.activity_status = 'Active'";
+	
+	public static final String UPDATE_PASSWORD_SQL = "update os_cfg_settings set value = '%s' where identifier = %d";
 }

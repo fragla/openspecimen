@@ -106,7 +106,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Initializ
 		
 		boolean successful = false;
 		try {
-			ConfigSetting newSetting = createSetting(existing, detail);
+			ConfigSetting newSetting = createSetting(existing, setting);
 			existing.setActivityStatus(Status.ACTIVITY_STATUS_DISABLED.getStatus());
 
 			daoFactory.getConfigSettingDao().saveOrUpdate(existing);
@@ -364,15 +364,14 @@ public class ConfigurationServiceImpl implements ConfigurationService, Initializ
 		}
 	}
 	
-	private ConfigSetting createSetting(ConfigSetting existing, ConfigSettingDetail detail) throws Exception {
+	private ConfigSetting createSetting(ConfigSetting existing, String value) throws Exception {
 		ConfigSetting newSetting = new ConfigSetting();
 		newSetting.setProperty(existing.getProperty());
 		newSetting.setActivatedBy(AuthUtil.getCurrentUser());
 		newSetting.setActivationDate(Calendar.getInstance().getTime());
 		newSetting.setActivityStatus(Status.ACTIVITY_STATUS_ACTIVE.getStatus());
 		
-		String value = detail.getValue();
-		if (detail.isSecured()) {
+		if (existing.getProperty().isSecured()) {
 			value = Utility.encrypt(value);
 		}
 		

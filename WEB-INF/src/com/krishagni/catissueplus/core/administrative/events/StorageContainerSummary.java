@@ -126,7 +126,7 @@ public class StorageContainerSummary extends AttributeModifiedSupport {
 	
 	@JsonIgnore
 	public Boolean getStoreSpecimensEnabled() {
-		return this.storeSpecimensEnabled;
+		return storeSpecimensEnabled;
 	}
 
 	@JsonProperty

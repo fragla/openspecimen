@@ -238,7 +238,7 @@ public class StorageContainer extends BaseEntity {
 	public void setLastAssignedPos(StorageContainerPosition lastAssignedPos) {
 		this.lastAssignedPos = lastAssignedPos;
 	}
-	
+
 	@NotAudited
 	public Set<StorageContainer> getChildContainers() {
 		return childContainers;

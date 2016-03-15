@@ -207,6 +207,10 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
     };
 
     function setContainerTypeProps(containerType) {
+      if (!containerType) {
+        return;
+      }
+
       $scope.container.containerTypeName = containerType.name;
       $scope.container.noOfRows = containerType.noOfRows;
       $scope.container.noOfColumns = containerType.noOfColumns;

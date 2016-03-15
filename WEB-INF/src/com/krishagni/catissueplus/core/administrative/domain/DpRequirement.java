@@ -1,8 +1,14 @@
 package com.krishagni.catissueplus.core.administrative.domain;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
+import com.krishagni.catissueplus.core.common.CollectionUpdater;
 import com.krishagni.catissueplus.core.common.util.Status;
 
 public class DpRequirement extends BaseEntity {
@@ -12,7 +18,9 @@ public class DpRequirement extends BaseEntity {
 	
 	private String anatomicSite;
 	
-	private String pathologyStatus;
+	private Set<String> pathologyStatuses = new HashSet<String>();
+
+	private String clinicalDiagnosis;
 	
 	private Long specimenCount;
 	
@@ -46,14 +54,22 @@ public class DpRequirement extends BaseEntity {
 		this.anatomicSite = anatomicSite;
 	}
 	
-	public String getPathologyStatus() {
-		return pathologyStatus;
+	public Set<String> getPathologyStatuses() {
+		return pathologyStatuses;
 	}
 	
-	public void setPathologyStatus(String pathologyStatus) {
-		this.pathologyStatus = pathologyStatus;
+	public void setPathologyStatuses(Set<String> pathologyStatuses) {
+		this.pathologyStatuses = pathologyStatuses;
 	}
-	
+
+	public String getClinicalDiagnosis() {
+		return clinicalDiagnosis;
+	}
+
+	public void setClinicalDiagnosis(String clinicalDiagnosis) {
+		this.clinicalDiagnosis = clinicalDiagnosis;
+	}
+
 	public Long getSpecimenCount() {
 		return specimenCount;
 	}
@@ -90,7 +106,8 @@ public class DpRequirement extends BaseEntity {
 		setDistributionProtocol(dpr.getDistributionProtocol());
 		setSpecimenType(dpr.getSpecimenType());
 		setAnatomicSite(dpr.getAnatomicSite());
-		setPathologyStatus(dpr.getPathologyStatus());
+		CollectionUpdater.update(getPathologyStatuses(), dpr.getPathologyStatuses());
+		setClinicalDiagnosis(dpr.getClinicalDiagnosis());
 		setSpecimenCount(dpr.getSpecimenCount());
 		setQuantity(dpr.getQuantity());
 		setComments(dpr.getComments());
@@ -98,17 +115,34 @@ public class DpRequirement extends BaseEntity {
 	}
 	
 	public boolean equalsSpecimenGroup(DpRequirement dpr) {
-		return equalsSpecimenGroup(dpr.getSpecimenType(), dpr.getAnatomicSite(), dpr.getPathologyStatus());
+		return equalsSpecimenGroup(dpr.getSpecimenType(), dpr.getAnatomicSite(), dpr.getPathologyStatuses(), dpr.getClinicalDiagnosis());
 	}
 
-	public boolean equalsSpecimenGroup(String specimenType, String anatomicSite, String pathologyStatus) {
-		return getSpecimenType().equals(specimenType) &&
-				getAnatomicSite().equals(anatomicSite) &&
-				getPathologyStatus().equals(pathologyStatus);
+	public boolean equalsSpecimenGroup(String specimenType, String anatomicSite, Set<String> pathologyStatuses, String clinicalDiagnosis) {
+		return StringUtils.equals(getSpecimenType(), specimenType) &&
+				StringUtils.equals(getAnatomicSite(), anatomicSite) &&
+				arePathologyStatusesEqual(pathologyStatuses) &&
+				StringUtils.equals(getClinicalDiagnosis(), clinicalDiagnosis);
 	}
 
 	public void delete() {
 		setActivityStatus(Status.ACTIVITY_STATUS_DISABLED.getStatus());
+	}
+
+	private boolean arePathologyStatusesEqual(Set<String> pathologyStatuses) {
+		boolean isEmptyOldPaths = CollectionUtils.isEmpty(getPathologyStatuses());
+		boolean isEmptyNewPaths = CollectionUtils.isEmpty(pathologyStatuses);
+
+		if (isEmptyOldPaths && isEmptyNewPaths) {
+			return true;
+		}
+
+		if (isEmptyOldPaths || isEmptyNewPaths) {
+			return false;
+		}
+
+		return CollectionUtils.isSubCollection(pathologyStatuses, getPathologyStatuses()) ||
+				CollectionUtils.isSubCollection(getPathologyStatuses(), pathologyStatuses);
 	}
 	
 }

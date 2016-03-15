@@ -44,14 +44,10 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
         };
         restrictCpsAndSpecimenTypes();
       }
-      loadContainerTypes();
 
       $scope.mode = $stateParams.mode;
-      
-      if ($scope.mode == 'createHierarchy') {
-        loadContainerTypes();
-        setContainerTypeProps(containerType);
-      }
+      loadContainerTypes();
+      setContainerTypeProps(containerType);
 
       watchParentContainer();
     };

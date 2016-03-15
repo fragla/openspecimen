@@ -46,7 +46,6 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
       }
 
       $scope.mode = $stateParams.mode;
-      
       if ($scope.mode == 'createHierarchy') {
         loadContainerTypes();
         setContainerTypeProps(containerType);
@@ -191,9 +190,16 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
     function createHierarchy() {
       Container.createHierarchy($scope.container).then(
         function(resp) {
-          if (resp[0].storageLocation) {
+          if (resp[0].storageLocation && resp[0].storageLocation.id) {
+            //
+            // hierarchy created under an existing container
+            // go to that container detail
+            //
             $state.go('container-detail.overview', {containerId: resp[0].storageLocation.id});
           } else {
+            //
+            // hierarchy created for top-level container. go to list view
+            //
             $state.go('container-list');
           }
         }
@@ -201,15 +207,11 @@ angular.module('os.administrative.container.addedit', ['os.administrative.models
     };
 
     function setContainerTypeProps(containerType) {
-      if (!containerType) {
-        return;
-      }
-
       $scope.container.containerTypeName = containerType.name;
-      $scope.container.noOfColumns = containerType.noOfColumns;
       $scope.container.noOfRows = containerType.noOfRows;
-      $scope.container.columnLabelingScheme = containerType.columnLabelingScheme;
+      $scope.container.noOfColumns = containerType.noOfColumns;
       $scope.container.rowLabelingScheme = containerType.rowLabelingScheme;
+      $scope.container.columnLabelingScheme = containerType.columnLabelingScheme;
       $scope.container.temperature = containerType.temperature;
       $scope.container.storeSpecimensEnabled = containerType.storeSpecimenEnabled;
     };

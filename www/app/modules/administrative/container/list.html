@@ -4,7 +4,7 @@
       <span translate="container.list">Storage Containers</span>
     </h3>
     <div class="os-btns right">
-      <button show-if-allowed="containerResource.createOpts" class="primary" 
+      <button show-if-allowed="containerResource.createOpts" class="primary"
         title="{{'container.tooltip.add' | translate}}" ui-sref="container-addedit({containerId: ''})">
         <span class="fa fa-plus"></span>
         <span translate="common.buttons.create">Create</span>
@@ -15,16 +15,16 @@
           <span class="fa fa-caret-down"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
-          <li show-if-allowed="containerResource.createOpts">
-            <a ui-sref="container-addedit({mode: 'createHierarchy'})">
-              <span class="fa fa-sitemap"></span>
-              <span translate="container.create_hierarchy">Create Hierarchy</span>
-            </a>
-          </li>
           <li>
             <a ui-sref="container-type-list">
               <span class="fa fa-cubes"></span>
               <span translate="container_type.list">Container Types</span>
+            </a>
+          </li>
+          <li show-if-allowed="containerResource.createOpts">
+            <a ui-sref="container-addedit({mode: 'createHierarchy'})">
+              <span class="fa fa-sitemap"></span>
+              <span translate="container.create_hierarchy">Create Hierarchy</span>
             </a>
           </li>
           <li class="divider"></li>

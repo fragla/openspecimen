@@ -35,9 +35,9 @@ import com.krishagni.catissueplus.core.common.PdfUtil;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class Utility {
-	private static String key = "0pEN@eSEncRyPtKy";
-	private static SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
-	private static Cipher cipher; 
+	private static final String key = "0pEN@eSEncRyPtKy";
+	
+	private static final SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
 	
 	public static String getDisabledValue(String value, int maxLength) {
 		if (StringUtils.isBlank(value)) {
@@ -295,19 +295,16 @@ public class Utility {
 	}
 	
 	public static String encrypt(String value) throws Exception {
-		cipher = Cipher.getInstance("AES");
+		Cipher cipher = Cipher.getInstance("AES");
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 		byte[] encryptedValue = cipher.doFinal(value.getBytes("UTF-8"));
-		Base64.Encoder encoder = Base64.getEncoder();
-		return encoder.encodeToString(encryptedValue);
+		return Base64.getEncoder().encodeToString(encryptedValue);
 	}
 	
 	public static String decrypt(String value) throws Exception {
-		cipher = Cipher.getInstance("AES");
+		Cipher cipher = Cipher.getInstance("AES");
 		cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		Base64.Decoder decoder = Base64.getDecoder();
-		byte[] decodedValue = decoder.decode(value.getBytes());
-		byte[] decryptedByte = cipher.doFinal(decodedValue);
-		return new String(decryptedByte);
+		byte[] decodedValue = Base64.getDecoder().decode(value.getBytes());
+		return cipher.doFinal(decodedValue).toString();
 	}
 }

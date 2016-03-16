@@ -12,8 +12,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.LocaleUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
@@ -371,7 +371,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, Initializ
 		newSetting.setActivationDate(Calendar.getInstance().getTime());
 		newSetting.setActivityStatus(Status.ACTIVITY_STATUS_ACTIVE.getStatus());
 		
-		if (existing.getProperty().isSecured()) {
+		if (StringUtils.isNotBlank(value) && existing.getProperty().isSecured()) {
 			value = Utility.encrypt(value);
 		}
 		

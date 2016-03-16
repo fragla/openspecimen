@@ -9,7 +9,7 @@ import java.util.Properties;
 
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -222,7 +222,7 @@ public class EmailServiceImpl implements EmailService, ConfigChangeListener, Ini
 	
 	private String getAccountPassword() throws Exception {
 		String password = cfgSvc.getStrSetting(MODULE, "account_password");
-		return password != null ? Utility.decrypt(password) : password;
+		return StringUtils.isNotBlank(password) ? Utility.decrypt(password) : password;
 	}
 	
 	private String getMailServerHost() {

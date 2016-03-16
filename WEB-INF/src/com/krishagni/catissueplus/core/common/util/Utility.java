@@ -305,6 +305,6 @@ public class Utility {
 		Cipher cipher = Cipher.getInstance("AES");
 		cipher.init(Cipher.DECRYPT_MODE, secretKey);
 		byte[] decodedValue = Base64.getDecoder().decode(value.getBytes());
-		return cipher.doFinal(decodedValue).toString();
+		return new String(cipher.doFinal(decodedValue));
 	}
 }

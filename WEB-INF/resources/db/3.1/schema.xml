@@ -423,7 +423,7 @@
         
         add_cfg_prop(moduleName, propName, propCode, propDesc, propType, defValue);
         
-        if isSecure then
+        if isSecure = 1 then
           update 
             os_cfg_props
           set

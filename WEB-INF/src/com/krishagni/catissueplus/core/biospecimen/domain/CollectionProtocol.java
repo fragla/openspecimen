@@ -661,7 +661,7 @@ public class CollectionProtocol extends BaseExtensionEntity {
 		for (CollectionProtocolEvent cpe : getCollectionProtocolEvents()) {
 			for (SpecimenRequirement sr : cpe.getSpecimenRequirements()) {
 				if (sr.getLabelAutoPrintMode() == SpecimenLabelAutoPrintMode.PRE_PRINT) {
-					sr.setLabelAutoPrintMode(SpecimenLabelAutoPrintMode.NONE);
+					sr.setLabelAutoPrintMode(null);
 				}
 			}
 		}

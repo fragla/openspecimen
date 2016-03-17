@@ -30,7 +30,7 @@ angular.module('os.administrative.containertype',
         templateUrl: 'modules/administrative/container-type/addedit.html',
         resolve: {
           containerType: function($stateParams, ContainerType) {
-            if($stateParams.containerTypeId) {
+            if ($stateParams.containerTypeId) {
               return ContainerType.getById($stateParams.containerTypeId);
             }
 

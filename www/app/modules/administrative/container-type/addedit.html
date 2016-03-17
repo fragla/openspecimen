@@ -40,6 +40,17 @@
 
       <div class="form-group">
         <label class="col-xs-3 control-label">
+          <span translate="container_type.container_name_fmt">Container Name Format</span>
+        </label>
+        <div class="col-xs-6">
+          <input type="text" name="containerNameFmt" ng-model="containerType.containerNameFmt" class="form-control"
+            placeholder="{{'container_type.container_name_fmt' | translate}}" ng-maxlength="255" required>
+          <div os-field-error field="ctform.containerNameFmt"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-xs-3 control-label">
           <span translate="container.dimension">Dimension</span>
         </label>
         <div class="col-xs-3">

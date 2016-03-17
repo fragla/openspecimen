@@ -16,6 +16,7 @@
     "distribution_orders": "Distribution Orders",
     "shipping_and_tracking": "Shipping and Tracking",
     "jobs": "Jobs",
+    "training": "Training",
 
     "cp_desc": "Create, update SOP of visits and specimens",
     "dp_desc": "Create, update procedures for distributing specimens",
@@ -30,7 +31,8 @@
     "settings_desc": "Manage application configuration settings",
     "distribution_orders_desc": "Create, execute request orders for distributing specimens",
     "shipping_and_tracking_desc": "Create, ship, track and receive specimen shipments",
-    "jobs_desc": "Create, schedule, execute jobs"
+    "jobs_desc": "Create, schedule, execute jobs",
+    "training_desc": "User manual and training videos portal"
   },
 
   "common": {
@@ -110,6 +112,8 @@
     "match": "This field does not match with above field",
     "dist_qty_gt_avail_qty": "Distribution quantity greater than available",
     "dist_qty_le_zero": "Distribution quantity cannot be less than or equals zero",
+    "ret_qty_gt_dist_qty": "Return quantity greater than distributed",
+    "ret_qty_le_zero": "Return quantity cannot be less than or equals zero",
     "nan": "Not a valid number",
     "dup_item": "Duplicate value"
   },
@@ -576,7 +580,8 @@
       "enter_specimen_label": "To add specimens to list, enter labels separated by a comma, tab or newline and click add",
       "details": "Event Details",
       "copy_first_to_all": "Copy First To All",
-      "specimens_not_found_or_no_access": "One or more specimens could not be loaded either because they do not exists or you do not have sufficient rights to access them"
+      "specimens_not_found_or_no_access": "One or more specimens could not be loaded either because they do not exists or you do not have sufficient rights to access them",
+      "events_saved": "Event saved successfully"
     }
   },
 
@@ -782,10 +787,12 @@
       "specimen_type": "Specimen Type",
       "anatomic_site": "Anatomic Site",
       "pathology_status": "Pathology Status",
+      "clinical_diagnosis": "Clinical Diagnosis",
       "specimens_dist": "Specimens Distributed",
       "specimen_cnt": "Specimen Count",
-      "target": "Target",
-      "distributed": "Distributed",
+      "target_qty": "Target Quantity",
+      "distributed_cnt": "Distributed Count",
+      "distributed_qty": "Distributed Quantity",
       "quantity_specimen": "Quantity Per Specimen",
       "comments": "Comments",
       "confirm_delete_req_title": "Deleting distribution requirement confirmation",
@@ -996,6 +1003,7 @@
     "create_container_type": "Create Container Type",
     "update_container_type": "Update Container Type",
     "abbreviation": "Abbreviation",
+    "container_name_fmt": "Container Name Format",
     "can_hold": "Can Hold",
 
     "tooltip": {
@@ -1416,11 +1424,8 @@
     "no_specimens_for_shipment": "Please select at least one specimen to create shipment",
     "created_by": "Created By",
     "add_event": "Add Event",
-    "visit": "Visit",
-    "ppid": "PPID",
     "location": "Storage Location",
-    "no_specimens_to_add_event": "Please select at least one specimen to add event",
-    "events_saved": "Event saved successfully"
+    "no_specimens_to_add_event": "Please select at least one specimen to add event"
   },
 
   "orders": {
@@ -1454,6 +1459,14 @@
     "report_will_be_emailed": "Generating distribution order report is taking more time than anticipated. Link to download report will be sent to you by email",
 
     "filters": "Filters",
+
+    "return_specimens": "Return Specimens",
+    "get_dist_details": "Get Details",
+    "paste_return_specimen_labels": "Paste or scan labels of specimens to be returned",
+    "specimens_returned": "{{count}} specimens returned successfully",
+    "return_qty": "Return Quantity",
+    "user": "User",
+    "comments": "Comments",
    
     "menu": {
       "overview": "Overview"
@@ -1476,13 +1489,16 @@
 
     "item_statuses": {
       "DISTRIBUTED": "Distribute",
-      "DISTRIBUTED_AND_CLOSED": "Distribute and Close"
+      "DISTRIBUTED_AND_CLOSED": "Distribute and Close",
+      "RETURNED": "Returned"
     },
 
     "buttons": {
       "distribute": "Distribute",
       "save_draft": "Save Draft",
-      "download_report": "Download Report"
+      "download_report": "Download Report",
+      "return_specimens": "Return Specimens",
+      "copy_first_to_all": "Copy First To All"
     },
 
     "tooltip": {
@@ -1733,7 +1749,9 @@
         "shipment_export_report": "Shipment export report",
         "shipment_export_report_desc": "Export Report format for all shipments",
         "field_separator": "Field Separator",
-        "field_separator_desc": "A single character that specifies how records in delimited text file should be split into fields. For example: CSV files use comma (,) as the field separator"
+        "field_separator_desc": "A single character that specifies how records in delimited text file should be split into fields. For example: CSV files use comma (,) as the field separator",
+        "training_url": "Training URL ",
+        "training_url_desc": "Training documentation URL"
       },
 
       "email": {
@@ -1781,9 +1799,9 @@
         "email_shipment_shipped": "Email notifications when specimens' shipment is shipped",
         "email_shipment_received": "Email notifications when specimens' shipment is received",
         "email_cp_expiring_notification": "CP Expiry Notification",
-        "cp_expiring_notification_desc": "Email notifications for collection protocols expiry",
+        "email_cp_expiring_notification_desc": "Email notifications for collection protocols expiry",
         "email_dp_expiring_notification": "DP Expiry Notification",
-        "dp_expiring_notification_desc": "Email notifications for distribution protocols expiry"
+        "email_dp_expiring_notification_desc": "Email notifications for distribution protocols expiry"
       },
 
       "catalog": {

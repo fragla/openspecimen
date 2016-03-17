@@ -15,6 +15,10 @@
 
     <property name="name" column="NAME"/>
 
+    <property name="abbreviation" column="ABBREVIATION"/>
+
+    <property name="containerNameFmt" column="CONTAINER_NAME_FMT"/>
+
     <property name="temperature" column="TEMPERATURE"/>
 
     <property name="noOfColumns" column="NO_OF_COLS"/>
@@ -26,8 +30,6 @@
     <property name="rowLabelingScheme" column="ROW_LABELING_SCHEME"/>
 
     <property name="storeSpecimenEnabled" column="STORE_SPECIMENS"/>
-
-    <property name="abbreviation" column="ABBREVIATION"/>
 
     <many-to-one name="canHold" column="CAN_HOLD"/>
     

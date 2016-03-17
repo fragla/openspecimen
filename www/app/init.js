@@ -2,10 +2,10 @@
 var ui = ui || {};
 ui.os = ui.os || {};
 ui.os.server = {
-  /*hostname: 'localhost', // testing purpose
+  hostname: 'localhost', // testing purpose
   port: 8080,
   secure: false,
-  app: '/openspecimen'*/
+  app: '/openspecimen'
 };
 
 ui.os.appProps = {

@@ -1,6 +1,7 @@
 package com.krishagni.catissueplus.core.administrative.domain.factory.impl;
 
-import org.apache.commons.lang.StringUtils;
+import com.krishagni.catissueplus.core.common.service.LabelGenerator;
+import org.apache.commons.lang3.StringUtils;
 
 import com.krishagni.catissueplus.core.administrative.domain.StorageContainer;
 import com.krishagni.catissueplus.core.administrative.domain.ContainerType;
@@ -17,10 +18,16 @@ import com.krishagni.catissueplus.core.common.util.Status;
 public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 	private DaoFactory daoFactory;
 
+	private LabelGenerator containerNameGenerator;
+
 	public void setDaoFactory(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
 	}
-	
+
+	public void setContainerNameGenerator(LabelGenerator containerNameGenerator) {
+		this.containerNameGenerator = containerNameGenerator;
+	}
+
 	@Override
 	public ContainerType createContainerType(ContainerTypeDetail detail) {
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
@@ -31,7 +38,7 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 		containerType.setStoreSpecimenEnabled(detail.isStoreSpecimenEnabled());
 
 		setName(detail, containerType, ose);
-		setAbbreviation(detail, containerType, ose);
+		setContainerNameFmt(detail, containerType, ose);
 		setDimension(detail, containerType, ose);
 		setLabelingSchemes(detail, containerType, ose);
 		setCanHold(detail, containerType, ose);
@@ -40,7 +47,7 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 		ose.checkAndThrow();
 		return containerType;
 	}
-	
+
 	private void setName(ContainerTypeDetail detail, ContainerType containerType, OpenSpecimenException ose) {
 		String name = detail.getName();
 		if (StringUtils.isBlank(name)) {
@@ -50,17 +57,24 @@ public class ContainerTypeFactoryImpl implements ContainerTypeFactory {
 		
 		containerType.setName(name);
 	}
-	
-	private void setAbbreviation(ContainerTypeDetail detail, ContainerType containerType, OpenSpecimenException ose) {
-		String abbreviation = detail.getAbbreviation();
-		if (StringUtils.isBlank(abbreviation)) {
-			ose.addError(ContainerTypeErrorCode.ABBREVIATION_REQUIRED);
-			return;
+
+	private void setContainerNameFmt(ContainerTypeDetail detail, ContainerType containerType, OpenSpecimenException ose) {
+		String containerNameFmt = detail.getContainerNameFmt();
+		if (StringUtils.isBlank(containerNameFmt)) {
+			ose.addError(ContainerTypeErrorCode.CONTAINER_NAME_FMT_REQUIRED);
 		}
-		
-		containerType.setAbbreviation(abbreviation);
+		String nameFmt = ensureValidContainerNameFmt(detail.getContainerNameFmt(), containerType, ose);
+		containerType.setContainerNameFmt(nameFmt);
 	}
-		
+
+	private String ensureValidContainerNameFmt(String nameFmt, ContainerType containerType, OpenSpecimenException ose) {
+		if (StringUtils.isNotBlank(nameFmt) && !containerNameGenerator.isValidLabelTmpl(nameFmt)) {
+			ose.addError(ContainerTypeErrorCode.INVALID_CONTAINER_NAME_FMT, nameFmt);
+		}
+
+		return nameFmt;
+	}
+
 	private void setDimension(ContainerTypeDetail detail, ContainerType containerType, OpenSpecimenException ose) {
 		setNoOfColumns(detail, containerType, ose);
 		setNoOfRows(detail, containerType, ose);

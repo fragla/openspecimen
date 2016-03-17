@@ -1,8 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog 
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <changeSet author="ckhilosiya" id="Add return specimens fields to order items table">
+    <addColumn tableName="OS_ORDER_ITEMS">
+      <column name="RETURNED_QUANTITY" type="${double.type}"></column>
+      <column name="RETURNING_CONTAINER" type="${int.type}"></column>
+      <column name="RETURNING_ROW" type="${text.type}(8)"></column>
+      <column name="RETURNING_COLUMN" type="${text.type}(8)"></column>
+      <column name="RETURNED_BY" type="${int.type}"></column>
+      <column name="RETURN_DATE" type="${nullable.ts.type}"></column>
+      <column name="RETURN_COMMENTS" type="${text.type}(255)"></column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="FK on specimen returning container">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_OI_RETURNING_CONT"
+      baseTableName="OS_ORDER_ITEMS"
+      baseColumnNames="RETURNING_CONTAINER"
+      referencedTableName="OS_STORAGE_CONTAINERS"
+      referencedColumnNames="IDENTIFIER"/>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="FK on user who returned specimen">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_OI_RETURNED_BY"
+      baseTableName="OS_ORDER_ITEMS"
+      baseColumnNames="RETURNED_BY"
+      referencedTableName="CATISSUE_USER"
+      referencedColumnNames="IDENTIFIER"/>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="Updated distribution view with return event details" runOnChange="true">
+    <createView viewName="OS_SPMN_DISTRIBUTIONS_VIEW" replaceIfExists="true">
+      select
+        item.identifier as identifier, item.specimen_id as specimen_id, item.quantity as quantity, item.status as status,
+        item.returned_quantity as returned_quantity, item.returning_container as returning_container,
+        item.returning_row as returning_row, item.returning_column as returning_column,
+        item.returned_by as returned_by, item.return_date as return_date, item.return_comments as return_comments,
+        ord.name as name, ord.requester_id as requester_id, ord.distributor_id as distributor_id,
+        ord.execution_date as execution_date, ord.comments as comments, dp.short_title as dp_short_title
+      from
+        os_order_items item
+        inner join os_orders ord on item.order_id = ord.identifier
+        inner join catissue_distribution_protocol dp on ord.distribution_protocol_id = dp.identifier
+      where
+        ord.status != 'PENDING'
+    </createView>
+  </changeSet>
   
   <changeSet author="nmarwaha" id="Procedure to populate the specimen statistics" runOnChange="true" dbms="mysql">
     <sql>
@@ -302,13 +350,129 @@
     </sql>
   </changeSet>
   
+  <changeSet author="ckhilosiya" id="Making DP requirements specimen type optional">
+    <dropNotNullConstraint
+      tableName="OS_DP_REQUIREMENTS"
+      columnName="SPECIMEN_TYPE"
+      columnDataType="${text.type}(50)"/>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="Making DP requirements anatomic site optional">
+    <dropNotNullConstraint
+      tableName="OS_DP_REQUIREMENTS"
+      columnName="ANATOMIC_SITE"
+      columnDataType="${text.type}(150)"/>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="Making DP requirements pathology status optional">
+    <dropNotNullConstraint
+      tableName="OS_DP_REQUIREMENTS"
+      columnName="PATHOLOGY_STATUS"
+      columnDataType="${text.type}(50)"/>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="Adding clinical diagnosis as criteria for DP requirement">
+    <addColumn tableName="OS_DP_REQUIREMENTS">
+      <column name="CLINICAL_DAIGNOSIS" type="${text.type}(255)"></column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="DP requirement pathology statuses">
+    <createTable tableName="OS_DPR_PATHOLOGY_STATUSES">
+      <column name="DPR_ID" type="${int.type}"></column>
+      <column name="PATHOLOGY_STATUS" type="${text.type}(50)"></column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="FK for distribution protocol requirement">
+    <addForeignKeyConstraint
+      constraintName="OS_FK_DPR_PATH_DPR_ID"
+      baseTableName="OS_DPR_PATHOLOGY_STATUSES"
+      baseColumnNames="DPR_ID"
+      referencedTableName="OS_DP_REQUIREMENTS"
+      referencedColumnNames="IDENTIFIER"/>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="Transfer DP requirement pathology status data">
+    <sql>
+      insert into os_dpr_pathology_statuses
+        (dpr_id, pathology_status)
+      select
+        identifier, pathology_status
+      from
+        os_dp_requirements
+    </sql>
+  </changeSet>
+
+  <changeSet author="ckhilosiya" id="Delete pathology status as it is moved to dpr pathology statuses table">
+    <dropColumn tableName="OS_DP_REQUIREMENTS" columnName="PATHOLOGY_STATUS"/>
+  </changeSet>
+  
+  <changeSet author="mdnasim" id="Container types">
+    <createTable tableName="OS_CONTAINER_TYPES">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="NAME" type="${text.type}(64)">
+        <constraints unique="true" nullable="false"/>
+      </column>
+
+      <column name="TEMPERATURE" type="${double.type}">
+      </column>
+     
+      <column name="NO_OF_COLS" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+     
+      <column name="NO_OF_ROWS" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+     
+      <column name="COLUMN_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers">
+        <constraints nullable="false"/>
+      </column>
+     
+      <column name="ROW_LABELING_SCHEME" type="${text.type}(64)" defaultValue="Numbers">
+        <constraints nullable="false"/>
+      </column>
+      
+      <column name="STORE_SPECIMENS" type="${boolean.type}" defaultValue="0">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="CAN_HOLD" type="${int.type}">
+      </column>
+      
+      <column name="ACTIVITY_STATUS" type="${text.type}(16)">
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="mdnasim" id="FK on container types can hold">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_CONT_TYPE_CAN_HOLD"
+      baseTableName="OS_CONTAINER_TYPES"
+      baseColumnNames="CAN_HOLD"
+      referencedTableName="OS_CONTAINER_TYPES"
+      referencedColumnNames="IDENTIFIER" />
+  </changeSet>
+
+  <changeSet author="mdnasim" id="Container types sequence" dbms="oracle">
+    <createSequence
+      sequenceName="OS_CONTAINER_TYPES_SEQ"
+      startValue="1"
+      incrementBy="1"
+      ordered="true" />
+  </changeSet>
+
   <changeSet author="mdnasim" id="Column to specify container type">
     <addColumn tableName="OS_STORAGE_CONTAINERS">
       <column name="CONTAINER_TYPE_ID" type="${int.type}">
       </column>
     </addColumn>
   </changeSet>
-  
+
   <changeSet author="mdnasim" id="FK on container type">
     <addForeignKeyConstraint
       constraintName="FK_OS_ST_CONT_TYPE_ID"
@@ -316,6 +480,13 @@
       baseColumnNames="CONTAINER_TYPE_ID"
       referencedTableName="OS_CONTAINER_TYPES"
       referencedColumnNames="IDENTIFIER"/>
-  </changeSet>  
+  </changeSet>
 
+  <changeSet author="vgaikwad" id="Column to specify container name format">
+    <addColumn tableName="OS_CONTAINER_TYPES">
+      <column name="CONTAINER_NAME_FMT" type="${text.type}(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

@@ -9,6 +9,8 @@ public class ContainerTypeSummary {
 	private Long id;
 	
 	private String name;
+
+	private String containerNameFmt;
 	
 	private int noOfColumns;
 	
@@ -21,8 +23,6 @@ public class ContainerTypeSummary {
 	private Double temperature;
 
 	private boolean storeSpecimenEnabled;
-
-	private String abbreviation;
 
 	private String activityStatus;
 
@@ -40,6 +40,14 @@ public class ContainerTypeSummary {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getContainerNameFmt() {
+		return containerNameFmt;
+	}
+
+	public void setContainerNameFmt(String containerNameFmt) {
+		this.containerNameFmt = containerNameFmt;
 	}
 
 	public int getNoOfColumns() {
@@ -90,14 +98,6 @@ public class ContainerTypeSummary {
 		this.storeSpecimenEnabled = storeSpecimenEnabled;
 	}
 
-	public String getAbbreviation() {
-		return abbreviation;
-	}
-
-	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
-	}
-
 	public String getActivityStatus() {
 		return activityStatus;
 	}
@@ -109,13 +109,13 @@ public class ContainerTypeSummary {
 	public static <T extends ContainerTypeSummary> void copy(ContainerType containerType, T detail) {
 		detail.setId(containerType.getId());
 		detail.setName(containerType.getName());
+		detail.setContainerNameFmt(containerType.getContainerNameFmt());
 		detail.setNoOfColumns(containerType.getNoOfColumns());
 		detail.setNoOfRows(containerType.getNoOfRows());
 		detail.setColumnLabelingScheme(containerType.getColumnLabelingScheme());
 		detail.setRowLabelingScheme(containerType.getRowLabelingScheme());
 		detail.setTemperature(containerType.getTemperature());
 		detail.setStoreSpecimenEnabled(containerType.isStoreSpecimenEnabled());
-		detail.setAbbreviation(containerType.getAbbreviation());
 		detail.setActivityStatus(containerType.getActivityStatus());
 	}
 	

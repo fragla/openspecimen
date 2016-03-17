@@ -43,7 +43,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	public void setDaoFactory(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
 	}
-	
+
 	@Override
 	public StorageContainer createStorageContainer(StorageContainerDetail detail) {
 		StorageContainer container = new StorageContainer();
@@ -105,58 +105,58 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	@Override
-	public StorageContainer createStorageContainer(ContainerHierarchyDetail hierarchyDetail, String name) {
-		ContainerType containerType = getContainerType(hierarchyDetail.getContainerTypeId(), 
-				hierarchyDetail.getContainerTypeName());
-		StorageContainerDetail detail = populateContainerDetail(containerType);
+	public StorageContainer createStorageContainer(String name, ContainerHierarchyDetail input) {
+		ContainerType containerType = getContainerType(input.getContainerTypeId(), input.getContainerTypeName());
+		StorageContainerDetail detail = getStorageContainerDetail(containerType);
 		detail.setName(name);
-		detail.setContainerTypeId(containerType.getId());
-		detail.setSiteName(hierarchyDetail.getSiteName());
-		detail.setStorageLocation(hierarchyDetail.getStorageLocation());
-		detail.setAllowedSpecimenClasses(hierarchyDetail.getAllowedSpecimenClasses());
-		detail.setAllowedSpecimenTypes(hierarchyDetail.getAllowedSpecimenTypes());
-		detail.setAllowedCollectionProtocols(hierarchyDetail.getAllowedCollectionProtocols());
+		detail.setSiteName(input.getSiteName());
+		detail.setStorageLocation(input.getStorageLocation());
+		detail.setAllowedSpecimenClasses(input.getAllowedSpecimenClasses());
+		detail.setAllowedSpecimenTypes(input.getAllowedSpecimenTypes());
+		detail.setAllowedCollectionProtocols(input.getAllowedCollectionProtocols());
 		
-		if (hierarchyDetail.getNoOfColumns() > 0) {
-			detail.setNoOfColumns(hierarchyDetail.getNoOfColumns());
+		if (input.getNoOfColumns() > 0) {
+			detail.setNoOfColumns(input.getNoOfColumns());
 		}
 		
-		if (hierarchyDetail.getNoOfRows() > 0) {
-			detail.setNoOfRows(hierarchyDetail.getNoOfRows());
+		if (input.getNoOfRows() > 0) {
+			detail.setNoOfRows(input.getNoOfRows());
 		}
 		
-		if (StringUtils.isNotBlank(hierarchyDetail.getColumnLabelingScheme())) {
-			detail.setColumnLabelingScheme(hierarchyDetail.getColumnLabelingScheme());
+		if (StringUtils.isNotBlank(input.getColumnLabelingScheme())) {
+			detail.setColumnLabelingScheme(input.getColumnLabelingScheme());
 		}
 		
-		if (StringUtils.isNotBlank(hierarchyDetail.getRowLabelingScheme())) {
-			detail.setRowLabelingScheme(hierarchyDetail.getRowLabelingScheme());
+		if (StringUtils.isNotBlank(input.getRowLabelingScheme())) {
+			detail.setRowLabelingScheme(input.getRowLabelingScheme());
 		}
 		
-		if (hierarchyDetail.getTemperature() != null) {
-			detail.setTemperature(hierarchyDetail.getTemperature());
+		if (input.getTemperature() != null) {
+			detail.setTemperature(input.getTemperature());
 		}
 		
-		if (hierarchyDetail.getStoreSpecimensEnabled() != null) {
-			detail.setStoreSpecimensEnabled(hierarchyDetail.getStoreSpecimensEnabled());
+		if (input.getStoreSpecimensEnabled() != null) {
+			detail.setStoreSpecimensEnabled(input.getStoreSpecimensEnabled());
 		}
 		
 		return createStorageContainer(detail);
 	}
 	
 	@Override
-	public StorageContainer createStorageContainer(ContainerType containerType, StorageContainer parentContainer, String name) {
-		StorageContainerDetail detail = populateContainerDetail(containerType);
+	public StorageContainer createStorageContainer(String name, ContainerType containerType, StorageContainer parentContainer) {
+		StorageContainerDetail detail = getStorageContainerDetail(containerType);
 		detail.setName(name);
 		detail.setSiteName(parentContainer.getSite().getName());
-		StorageContainer container = createStorageContainer(detail);
 
-		// Set parent container and compute restrictions
+		StorageContainer container = createStorageContainer(detail);
 		container.setParentContainer(parentContainer);
+
 		StorageContainerPosition position = parentContainer.nextAvailablePosition();
 		position.setOccupyingContainer(container);
 		container.setPosition(position);
 		setComputedRestrictions(container);
+		container.setContainerType(containerType);
+
 		return container;
 	}
 	
@@ -539,6 +539,7 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	private ContainerType getContainerType(Long id, String name) {
 		ContainerType containerType = null;
 		Object key = null;
+
 		if (id != null) {
 			containerType = daoFactory.getContainerTypeDao().getById(id);
 			key = id;
@@ -552,11 +553,12 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 		if (containerType == null) {
 			throw OpenSpecimenException.userError(ContainerTypeErrorCode.NOT_FOUND, key);
 		}
+
 		return containerType;
 	}
 	
 
-	private StorageContainerDetail populateContainerDetail(ContainerType containerType) {
+	private StorageContainerDetail getStorageContainerDetail(ContainerType containerType) {
 		StorageContainerDetail detail = new StorageContainerDetail();
 		detail.setNoOfColumns(containerType.getNoOfColumns());
 		detail.setNoOfRows(containerType.getNoOfRows());

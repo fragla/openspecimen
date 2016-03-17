@@ -8,8 +8,6 @@ public enum ContainerTypeErrorCode implements ErrorCode {
 	
 	NAME_REQUIRED,
 	
-	ABBREVIATION_REQUIRED,
-	
 	ID_OR_NAME_REQ,
 	
 	DUP_NAME,
@@ -20,7 +18,11 @@ public enum ContainerTypeErrorCode implements ErrorCode {
 	
 	REF_ENTITY_FOUND,
 
-	CYCLES_NOT_ALLOWED;
+	CYCLES_NOT_ALLOWED,
+
+	CONTAINER_NAME_FMT_REQUIRED,
+
+	INVALID_CONTAINER_NAME_FMT;
 	
 	@Override
 	public String code() {

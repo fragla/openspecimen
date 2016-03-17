@@ -23,7 +23,9 @@ public class ContainerType extends BaseEntity {
 	private static final String ENTITY_NAME = "container_type";
 	
 	private String name;
-	
+
+	private String containerNameFmt;
+
 	private int noOfColumns;
 	
 	private int noOfRows;
@@ -35,8 +37,6 @@ public class ContainerType extends BaseEntity {
 	private Double temperature;
 	
 	private boolean storeSpecimenEnabled;
-	
-	private String abbreviation;
 	
 	private ContainerType canHold;
 	
@@ -57,6 +57,14 @@ public class ContainerType extends BaseEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getContainerNameFmt() {
+		return containerNameFmt;
+	}
+
+	public void setContainerNameFmt(String containerNameFmt) {
+		this.containerNameFmt = containerNameFmt;
 	}
 
 	public int getNoOfColumns() {
@@ -107,14 +115,6 @@ public class ContainerType extends BaseEntity {
 		this.storeSpecimenEnabled = storeSpecimenEnabled;
 	}
 
-	public String getAbbreviation() {
-		return abbreviation;
-	}
-
-	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
-	}
-
 	public ContainerType getCanHold() {
 		return canHold;
 	}
@@ -142,13 +142,13 @@ public class ContainerType extends BaseEntity {
 
 	public void update(ContainerType containerType) {
 		setName(containerType.getName());
+		setContainerNameFmt(containerType.getContainerNameFmt());
 		setNoOfColumns(containerType.getNoOfColumns());
 		setNoOfRows(containerType.getNoOfRows());
 		setColumnLabelingScheme(containerType.getColumnLabelingScheme());
 		setRowLabelingScheme(containerType.getRowLabelingScheme());
 		setTemperature(containerType.getTemperature());
 		setStoreSpecimenEnabled(containerType.isStoreSpecimenEnabled());
-		setAbbreviation(containerType.getAbbreviation());
 		setActivityStatus(containerType.getActivityStatus());
 		
 		updateCanHold(containerType.getCanHold());

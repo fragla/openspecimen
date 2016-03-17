@@ -5,32 +5,22 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-  <changeSet author="slakhani" id="Adding column to specify whether property is secured or not">
-    <addColumn tableName="OS_CFG_PROPS">
-      <column name="IS_SECURE" type="${boolean.type}" defaultValueBoolean="0">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
-        
   <changeSet author="vlonushte" id="CSV file field separator setting">
-    <validCheckSum>7:eeb20d997fbf11b725b7673a31ad103a</validCheckSum>
     <sql>
       call add_cfg_prop(
         'common', 'field_separator',
         'field_separator', 'field_separator_desc',
-        'CHAR', ',', 0
+        'CHAR', ','
       );
     </sql>
   </changeSet>
   
   <changeSet author="nmarwaha" id="Adding email notification config property for CP expiry">
-    <validCheckSum>7:7870d3495189ff27925d434846bd6545</validCheckSum>
     <sql>
       call add_cfg_prop(
         'notifications', 'email_cp_expiring_notification',
         'cp_expiring_notification', 'cp_expiring_notification_desc',
-        'BOOLEAN', 'true', 0
+        'BOOLEAN', 'true'
       );
     </sql>
   </changeSet>
@@ -54,24 +44,23 @@
   </changeSet>
   
   <changeSet author="nmarwaha" id="Adding email config properties for DP expiry">
-    <validCheckSum>7:614a53bd5135a069c903c817ba510621</validCheckSum>
     <sql>
       call add_cfg_prop(
         'notifications', 'email_dp_expiring_notification',
         'dp_expiring_notification', 'dp_expiring_notification_desc',
-        'BOOLEAN', 'true', 0
+        'BOOLEAN', 'true'
       );
       
       call add_cfg_prop(
         'administrative', 'dp_expiry_rem_notif',
         'dp_expiry_rem_notif', 'dp_expiry_rem_notif_desc',
-        'INT', '30', 0
+        'INT', '30'
       );
       
       call add_cfg_prop(
         'administrative', 'dp_expiry_rem_rept_inter',
         'dp_expiry_rem_rept_inter', 'dp_expiry_rem_rept_inter_desc',
-        'INT', '5', 0
+        'INT', '5'
       );
     </sql>
   </changeSet>
@@ -120,14 +109,21 @@
   </changeSet>
   
   <changeSet author="slakhani" id="Training card url setting">
-    <validCheckSum>7:8a3ff8fdcab900a508e3cc07002e3627</validCheckSum>
     <sql>
       call add_cfg_prop(
         'common', 'training_url',
         'training_url', 'training_url_desc',
-        'STRING', 'https://openspecimen.atlassian.net/wiki/x/UQDi', 0
+        'STRING', 'https://openspecimen.atlassian.net/wiki/x/UQDi'
       );
     </sql>
+  </changeSet>
+  
+  <changeSet author="slakhani" id="Adding column to specify whether property is secured or not">
+    <addColumn tableName="OS_CFG_PROPS">
+      <column name="IS_SECURE" type="${boolean.type}" defaultValueBoolean="0">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
   </changeSet>
   
   <changeSet author="slakhani" id="Setting secure flag to true for email password configuration">

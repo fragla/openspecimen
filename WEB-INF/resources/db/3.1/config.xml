@@ -118,26 +118,19 @@
     </sql>
   </changeSet>
   
-  <changeSet author="slakhani" id="Adding column to specify whether property is secured or not">
-    <addColumn tableName="OS_CFG_PROPS">
-      <column name="IS_SECURE" type="${boolean.type}" defaultValueBoolean="0">
-        <constraints nullable="false"/>
-      </column>
-    </addColumn>
-  </changeSet>
-  
-  <changeSet author="slakhani" id="Setting secure flag to true for email password configuration">
+  <changeSet author="slakhani" id="Email account password value should be secured">
     <sql>
       update 
         os_cfg_props
       set
         is_secure = 1
       where
-        module_id = (select identifier from os_modules where name = 'email') and name = 'account_password';
+        module_id = (select identifier from os_modules where name = 'email') and
+        name = 'account_password';
     </sql>
   </changeSet>
 
-  <changeSet author="slakhani" id="Encrypting existing email configuration password">
+  <changeSet author="slakhani" id="Securing existing email account password value">
     <customChange class="com.krishagni.catissueplus.core.init.ConfigEmailPasswordUpdator"></customChange>
   </changeSet>
 </databaseChangeLog>

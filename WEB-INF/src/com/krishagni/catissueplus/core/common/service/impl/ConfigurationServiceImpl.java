@@ -160,9 +160,13 @@ public class ConfigurationServiceImpl implements ConfigurationService, Initializ
 			ConfigSetting setting = moduleSettings.get(name);
 			if (setting != null) {
 				value = setting.getValue();
+
+				if (setting.getProperty().isSecured() && value != null) {
+					value = Utility.decrypt(value);
+				}
 			}
 		}
-		
+
 		if (StringUtils.isBlank(value)) {
 			value = defValue != null && defValue.length > 0 ? defValue[0] : null;
 		} 
@@ -364,14 +368,14 @@ public class ConfigurationServiceImpl implements ConfigurationService, Initializ
 		}
 	}
 	
-	private ConfigSetting createSetting(ConfigSetting existing, String value) throws Exception {
+	private ConfigSetting createSetting(ConfigSetting existing, String value) {
 		ConfigSetting newSetting = new ConfigSetting();
 		newSetting.setProperty(existing.getProperty());
 		newSetting.setActivatedBy(AuthUtil.getCurrentUser());
 		newSetting.setActivationDate(Calendar.getInstance().getTime());
 		newSetting.setActivityStatus(Status.ACTIVITY_STATUS_ACTIVE.getStatus());
 		
-		if (StringUtils.isNotBlank(value) && existing.getProperty().isSecured()) {
+		if (value != null && existing.getProperty().isSecured()) {
 			value = Utility.encrypt(value);
 		}
 		

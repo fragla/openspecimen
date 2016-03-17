@@ -221,8 +221,7 @@ public class EmailServiceImpl implements EmailService, ConfigChangeListener, Ini
 	}
 	
 	private String getAccountPassword() throws Exception {
-		String password = cfgSvc.getStrSetting(MODULE, "account_password");
-		return StringUtils.isNotBlank(password) ? Utility.decrypt(password) : password;
+		return cfgSvc.getStrSetting(MODULE, "account_password");
 	}
 	
 	private String getMailServerHost() {

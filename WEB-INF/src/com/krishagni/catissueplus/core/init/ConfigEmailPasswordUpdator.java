@@ -51,18 +51,16 @@ public class ConfigEmailPasswordUpdator implements CustomTaskChange {
 				password = rs.getString("value");
 			}
 			
-			if (StringUtils.isNotBlank(password)) {
+			if (password != null) {
 				password = Utility.encrypt(password);
 				statement.executeUpdate(String.format(UPDATE_PASSWORD_SQL, password, id));
 			}
 		} catch (Exception e) {
-			throw new CustomChangeException("Got error while encrypting config email password: ", e);
+			throw new CustomChangeException("Error when encrypting email account password: ", e);
 		} finally {
-			try {
-				rs.close();
-				statement.close();
-			} catch (SQLException e) {
-				throw new CustomChangeException("Got error while encrypting config email password: ", e);
+			try { rs.close(); } catch (Exception e) {}
+
+			try { statement.close(); } catch (Exception e) {
 			}
 		}
 	}
@@ -71,13 +69,13 @@ public class ConfigEmailPasswordUpdator implements CustomTaskChange {
 			"select " + 
 			"  s.identifier, s.value " +
 			"from "	+
-			"  os_cfg_settings s " +
-			"  left join os_cfg_props p on s.property_id = p.identifier " +
-			"  left join os_modules m on p.module_id = m.identifier " +
+			"  os_modules m" +
+			"  inner join os_cfg_props p on p.module_id = m.identifier" +
+			"  inner join os_cfg_settings s on s.property_id = p.identifier " +
 			"where " +
-			"  p.name = 'account_password' and " +
 			"  m.name = 'email' and " +
+			"  p.name = 'account_password' and " +
 			"  s.activity_status = 'Active'";
-	
+
 	public static final String UPDATE_PASSWORD_SQL = "update os_cfg_settings set value = '%s' where identifier = %d";
 }

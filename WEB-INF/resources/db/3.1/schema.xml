@@ -377,6 +377,14 @@
     </addColumn>
   </changeSet>
   
+  <changeSet author="slakhani" id="Column to specify whether config property value needs to be secured">
+    <addColumn tableName="OS_CFG_PROPS">
+      <column name="IS_SECURE" type="${boolean.type}" defaultValueBoolean="0">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
   <changeSet author="slakhani" id="Create procedure to add secured config property" dbms="mysql">
     <sql endDelimiter="//">
       create procedure add_secured_cfg_prop(
@@ -389,11 +397,11 @@
         in isSecure boolean
       )
       begin
-        select identifier into @module_id from os_modules where name = moduleName;
-        
         call add_cfg_prop(moduleName, propName, propCode, propDesc, propType, defValue);
         
         if isSecure then
+          select identifier into @module_id from os_modules where name = moduleName;
+
           update 
             os_cfg_props
           set
@@ -419,11 +427,11 @@
       ) is
         module_id number(20);
       begin
-        select identifier into module_id from os_modules where name = moduleName;
-        
         add_cfg_prop(moduleName, propName, propCode, propDesc, propType, defValue);
         
         if isSecure = 1 then
+          select identifier into module_id from os_modules where name = moduleName;
+
           update 
             os_cfg_props
           set

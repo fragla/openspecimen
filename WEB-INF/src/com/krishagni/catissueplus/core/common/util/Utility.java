@@ -294,17 +294,25 @@ public class Utility {
 		return ConfigUtil.getInstance().getCharSetting("common", "field_separator", CSVWriter.DEFAULT_SEPARATOR); 
 	}
 	
-	public static String encrypt(String value) throws Exception {
-		Cipher cipher = Cipher.getInstance("AES");
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		byte[] encryptedValue = cipher.doFinal(value.getBytes("UTF-8"));
-		return Base64.getEncoder().encodeToString(encryptedValue);
+	public static String encrypt(String value) {
+		try {
+			Cipher cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+			byte[] encryptedValue = cipher.doFinal(value.getBytes("UTF-8"));
+			return Base64.getEncoder().encodeToString(encryptedValue);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
-	public static String decrypt(String value) throws Exception {
-		Cipher cipher = Cipher.getInstance("AES");
-		cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		byte[] decodedValue = Base64.getDecoder().decode(value.getBytes());
-		return new String(cipher.doFinal(decodedValue));
+	public static String decrypt(String value) {
+		try {
+			Cipher cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.DECRYPT_MODE, secretKey);
+			byte[] decodedValue = Base64.getDecoder().decode(value.getBytes());
+			return new String(cipher.doFinal(decodedValue));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
